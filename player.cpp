@@ -56,6 +56,7 @@ void Player::logicalUpdate()
         };
         box.Set(points.data(), points.size());
         body->CreateFixture(&box, 0.0f);
+
         body->SetType(b2_dynamicBody);
         body->SetActive(true);
 

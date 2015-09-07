@@ -38,5 +38,4 @@ HEADERS += \
     physicalwall.h \
     sensor.h
 
-CONFIG += c++14
-QMAKE_CXXFLAGS += -Wall -Werror
+QMAKE_CXXFLAGS += -Wall -Werror -std=c++14

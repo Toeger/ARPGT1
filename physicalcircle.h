@@ -13,7 +13,7 @@ public:
     void set_velocity(b2Vec2 velocity);
     b2World *get_world();
     ~PhysicalCircle();
-private:
+//private:
     b2Body *body;
 };
 
