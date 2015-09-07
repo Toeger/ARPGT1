@@ -1,3 +1,5 @@
+#include <array>
+
 #include "player.h"
 #include "drawlist.h"
 #include "updatelist.h"
@@ -5,25 +7,14 @@
 #include "conversions.h"
 
 Player::Player(b2World &world):
-    character(50)
+    character(50),
+    pc(world, {300, 300}, 50)
 {
     character.setFillColor({50, 100, 200});
     character.setPosition(400, 300);
     Drawlist::add(character);
     //UpdateList::add([this](){this->logicalUpdate();});
     LogicalObject::add(*this);
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(400, 300);
-    body = world.CreateBody(&bodyDef);
-    b2CircleShape characterShape;
-    characterShape.m_radius = 50;
-
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &characterShape;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 0.3f;
-    body->CreateFixture(&fixtureDef);
 }
 
 void Player::logicalUpdate()
@@ -34,22 +25,50 @@ void Player::logicalUpdate()
     b2Vec2 velocity{0, 0};
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {
-        velocity.y -= speed;
+        velocity.y--;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        velocity.x -= speed;
+        velocity.x--;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        velocity.y += speed;
+        velocity.y++;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        velocity.x += speed;
+        velocity.x++;
     }
-    body->SetLinearVelocity(velocity);
-    character.setPosition(
-                Conversions::boxPosToSfCirclePos(
-                    body->GetPosition(), character.getRadius()));
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+        //create attack cone
+        b2BodyDef bodyDef;
+        auto pos = pc.get_position();
+        bodyDef.position = pos;
+        b2Body *body = get_world()->CreateBody(&bodyDef);
+        b2PolygonShape box;
+        std::array<b2Vec2, 3> points
+        {
+            pos,
+            {pos.x + 10, pos.y + 10},
+            {pos.x + 10, pos.y - 10},
+        };
+        box.Set(points.data(), points.size());
+        body->CreateFixture(&box, 0.0f);
+
+        //check if we hit anything
+
+        //apply damage/knockback
+        //remove attack cone
+        get_world()->DestroyBody(body);
+    }
+    velocity.Normalize();
+    velocity.x *= speed;
+    velocity.y *= speed;
+    pc.set_velocity(velocity);
+    pc.apply_position(character);
+}
+
+b2World *Player::get_world()
+{
+    return pc.get_world();
 }

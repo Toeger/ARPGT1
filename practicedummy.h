@@ -2,7 +2,7 @@
 #define PRACTICEDUMMY_H
 
 #include <SFML/Graphics.hpp>
-#include <Box2D/Box2D.h>
+#include "physicalcircle.h"
 
 class PracticeDummy
 {
@@ -10,7 +10,7 @@ public:
     PracticeDummy(b2World &world);
     void logicalUpdate();
     sf::CircleShape character;
-    b2Body *body;
+    PhysicalCircle pc;
 };
 
 #endif // PRACTICEDUMMY_H
