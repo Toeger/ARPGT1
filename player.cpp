@@ -5,6 +5,8 @@
 #include "updatelist.h"
 #include "logicalobject.h"
 #include "conversions.h"
+#include "sensor.h"
+#include <QDebug>
 
 Player::Player(b2World &world):
     character(50),
@@ -49,14 +51,16 @@ void Player::logicalUpdate()
         std::array<b2Vec2, 3> points
         {
             pos,
-            {pos.x + 10, pos.y + 10},
-            {pos.x + 10, pos.y - 10},
+            {pos.x + 100, pos.y + 100},
+            {pos.x + 100, pos.y - 100},
         };
         box.Set(points.data(), points.size());
         body->CreateFixture(&box, 0.0f);
+        body->SetType(b2_dynamicBody);
+        body->SetActive(true);
 
         //check if we hit anything
-
+        qDebug() << Sensor::get_collisions(body).size();
         //apply damage/knockback
         //remove attack cone
         get_world()->DestroyBody(body);
