@@ -6,7 +6,7 @@
 #include "logicalobject.h"
 #include "conversions.h"
 #include "sensor.h"
-#include <QDebug>
+#include <iostream>
 
 Player::Player(b2World &world):
     character(50),
@@ -61,7 +61,7 @@ void Player::logicalUpdate()
         body->SetActive(true);
 
         //check if we hit anything
-        qDebug() << Sensor::get_collisions(body).size();
+        std::cout << Sensor::get_collisions(body).size() << std::endl;
         //apply damage/knockback
         //remove attack cone
         get_world()->DestroyBody(body);
