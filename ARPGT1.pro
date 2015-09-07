@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     collidable.cpp \
     physicalcircle.cpp \
     physicalwall.cpp \
-    sensor.cpp
+    sensor.cpp \
+    camera.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 LIBS += -lBox2D
@@ -31,6 +32,10 @@ HEADERS += \
     conversions.h \
     physicalcircle.h \
     physicalwall.h \
-    sensor.h
+    sensor.h \
+    camera.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14
+
+DISTFILES += \
+    TODO

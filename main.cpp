@@ -23,16 +23,18 @@ int main()
     using namespace std::chrono_literals;
     b2World world({0, 0});
 
+    //window.setVerticalSyncEnabled(true);
+
     const float thickness = 1;
     std::array<PhysicalWall, 4> boundingbox
     {
-        PhysicalWall{world, {400, 600}, {800, thickness}},
-        PhysicalWall{world, {400, 0}, {800, thickness}},
-        PhysicalWall{world, {0, 300}, {thickness, 600}},
-        PhysicalWall{world, {800, 300}, {thickness, 600}},
+        PhysicalWall{world, {400, 600}, {800, thickness}, true, sf::Color::Blue},
+        PhysicalWall{world, {400, 0}, {800, thickness}, true, sf::Color::Blue},
+        PhysicalWall{world, {0, 300}, {thickness, 600}, true, sf::Color::Blue},
+        PhysicalWall{world, {800, 300}, {thickness, 600}, true, sf::Color::Blue},
     };
 
-    Player p{world};
+    Player p(world, &window);
     PracticeDummy pd{world};
 
     while (window.isOpen()){
