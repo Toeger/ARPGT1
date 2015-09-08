@@ -37,8 +37,14 @@ Weapon::Weapon(b2Body *body)
 void Weapon::logicalUpdate()
 {
     auto body = fixture->GetBody();
-    auto pos = body->GetPosition();
-    //drawShape.
-    drawShape.setPosition({pos.x, pos.y});
+    //auto pos = body->GetPosition();
+    auto polyShape = dynamic_cast<b2PolygonShape *>(fixture->GetShape());
+    assert(polyShape);
+    for (int i = 0; i < polyShape->GetVertexCount(); ++i){
+        const auto &pos = polyShape->GetVertex(i);
+        drawShape.setPoint(i, {pos.x, pos.y});
+
+    }
+    //drawShape.setPosition({pos.x, pos.y});
     drawShape.setRotation(body->GetAngle());
 }

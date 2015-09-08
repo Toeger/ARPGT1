@@ -72,8 +72,6 @@ void Player::logicalUpdate()
     Utility::rotate(velocity, camera.get_rotation());
 
     pc.set_velocity(velocity);
-    //std::cout << "x" << velocity.x << std::endl;
-    //std::cout << "y" << velocity.y << std::endl;
     pc.apply_position(character);
     auto box2dposition = pc.get_position();
     camera.set_position(box2dposition.x, box2dposition.y);

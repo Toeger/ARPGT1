@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     physicalwall.cpp \
     sensor.cpp \
     camera.cpp \
-    weapon.cpp
+    weapon.cpp \
+    debugdraw.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 LIBS += -lBox2D
@@ -36,7 +37,8 @@ HEADERS += \
     sensor.h \
     camera.h \
     weapon.h \
-    utility.h
+    utility.h \
+    debugdraw.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14
 
