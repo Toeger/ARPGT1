@@ -18,12 +18,13 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
     auto &now =  std::chrono::high_resolution_clock::now;
-    auto lastUpdate = now();
+    auto last_update_timepoint = now();
     const auto lfps = 30;
+    const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
     using namespace std::chrono_literals;
     b2World world({0, 0});
 
-    //window.setVerticalSyncEnabled(true);
+    window.setVerticalSyncEnabled(true);
 
     const float thickness = 1;
     std::array<PhysicalWall, 4> boundingbox
@@ -47,10 +48,11 @@ int main()
                 window.close();
         }
         //UpdateList::updateAll();
-        if (now() - lastUpdate > 1s / lfps){
+        while (now() - last_update_timepoint > logical_frame_duration)
+        {
             world.Step(1, 100, 100);
             LogicalObject::update();
-            lastUpdate += 1s / lfps;
+            last_update_timepoint += logical_frame_duration;
         }
         window.clear(sf::Color::Black);
         Drawlist::drawAll(window);

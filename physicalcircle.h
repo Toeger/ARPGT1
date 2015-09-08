@@ -7,7 +7,7 @@
 class PhysicalCircle
 {
 public:
-    PhysicalCircle(b2World &world, b2Vec2 position, float radius);
+    PhysicalCircle(b2World &world, b2Vec2 position, float radius, float friction = 1.f);
     b2Vec2 get_position() const;
     void apply_position(sf::CircleShape &circle) const;
     void set_velocity(b2Vec2 velocity);

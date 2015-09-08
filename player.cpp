@@ -10,7 +10,7 @@
 
 Player::Player(b2World &world, sf::RenderWindow *window):
     character(50),
-    pc(world, {300, 300}, 50),
+    pc(world, {300, 300}, 50, 0.),
     camera(window)
 {
     character.setFillColor({50, 100, 200});
@@ -21,7 +21,6 @@ Player::Player(b2World &world, sf::RenderWindow *window):
 }
 
 void rotate(b2Vec2 &vec, float angle){
-    std::cout << angle << std::endl;
     angle *= M_PI / 180;
     auto x = (vec.x * cos(angle)) - (vec.y * sin(angle));
     auto y = (vec.y * cos(angle)) + (vec.x * sin(angle));
@@ -84,7 +83,7 @@ void Player::logicalUpdate()
         body->SetActive(true);
 
         //check if we hit anything
-        std::cout << Sensor::get_collisions(body).size() << std::endl;
+        //std::cout << Sensor::get_collisions(body).size() << std::endl;
         //apply damage/knockback
         //remove attack cone
         get_world()->DestroyBody(body);

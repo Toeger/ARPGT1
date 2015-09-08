@@ -1,6 +1,6 @@
 #include "physicalcircle.h"
 
-PhysicalCircle::PhysicalCircle(b2World &world, b2Vec2 position, float radius)
+PhysicalCircle::PhysicalCircle(b2World &world, b2Vec2 position, float radius, float friction)
 {
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
@@ -11,10 +11,10 @@ PhysicalCircle::PhysicalCircle(b2World &world, b2Vec2 position, float radius)
 
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &characterShape;
-    fixtureDef.density = 1.0f;
-    fixtureDef.friction = 1.f;
+    fixtureDef.density = .0f;
+    fixtureDef.friction = friction;
     body->CreateFixture(&fixtureDef);
-    body->SetLinearDamping(.01f);
+    body->SetLinearDamping(.0f);
 }
 
 b2Vec2 PhysicalCircle::get_position() const

@@ -11,7 +11,7 @@ public:
     Player(b2World &world, sf::RenderWindow *window);
     void logicalUpdate();
     sf::CircleShape character;
-    float speed = 0.6;
+    float speed = 1000000;
     PhysicalCircle pc;
 private:
     b2World *get_world();
