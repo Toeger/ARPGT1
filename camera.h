@@ -10,8 +10,7 @@ public:
     void set_position(float x, float y);
     void set_rotation(float angle);
     void face(float x, float y);
-    void rotate_left();
-    void rotate_right();
+    void rotate(float turningangle);
     float get_rotation() const;
     ~Camera();
 private:

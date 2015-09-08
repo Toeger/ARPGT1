@@ -50,7 +50,8 @@ int main()
         //UpdateList::updateAll();
         while (now() - last_update_timepoint > logical_frame_duration)
         {
-            world.Step(1, 100, 100);
+            for (int i = 0; i < 10; ++i)
+                world.Step(1.f/lfps, 10, 8);
             LogicalObject::update();
             last_update_timepoint += logical_frame_duration;
         }

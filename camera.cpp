@@ -21,14 +21,7 @@ void Camera::set_rotation(float angle)
     view.setRotation(angle);
 }
 
-
-const float turningangle = .3f;
-void Camera::rotate_left()
-{
-    view.rotate(-turningangle);
-}
-
-void Camera::rotate_right()
+void Camera::rotate(float turningangle)
 {
     view.rotate(turningangle);
 }
