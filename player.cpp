@@ -1,5 +1,7 @@
 #include <array>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 
 #include "player.h"
 #include "drawlist.h"
@@ -9,6 +11,7 @@
 #include "sensor.h"
 #include "utility.h"
 #include "hittable.h"
+#include "enemylist.h"
 
 Player::Player(b2World &world, sf::RenderWindow *window):
     character(50),
@@ -37,11 +40,9 @@ void Player::logicalUpdate()
     pc.body->SetAngularVelocity(0);
     const float angleCorrectionFactor = 3;
     auto rotate_left = [&angle, &angleCorrectionFactor, this]{
-        camera.rotate(-angle);
         pc.body->SetAngularVelocity(pc.body->GetAngularVelocity() - degreeToRadians(angle) * angleCorrectionFactor);
     };
     auto rotate_right = [&angle, &angleCorrectionFactor, this]{
-        camera.rotate(angle);
         pc.body->SetAngularVelocity(pc.body->GetAngularVelocity() + degreeToRadians(angle) * angleCorrectionFactor);
     };
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -77,6 +78,23 @@ void Player::logicalUpdate()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
         rotate_right();
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+        if (EnemyList::enemy_list.size()){
+            const auto self_position = pc.body->GetPosition();
+            b2Body *closest_body = *std::min_element(std::begin(EnemyList::enemy_list), std::end(EnemyList::enemy_list),
+                [this, &self_position](const b2Body *lhs, const b2Body *rhs){
+                const auto lhs_distance = (self_position - lhs->GetPosition()).Length();
+                const auto rhs_distance =(self_position - rhs->GetPosition()).Length();
+                return lhs_distance < rhs_distance;
+            });
+            const auto closest_body_position = closest_body->GetPosition();
+            auto direction_angle = atan2(closest_body_position.y - self_position.y, closest_body_position.x - self_position.x);
+            auto body_angle = pc.body->GetAngle();
+            pc.body->SetAngularVelocity(
+                (direction_angle
+                        - body_angle + M_PI_2));
+        }
+    }
     velocity.Normalize();
     velocity.x *= speed;
     velocity.y *= speed;
@@ -86,6 +104,7 @@ void Player::logicalUpdate()
     pc.apply_position(character);
     auto box2dposition = pc.get_position();
     camera.set_position(box2dposition.x, box2dposition.y);
+    camera.set_rotation(pc.body->GetAngle() * 180 / M_PI);
 }
 
 b2World *Player::get_world()

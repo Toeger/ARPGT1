@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     camera.cpp \
     weapon.cpp \
     debugdraw.cpp \
-    hittable.cpp
+    hittable.cpp \
+    enemylist.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 LIBS += -lBox2D
@@ -40,7 +41,8 @@ HEADERS += \
     weapon.h \
     utility.h \
     debugdraw.h \
-    hittable.h
+    hittable.h \
+    enemylist.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14
 #QMAKE_CFLAGS += -flto
