@@ -22,6 +22,10 @@ Player::Player(b2World &world, sf::RenderWindow *window):
     LogicalObject::add(*this);
 }
 
+float degreeToRadians(float degree){
+    return degree * M_PI / 180;
+}
+
 void Player::logicalUpdate()
 {
     sf::Color c = character.getFillColor();
@@ -33,11 +37,11 @@ void Player::logicalUpdate()
     const float angleCorrectionFactor = 3;
     auto rotate_left = [&angle, &angleCorrectionFactor, this]{
         camera.rotate(-angle);
-        pc.body->SetAngularVelocity(pc.body->GetAngularVelocity() - angle * angleCorrectionFactor);
+        pc.body->SetAngularVelocity(pc.body->GetAngularVelocity() - degreeToRadians(angle) * angleCorrectionFactor);
     };
     auto rotate_right = [&angle, &angleCorrectionFactor, this]{
         camera.rotate(angle);
-        pc.body->SetAngularVelocity(pc.body->GetAngularVelocity() + angle * angleCorrectionFactor);
+        pc.body->SetAngularVelocity(pc.body->GetAngularVelocity() + degreeToRadians(angle) * angleCorrectionFactor);
     };
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {

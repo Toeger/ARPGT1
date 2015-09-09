@@ -11,6 +11,7 @@ public:
     void set_rotation(float angle);
     void face(float x, float y);
     void rotate(float turningangle);
+    void set_size(int x, int y);
     float get_rotation() const;
     ~Camera();
 private:

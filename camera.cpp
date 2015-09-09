@@ -26,6 +26,11 @@ void Camera::rotate(float turningangle)
     view.rotate(turningangle);
 }
 
+void Camera::set_size(int x, int y)
+{
+    view.setSize({static_cast<float>(x), static_cast<float>(y)});
+}
+
 float Camera::get_rotation() const
 {
     return view.getRotation();

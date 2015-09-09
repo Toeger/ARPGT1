@@ -13,6 +13,7 @@
 #include "logicalobject.h"
 #include "practicedummy.h"
 #include "physicalwall.h"
+#include "debugdraw.h"
 
 int main()
 {
@@ -23,6 +24,8 @@ int main()
     const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
     using namespace std::chrono_literals;
     b2World world({0, 0});
+    DebugDraw debug_draw(window);
+    world.SetDebugDraw(&debug_draw);
 
     window.setVerticalSyncEnabled(true);
 
@@ -46,6 +49,9 @@ int main()
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::Resized)
+                p.camera.set_size(event.size.width, event.size.height);
+                //window.setSize({event.size.width, event.size.height});
         }
         //UpdateList::updateAll();
         while (now() - last_update_timepoint > logical_frame_duration)
@@ -56,7 +62,8 @@ int main()
             last_update_timepoint += logical_frame_duration;
         }
         window.clear(sf::Color::Black);
-        Drawlist::drawAll(window);
+        //Drawlist::drawAll(window);
+        world.DrawDebugData();
         window.display();
     }
 }
