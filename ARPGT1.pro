@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     sensor.cpp \
     camera.cpp \
     weapon.cpp \
-    debugdraw.cpp
+    debugdraw.cpp \
+    hittable.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 LIBS += -lBox2D
@@ -38,9 +39,11 @@ HEADERS += \
     camera.h \
     weapon.h \
     utility.h \
-    debugdraw.h
+    debugdraw.h \
+    hittable.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14
+#QMAKE_CFLAGS += -flto
 
 DISTFILES += \
     TODO

@@ -10,7 +10,6 @@ public:
     Weapon(b2Body *body);
     b2Fixture *fixture;
     sf::ConvexShape drawShape;
-    void logicalUpdate();
 };
 
 #endif // WEAPON_H

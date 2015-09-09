@@ -12,7 +12,7 @@ public:
     Player(b2World &world, sf::RenderWindow *window);
     void logicalUpdate();
     sf::CircleShape character;
-    float speed = 30;
+    float speed = 50;
     PhysicalCircle pc;
     Camera camera;
     Weapon weapon;

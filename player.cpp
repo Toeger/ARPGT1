@@ -8,6 +8,7 @@
 #include "conversions.h"
 #include "sensor.h"
 #include "utility.h"
+#include "hittable.h"
 
 Player::Player(b2World &world, sf::RenderWindow *window):
     character(50),
@@ -62,7 +63,13 @@ void Player::logicalUpdate()
         rotate_right();
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-        std::cout << Sensor::get_collisions(pc.body).size() << std::endl;
+        auto collisions = Sensor::get_collisions(pc.body);
+        for (auto &c : collisions){
+            auto user_data = c->GetUserData();
+            if (user_data){
+                static_cast<Hittable *>(user_data)->take_hit(weapon);
+            }
+        }
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
         rotate_left();

@@ -1,7 +1,6 @@
 #include "weapon.h"
 #include "utility.h"
 #include "drawlist.h"
-#include "logicalobject.h"
 
 Weapon::Weapon(b2Body *body)
 {
@@ -27,7 +26,6 @@ Weapon::Weapon(b2Body *body)
     drawShape.setOrigin({points[0].x, points[0].y});
     drawShape.setFillColor({50, 0, 0});
     Drawlist::add(drawShape);
-    LogicalObject::add(*this);
     weaponShape.Set(points.data(), points.size());
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &weaponShape;
@@ -35,17 +33,3 @@ Weapon::Weapon(b2Body *body)
     fixture = body->CreateFixture(&fixtureDef);
 }
 
-void Weapon::logicalUpdate()
-{
-    auto body = fixture->GetBody();
-    //auto pos = body->GetPosition();
-    auto polyShape = dynamic_cast<b2PolygonShape *>(fixture->GetShape());
-    assert(polyShape);
-    for (int i = 0; i < polyShape->GetVertexCount(); ++i){
-        const auto &pos = polyShape->GetVertex(i);
-        drawShape.setPoint(i, {pos.x, pos.y});
-
-    }
-    //drawShape.setPosition({pos.x, pos.y});
-    drawShape.setRotation(body->GetAngle());
-}
