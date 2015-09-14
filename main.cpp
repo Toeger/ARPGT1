@@ -11,6 +11,7 @@
 #include "practicedummy.h"
 #include "entity.h"
 #include "components.h"
+#include <typeinfo>
 
 int main()
 {
@@ -25,6 +26,10 @@ int main()
 
     Player p(&window);
     PracticeDummy pd;
+    Entity e;
+    e.add(Components::Velocity{3});
+    e.add(Components::Direction{});
+    e.add(Components::Position{1, 2});
 
     while (window.isOpen()){
         // check all the window's events that were triggered since the last iteration of the loop
@@ -42,7 +47,10 @@ int main()
         while (now() - last_update_timepoint > logical_frame_duration)
         {
             last_update_timepoint += logical_frame_duration;
-            //for (auto &e : System::get_components<Components::Position, Components::Velocity, Components::Direction>())
+            for (auto sit = System::begin<Components::Position, Components::Velocity, Components::Direction>(); sit; sit.advance()){
+                auto data = (*sit);
+                (void)data;
+            }
         }
         window.clear(sf::Color::Black);
         //rendering system

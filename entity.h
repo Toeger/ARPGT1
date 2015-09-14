@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <limits>
 #include <iostream>
+#include <tuple>
 
 namespace Impl{
 using Id = unsigned int;
@@ -51,22 +52,51 @@ private:
 
 template <class T>
 struct System_iterator<T>{
+    Impl::Id advance(){
+        if (current_index == max_id)
+            return max_id;
+        return advance(current_index + 1);
+    }
+
     Impl::Id advance(Impl::Id target){
         while (System::get_ids<T>()[current_index] < target){
             current_index++;
         }
         return System::get_ids<T>()[current_index];
     }
+    operator bool(){
+        return current_index != max_id;
+    }
+    T &operator *(){
+        return System::get_components<T>()[current_index];
+    }
+    const T &operator *() const{
+        return System::get_components<T>()[current_index];
+    }
+
     std::size_t current_index = 0;
 };
 
 template <class T, class... Rest>
 struct System_iterator{
+    Impl::Id advance(){
+        return t.advance();
+    }
     Impl::Id advance(Impl::Id target){
         return rest.advance(t.advance(target));
     }
+    operator bool(){
+        return t;
+    }
+    auto operator *(){ //std::tuple<T&, (Rest &)...>
+        return std::tie(*t, (*rest)...);
+    }
+//    std::tuple<const T&, const Rest &...> operator *() const{
+//        return std::tie(*t, *rest);
+//    }
     System_iterator<T> t;
     System_iterator<Rest...> rest;
+    //std::tuple<Rest...> rest;
 };
 
 template <class... T>
@@ -83,7 +113,7 @@ struct Entity
     void add(Component &&c){
         System::get_ids<Component>().back() = id;
         System::get_ids<Component>().push_back(max_id);
-        System::get_components<Component>().push_back(std::forward<Component>(c));
+        System::get_components<Component>().emplace_back(std::forward<Component>(c));
     }
 private:
     static Impl::Id id_counter;
