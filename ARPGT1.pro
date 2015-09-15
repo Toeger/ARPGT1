@@ -9,7 +9,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     player.cpp \
-    logicalobject.cpp \
     practicedummy.cpp \
     sensor.cpp \
     camera.cpp \
@@ -22,7 +21,6 @@ LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
 HEADERS += \
     player.h \
-    logicalobject.h \
     practicedummy.h \
     conversions.h \
     sensor.h \

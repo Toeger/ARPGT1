@@ -1,4 +1,6 @@
 Issues
-    Movementspeed depends on framerate
+    System iterators are ... non standard
+    switch to entityx? Or fix own ECS
 TODO
-    Resizing
+    Find collision detection thing or make it myself
+

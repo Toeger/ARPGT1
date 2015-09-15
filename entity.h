@@ -6,6 +6,7 @@
 #include <limits>
 #include <iostream>
 #include <tuple>
+#include <algorithm>
 
 namespace Impl{
 using Id = unsigned int;
@@ -65,8 +66,14 @@ struct System_iterator<T>{
         return System::get_ids<T>()[current_index];
     }
     operator bool(){
-        return current_index != max_id;
+        return System::get_ids<T>()[current_index] != max_id;
     }
+    template<class U>
+    U &get(){
+        static_assert(std::is_same<U, T>::value, "Invalid type for this iterator");
+        return *(*this);
+    }
+private:
     T &operator *(){
         return System::get_components<T>()[current_index];
     }
@@ -80,7 +87,7 @@ struct System_iterator<T>{
 template <class T, class... Rest>
 struct System_iterator{
     Impl::Id advance(){
-        return t.advance();
+        return advance(t.advance(0) + 1);
     }
     Impl::Id advance(Impl::Id target){
         return rest.advance(t.advance(target));
@@ -88,12 +95,22 @@ struct System_iterator{
     operator bool(){
         return t;
     }
-    auto operator *(){ //std::tuple<T&, (Rest &)...>
-        return std::tie(*t, (*rest)...);
-    }
+//    std::tuple<T&, (Rest &)...>
+//    operator *(){
+//        return std::tie(*t, (*rest)...);
+//    }
 //    std::tuple<const T&, const Rest &...> operator *() const{
 //        return std::tie(*t, *rest);
 //    }
+    template<class U>
+    std::enable_if_t<std::is_same<U, T>::value, U&> get(){
+        return t.template get<U>();
+    }
+    template<class U>
+    std::enable_if_t<!std::is_same<U, T>::value, U&> get(){
+        return rest.template get<U>();
+    }
+private:
     System_iterator<T> t;
     System_iterator<Rest...> rest;
     //std::tuple<Rest...> rest;
@@ -112,8 +129,19 @@ struct Entity
     template<class Component>
     void add(Component &&c){
         System::get_ids<Component>().back() = id;
+        //TODO: Binary search -> insert
         System::get_ids<Component>().push_back(max_id);
         System::get_components<Component>().emplace_back(std::forward<Component>(c));
+    }
+    template<class Component>
+    Component *get(){
+        auto &ids = System::get_ids<Component>();
+        auto &components = System::get_components<Component>();
+        auto id_it = lower_bound(begin(ids), end(ids), id);
+        if (*id_it != id)
+            return nullptr;
+        auto pos = id_it - begin(ids);
+        return &components[pos];
     }
 private:
     static Impl::Id id_counter;

@@ -5,14 +5,14 @@
 
 namespace Components{
 struct Position{
-    double x, y;
+    float x, y;
 };
 
-struct Direction{
-    double x, y;
+struct NormalizedDirection{
+    float x, y;
 };
 
-using Velocity = double;
+using Velocity = float;
 using sf::CircleShape;
 using sf::RectangleShape;
 }

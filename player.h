@@ -10,10 +10,7 @@ class Player : public Entity
 {
 public:
     Player(sf::RenderWindow *window);
-    void logicalUpdate();
-    float speed = 50;
     Camera camera;
-    Weapon weapon;
 private:
 };
 

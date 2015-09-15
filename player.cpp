@@ -4,7 +4,6 @@
 #include <cmath>
 
 #include "player.h"
-#include "logicalobject.h"
 #include "conversions.h"
 #include "sensor.h"
 #include "utility.h"
@@ -22,13 +21,8 @@ Player::Player(sf::RenderWindow *window):
     add(Components::Position{400, 300});
     //character.setPosition(400, 300);
     //UpdateList::add([this](){this->logicalUpdate();});
-    LogicalObject::add(*this);
 }
 
 float degreeToRadians(float degree){
     return degree * M_PI / 180;
-}
-
-void Player::logicalUpdate()
-{
 }

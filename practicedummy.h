@@ -3,12 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 #include "weapon.h"
+#include "entity.h"
 
-class PracticeDummy
+class PracticeDummy : public Entity
 {
 public:
     PracticeDummy();
-    void logicalUpdate();
     sf::CircleShape character;
 };
 
