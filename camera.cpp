@@ -21,6 +21,11 @@ void Camera::set_rotation(float angle)
     view.setRotation(angle);
 }
 
+void Camera::face(float x, float y)
+{
+    view.setRotation(atan2(y, x) * 180 / M_PI + 90);
+}
+
 void Camera::rotate(float turningangle)
 {
     view.rotate(turningangle);
@@ -34,6 +39,11 @@ void Camera::set_size(int x, int y)
 float Camera::get_rotation() const
 {
     return view.getRotation();
+}
+
+void Camera::set_zoom(float z)
+{
+    view.zoom(z);
 }
 
 Camera::~Camera()

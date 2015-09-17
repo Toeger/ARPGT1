@@ -1,6 +1,7 @@
 Issues
-    System iterators are ... non standard
-    switch to entityx? Or fix own ECS
+    Inserting components can break order
+    Reject inserting of multiple components of the same type and ID
+    Enable emplacing components
 TODO
-    Find collision detection thing or make it myself
-
+    Add Box2D for collision detection
+    Write tests

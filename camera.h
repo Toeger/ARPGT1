@@ -13,6 +13,7 @@ public:
     void rotate(float turningangle);
     void set_size(int x, int y);
     float get_rotation() const;
+    void set_zoom(float z);
     ~Camera();
 private:
     sf::RenderWindow *window;

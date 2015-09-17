@@ -7,6 +7,7 @@
 #include <iostream>
 #include <tuple>
 #include <algorithm>
+#include <cassert>
 
 namespace Impl{
 using Id = unsigned int;
@@ -54,9 +55,9 @@ private:
 template <class T>
 struct System_iterator<T>{
     Impl::Id advance(){
-        if (current_index == max_id)
+        if (System::get_ids<T>()[current_index] == max_id)
             return max_id;
-        return advance(current_index + 1);
+        return advance(System::get_ids<T>()[current_index] + 1);
     }
 
     Impl::Id advance(Impl::Id target){
@@ -128,19 +129,21 @@ struct Entity
     }
     template<class Component>
     void add(Component &&c){
-        System::get_ids<Component>().back() = id;
-        //TODO: Binary search -> insert
-        System::get_ids<Component>().push_back(max_id);
-        System::get_components<Component>().emplace_back(std::forward<Component>(c));
+        auto &ids = System::get_ids<Component>();
+        auto &components = System::get_components<Component>();
+        auto insert_position = std::lower_bound(begin(ids), end(ids), id);
+        assert(*insert_position != id);
+        components.insert(begin(components) + (insert_position - begin(ids)), std::forward<Component>(c));
+        ids.insert(insert_position, id);
     }
     template<class Component>
     Component *get(){
         auto &ids = System::get_ids<Component>();
-        auto &components = System::get_components<Component>();
         auto id_it = lower_bound(begin(ids), end(ids), id);
         if (*id_it != id)
             return nullptr;
         auto pos = id_it - begin(ids);
+        auto &components = System::get_components<Component>();
         return &components[pos];
     }
 private:

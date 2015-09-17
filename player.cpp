@@ -18,7 +18,6 @@ Player::Player(sf::RenderWindow *window):
     Components::CircleShape character(50);
     character.setFillColor({50, 100, 200});
     add(std::move(character));
-    add(Components::Position{400, 300});
     //character.setPosition(400, 300);
     //UpdateList::add([this](){this->logicalUpdate();});
 }

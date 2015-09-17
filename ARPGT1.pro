@@ -18,6 +18,7 @@ SOURCES += main.cpp \
     entity.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
+LIBS += -lBox2D
 
 HEADERS += \
     player.h \

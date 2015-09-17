@@ -2,20 +2,11 @@
 #define COMPONENTS
 
 #include <SFML/Graphics.hpp>
+#include <Box2D/Box2D.h>
 
 namespace Components{
-struct Position{
-    float x, y;
-};
-
-struct NormalizedDirection{
-    float x, y;
-};
-
-using Velocity = float;
+using Physical_shape = b2Body *;
 using sf::CircleShape;
-using sf::RectangleShape;
 }
 
 #endif // COMPONENTS
-
