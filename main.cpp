@@ -13,6 +13,7 @@
 #include "entity.h"
 #include "components.h"
 #include "utility.h"
+#include "zombieai.h"
 
 int main()
 {
@@ -27,7 +28,8 @@ int main()
 
     b2World world({0, 0});
 
-    Player p(&window);
+    Player &p = Player::player;
+    p.set_window(&window);
     {
 
         b2BodyDef bodyDef;
@@ -68,6 +70,30 @@ int main()
         cs.setOutlineColor({100, 200, 200});
         pd.add(cs);
     }
+    std::vector<Entity> zombies(1000);
+    int zcounter = 0;
+    for (auto &z : zombies){
+        b2BodyDef bodyDef;
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.position.Set(zcounter % 100, -zcounter / 100);
+        zcounter++;
+        auto body = world.CreateBody(&bodyDef);
+        b2CircleShape characterShape;
+        characterShape.m_radius = 40 / 100.f;
+
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &characterShape;
+        fixtureDef.density = 1.f;
+        fixtureDef.friction = 0;
+        body->CreateFixture(&fixtureDef);
+        body->SetLinearDamping(5.0f);
+
+        z.add(body);
+        sf::CircleShape cs(characterShape.m_radius * 100);
+        cs.setFillColor({200, 0, 0});
+        z.add(cs);
+        z.add(Components::ZombieAi());
+    }
     Entity background_picture;
     {
         sf::Sprite sprite;
@@ -81,15 +107,25 @@ int main()
         sprite.setTextureRect({0, 0, 2000000, 2000000});
         background_picture.add(sprite);
     }
+#if 0
+    sf::Font font;
+    (void)font;
 
+    if (!font.loadFromFile("Arctik 1.5.ttf"))
+        throw std::runtime_error("Missing font: Arctik 1.5.ttf");
+    sf::Text text;
+    text.setFont(font);
+#endif
     while (window.isOpen()){
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
         {
             // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed){
+                p.set_window(nullptr);
                 window.close();
+            }
             if (event.type == sf::Event::Resized)
                 //auto zoom = p.camera.get_zoom();
                 p.camera.set_size(event.size.width, event.size.height);
@@ -100,6 +136,8 @@ int main()
                 p.camera.set_zoom(pow(1 - zoom_factor, event.mouseWheel.delta));
             }
         }
+        if (!window.isOpen())
+            continue;
         //UpdateList::updateAll();
         while (now() - last_update_timepoint > logical_frame_duration)
         {
@@ -146,13 +184,14 @@ int main()
         }
         window.clear(sf::Color::Black);
         //rendering system
-        for (auto sit = System::begin<sf::Sprite>(); sit; sit.advance()){
+        ZombieAI::ZombieAI_system::update();
+        for (auto sit = System::range<sf::Sprite>(); sit; sit.advance()){
             window.draw(sit.get<sf::Sprite>());
         }
         auto &player_body = *p.get<Components::Physical_shape>();
         const auto &pos = player_body->GetPosition();
         p.camera.set_position(pos.x * 100, pos.y * 100);
-        for (auto sit = System::begin<Components::CircleShape, Components::Physical_shape>(); sit; sit.advance()){
+        for (auto sit = System::range<Components::CircleShape, Components::Physical_shape>(); sit; sit.advance()){
             const auto &pos = sit.get<Components::Physical_shape>()->GetPosition();
             auto &cs = sit.get<Components::CircleShape>();
             auto sfmlpos = Utility::b2s_coords(pos);
@@ -160,6 +199,32 @@ int main()
             sfmlpos.y -= cs.getRadius();
             cs.setPosition(sfmlpos);
             window.draw(cs);
+        }
+#if 0
+        {
+            static int fps;
+            fps++;
+            static auto starttime = std::chrono::high_resolution_clock::now();
+            const auto measure_time = std::chrono::milliseconds(500);
+            if (std::chrono::high_resolution_clock::now() - starttime < measure_time){
+                starttime += measure_time;
+                text.setString(std::to_string(fps*2));
+                std::cout << fps * 2;
+                fps = 0;
+            }
+            window.draw(text);
+        }
+#endif
+        {
+            static int fps;
+            fps++;
+            static auto starttime = std::chrono::high_resolution_clock::now();
+            const auto measure_time = std::chrono::milliseconds(500);
+            if (std::chrono::high_resolution_clock::now() - starttime > measure_time){
+                starttime += measure_time;
+                window.setTitle(std::to_string(fps*2));
+                fps = 0;
+            }
         }
         window.display();
     }

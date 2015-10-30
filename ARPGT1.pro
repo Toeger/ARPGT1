@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     weapon.cpp \
     hittable.cpp \
     enemylist.cpp \
-    entity.cpp
+    entity.cpp \
+    zombieai.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 LIBS += -lBox2D
@@ -31,7 +32,8 @@ HEADERS += \
     hittable.h \
     enemylist.h \
     components.h \
-    entity.h
+    entity.h \
+    zombieai.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -Wno-unused-parameter -g
 #QMAKE_CFLAGS += -flto

@@ -30,13 +30,9 @@ struct System{
         return p_get_ids<remove_cvr<Component>>();
     }
     template<class... Components>
-    static System_iterator<Components...> begin(){
-        return System_iterator<Components...>();
-    }
-    template<class... Components>
-    static System_iterator<Components...> end(){
+    static System_iterator<Components...> range(){
         System_iterator<Components...> si;
-        si.current_index = max_id;
+        si.advance(0);
         return si;
     }
 private:
@@ -74,6 +70,13 @@ struct System_iterator<T>{
         static_assert(std::is_same<U, T>::value, "Invalid type for this iterator");
         return *(*this);
     }
+    Impl::Id get_id(){
+        return System::get_ids<T>()[current_index];
+    }
+    std::vector<Impl::Id> get_ids() const{
+        return {System::get_ids<T>()[current_index]};
+    }
+
 private:
     T &operator *(){
         return System::get_components<T>()[current_index];
@@ -81,17 +84,24 @@ private:
     const T &operator *() const{
         return System::get_components<T>()[current_index];
     }
-
     std::size_t current_index = 0;
 };
 
 template <class T, class... Rest>
 struct System_iterator{
     Impl::Id advance(){
-        return advance(t.advance(0) + 1);
+        return advance(t.get_id() + 1);
     }
     Impl::Id advance(Impl::Id target){
-        return rest.advance(t.advance(target));
+        auto rest_target = rest.advance(target);
+        target = t.advance(rest_target);
+        while (target != rest_target){
+            if (target < rest_target)
+                target = t.advance(rest_target);
+            else
+                rest_target = rest.advance(target);
+        }
+        return target;
     }
     operator bool(){
         return t;
@@ -111,6 +121,12 @@ struct System_iterator{
     std::enable_if_t<!std::is_same<U, T>::value, U&> get(){
         return rest.template get<U>();
     }
+    std::vector<Impl::Id> get_ids() const{
+        auto v = rest.get_ids();
+        v.push_back(t.get_id());
+        return v;
+    }
+
 private:
     System_iterator<T> t;
     System_iterator<Rest...> rest;

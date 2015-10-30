@@ -6,7 +6,8 @@
 class Camera
 {
 public:
-    Camera(sf::RenderWindow *window);
+    Camera(sf::RenderWindow *window = nullptr);
+    void set_window(sf::RenderWindow *window);
     void set_position(float x, float y);
     void set_rotation(float angle);
     void face(float x, float y);

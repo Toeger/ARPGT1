@@ -11,6 +11,8 @@
 #include "enemylist.h"
 #include "components.h"
 
+Player Player::player;
+
 Player::Player(sf::RenderWindow *window):
     camera(window)
 {
@@ -20,6 +22,11 @@ Player::Player(sf::RenderWindow *window):
     add(std::move(character));
     //character.setPosition(400, 300);
     //UpdateList::add([this](){this->logicalUpdate();});
+}
+
+void Player::set_window(sf::RenderWindow *window)
+{
+    camera.set_window(window);
 }
 
 float degreeToRadians(float degree){

@@ -5,7 +5,15 @@ Camera::Camera(sf::RenderWindow *window) :
 {
     view.setCenter(400, 300);
     view.setSize(800, 600);
-    window->setView(view);
+    if (window)
+        window->setView(view);
+}
+
+void Camera::set_window(sf::RenderWindow *window)
+{
+    this->window = window;
+    if (window)
+        window->setView(view);
 }
 
 void Camera::set_position(float x, float y)
@@ -48,5 +56,6 @@ void Camera::set_zoom(float z)
 
 Camera::~Camera()
 {
-    window->setView(window->getDefaultView());
+    if (window)
+        window->setView(window->getDefaultView());
 }
