@@ -1,7 +1,6 @@
 Issues
-    Inserting components can break order
-    Reject inserting of multiple components of the same type and ID
     Enable emplacing components
 TODO
-    Add Box2D for collision detection
+    Figure out Box2d sensors again
     Write tests
+    Figure out why the template variable version of System has a segfault on exit
