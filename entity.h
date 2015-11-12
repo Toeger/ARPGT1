@@ -42,6 +42,11 @@ namespace System{
 		si.advance(0);
 		return si;
 	}
+	template<class Component>
+	void clear(){
+		components<remove_cvr<Component>>.clear();
+		ids<remove_cvr<Component>>.clear();
+	}
 }
 
 #else
@@ -63,6 +68,11 @@ struct System{
 		System_iterator<Components...> si;
 		si.advance(0);
 		return si;
+	}
+	template<class Component>
+	static void clear(){
+		p_get_components<remove_cvr<Component>>().clear();
+		p_get_ids<remove_cvr<Component>>().clear();
 	}
 private:
 	template<class Component>

@@ -14,6 +14,7 @@
 #include "components.h"
 #include "utility.h"
 #include "zombieai.h"
+#include "physical.h"
 
 int main()
 {
@@ -27,72 +28,27 @@ int main()
 	window.setVerticalSyncEnabled(true);
 
 	b2World world({0, 0});
+	Physical::world = &world;
+	/*TODO:
+	ON_SCOPE_EXIT(
+		System::clear<Components::PhysicalCircle>();
+	);
+	*/
 
 	Player &p = Player::player;
 	p.set_window(&window);
-	{
-
-		b2BodyDef bodyDef;
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set(10, 10);
-		auto body = world.CreateBody(&bodyDef);
-		b2CircleShape characterShape;
-		characterShape.m_radius = 50 / 100.f;
-
-		b2FixtureDef fixtureDef;
-		fixtureDef.shape = &characterShape;
-		fixtureDef.density = 1.f;
-		fixtureDef.friction = 0;
-		body->CreateFixture(&fixtureDef);
-		body->SetLinearDamping(10.f);
-
-		p.add(std::move(body));
-	}
+	Components::add_PhysicalCircleShape(p, 50/100.f, {10, 10}, sf::Color::Blue);
 	p.camera.rotate(0);
+
 	PracticeDummy pd;
-	{
-		b2BodyDef bodyDef;
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set(11, 10);
-		auto body = world.CreateBody(&bodyDef);
-		b2CircleShape characterShape;
-		characterShape.m_radius = 40 / 100.f;
-
-		b2FixtureDef fixtureDef;
-		fixtureDef.shape = &characterShape;
-		fixtureDef.density = 1.f;
-		fixtureDef.friction = 0;
-		body->CreateFixture(&fixtureDef);
-		body->SetLinearDamping(5.0f);
-
-		pd.add(std::move(body));
-		sf::CircleShape cs(characterShape.m_radius * 100);
-		cs.setOutlineColor({100, 200, 200});
-		pd.add(std::move(cs));
-	}
+	Components::add_PhysicalCircleShape(pd, 40/100.f, {10, 15}, sf::Color::White);
+	sf::CircleShape s;
 	std::vector<Entity> zombies(32);
 	int zcounter = 0;
 	for (auto &z : zombies){
-		b2BodyDef bodyDef;
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set(zcounter % 100, -zcounter / 100);
-		zcounter++;
-		auto body = world.CreateBody(&bodyDef);
-		b2CircleShape characterShape;
-		characterShape.m_radius = 40 / 100.f;
-
-		b2FixtureDef fixtureDef;
-		fixtureDef.shape = &characterShape;
-		fixtureDef.density = 1.f;
-		fixtureDef.friction = 0;
-		body->CreateFixture(&fixtureDef);
-		body->SetLinearDamping(5.0f);
-
-		z.add(std::move(body));
-		sf::CircleShape cs(characterShape.m_radius * 100);
-		cs.setFillColor({200, 0, 0});
-		z.add(std::move(cs));
+		Components::add_PhysicalCircleShape(z, 40/100.f, {zcounter % 100, -zcounter / 100}, sf::Color::Red);
 		z.emplace<Components::ZombieAi>();
+		zcounter++;
 	}
 	Entity background_picture;
 	{
@@ -141,8 +97,10 @@ int main()
 		//UpdateList::updateAll();
 		while (now() - last_update_timepoint > logical_frame_duration)
 		{
+			//resolve physics
+			world.Step(1/30.f, 6, 2);
 			last_update_timepoint += logical_frame_duration;
-			auto &player_body = *p.get<Components::Physical_shape>();
+			auto &player_body = *p.get<Components::PhysicalCircle>();
 			//setting player direction and velocity
 			{
 				b2Vec2 vel{0, 0};
@@ -167,10 +125,14 @@ int main()
 						p.camera.rotate(camera_turning_speed);
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
-						const auto &dummy_body = *pd.get<Components::Physical_shape>();
+						const auto &dummy_body = *pd.get<Components::PhysicalCircle>();
 						const auto &dummy_pos = dummy_body->GetPosition();
 						const auto &player_pos = player_body->GetPosition();
 						p.camera.face(dummy_pos.x - player_pos.x, dummy_pos.y - player_pos.y);
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+						//for now shoot a ball straight up
+
 					}
 					vel.Normalize();
 					vel *= 5;
@@ -179,8 +141,6 @@ int main()
 				}
 				player_body->SetLinearVelocity(vel);
 			}
-			//resolve physics
-			world.Step(1/30.f, 6, 2);
 		}
 		window.clear(sf::Color::Black);
 		//rendering system
@@ -188,15 +148,16 @@ int main()
 		for (auto sit = System::range<sf::Sprite>(); sit; sit.advance()){
 			window.draw(sit.get<sf::Sprite>());
 		}
-		auto &player_body = *p.get<Components::Physical_shape>();
+		auto &player_body = *p.get<Components::PhysicalCircle>();
 		const auto &pos = player_body->GetPosition();
 		p.camera.set_position(pos.x * 100, pos.y * 100);
-		for (auto sit = System::range<Components::CircleShape, Components::Physical_shape>(); sit; sit.advance()){
-			const auto &pos = sit.get<Components::Physical_shape>()->GetPosition();
+		for (auto sit = System::range<Components::CircleShape, Components::PhysicalCircle>(); sit; sit.advance()){
+			const auto &pos = sit.get<Components::PhysicalCircle>()->GetPosition();
 			auto &cs = sit.get<Components::CircleShape>();
 			auto sfmlpos = Utility::b2s_coords(pos);
-			sfmlpos.x -= cs.getRadius();
-			sfmlpos.y -= cs.getRadius();
+			//const auto &radius = cs.getRadius();
+			//sfmlpos.x -= radius;
+			//sfmlpos.y -= radius;
 			cs.setPosition(sfmlpos);
 			window.draw(cs);
 		}
@@ -222,10 +183,12 @@ int main()
 			const auto measure_time = std::chrono::milliseconds(500);
 			if (std::chrono::high_resolution_clock::now() - starttime > measure_time){
 				starttime += measure_time;
-				window.setTitle(std::to_string(fps*2));
+				window.setTitle("FPS: " + std::to_string(fps*2));
 				fps = 0;
 			}
 		}
 		window.display();
 	}
+	System::clear<Components::PhysicalCircle>();
+	Physical::world = nullptr;
 }
