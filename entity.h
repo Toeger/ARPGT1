@@ -9,6 +9,14 @@
 #include <algorithm>
 #include <cassert>
 
+/*
+Overhead of the Entity Component System:
+	One Id per Entity and component
+	Components are stored in one vector per type
+	Ids are stored in one vector per component type
+	Putting components and Ids into the same vector would work, not sure if it would be better. Probably depends on component size.
+*/
+
 //every Entity gets a unique Id
 namespace Impl{
 using Id = unsigned int;
@@ -206,6 +214,7 @@ struct Entity
 	Entity(){
 		id = id_counter++;
 	}
+	//add a component to an Entity
 	template<class Component>
 	void add(Component &&c){
 		auto &ids = System::get_ids<Component>();
@@ -215,6 +224,7 @@ struct Entity
 		components.insert(begin(components) + (insert_position - begin(ids)), std::forward<Component>(c));
 		ids.insert(insert_position, id);
 	}
+	//emplace a component into an Entity
 	template<class Component, class... Args>
 	void emplace(Args &&...c){
 		auto &ids = System::get_ids<Component>();
