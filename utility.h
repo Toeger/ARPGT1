@@ -9,8 +9,12 @@
 namespace Utility {
 	inline void normalize(float &a, float &b){
 		auto length = sqrt(a * a + b * b);
-		if (length < std::numeric_limits<float>::epsilon())
+		if (length < std::numeric_limits<float>::epsilon()){
+			//probably not the correct way to handle normalization of a nullvector, throw an exception instead?
+			a = 1;
+			b = 0;
 			return;
+		}
 		a /= length;
 		b /= length;
 	}
@@ -36,14 +40,14 @@ namespace Utility {
 	struct RAII{
 		RAII(Function &&f) : f(std::move(f)){}
 		~RAII(){
-			f();
+			std::move(f)();
 		}
 	private:
 		Function f;
 	};
 	template <class Function>
 	RAII<Function> create_RAII(Function &&f){
-		return RAII<Function>(std::move(f));
+		return RAII<Function>(std::forward<Function>(f));
 	}
 #define CAT(a,b) CAT_(a,b) // force expand
 #define CAT_(a,b) a##b // actually concatenate
