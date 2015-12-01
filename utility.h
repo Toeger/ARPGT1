@@ -19,6 +19,8 @@ namespace Utility {
 		b /= length;
 	}
 	inline void rotate(float &a, float &b, float angle){
+		//do I need to manually cache results of sin(angle) and cos(angle)?
+		//is there a way to provide angle as a vector and would it be more efficient?
 		auto a2 = a * cos(angle) - b * sin(angle);
 		b = a * sin(angle) + b * cos(angle);
 		a = a2;
@@ -27,6 +29,10 @@ namespace Utility {
 	inline sf::Vector2f b2s_coords(const b2Vec2 &v){
 		return {v.x * 100, v.y * 100};
 	}
+
+	template<class T>
+	using remove_cvr = std::remove_cv_t<std::remove_reference_t<T>>;
+
 	template <typename T>
 	struct return_type;
 	template <typename R, typename... Args>
@@ -47,7 +53,7 @@ namespace Utility {
 	};
 	template <class Function>
 	RAII<Function> create_RAII(Function &&f){
-		return RAII<Function>(std::forward<Function>(f));
+		return RAII<remove_cvr<Function>>(std::forward<Function>(f));
 	}
 #define CAT(a,b) CAT_(a,b) // force expand
 #define CAT_(a,b) a##b // actually concatenate

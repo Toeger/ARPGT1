@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include "utility.h"
+
 /*
 Overhead of the Entity Component System:
 	One Id per Entity and component
@@ -34,21 +36,18 @@ Limitations:
 */
 #if 0
 namespace System{ //this implementation should be better than the one below but causes a segfault on exit, don't know why
-	template<class T>
-	using remove_cvr = std::remove_cv_t<std::remove_reference_t<T>>;
-
 	template<class Component>
 	static std::vector<Component> components{};
 	template<class Component>
 	static std::vector<Impl::Id> ids{max_id};
 
 	template<class Component>
-	std::vector<remove_cvr<Component>> &get_components(){
-		return components<remove_cvr<Component>>;
+	std::vector<Utility::remove_cvr<Component>> &get_components(){
+		return components<Utility::remove_cvr<Component>>;
 	}
 	template<class Component>
 	std::vector<Impl::Id> &get_ids(){
-		return ids<remove_cvr<Component>>;
+		return ids<Utility::remove_cvr<Component>>;
 	}
 	template<class... Components>
 	System_iterator<Components...> range(){
@@ -58,24 +57,21 @@ namespace System{ //this implementation should be better than the one below but 
 	}
 	template<class Component>
 	void clear(){
-		components<remove_cvr<Component>>.clear();
-		ids<remove_cvr<Component>>.clear();
+		components<Utility::remove_cvr<Component>>.clear();
+		ids<Utility::remove_cvr<Component>>.clear();
 	}
 }
 
 #else
 
 struct System{
-	template<class T>
-	using remove_cvr = std::remove_cv_t<std::remove_reference_t<T>>;
-
 	template<class Component>
-	static std::vector<remove_cvr<Component>> &get_components(){
-		return p_get_components<remove_cvr<Component>>();
+	static std::vector<Utility::remove_cvr<Component>> &get_components(){
+		return p_get_components<Utility::remove_cvr<Component>>();
 	}
 	template<class Component>
 	static std::vector<Impl::Id> &get_ids(){
-		return p_get_ids<remove_cvr<Component>>();
+		return p_get_ids<Utility::remove_cvr<Component>>();
 	}
 	template<class... Components>
 	static System_iterator<Components...> range(){
@@ -85,8 +81,8 @@ struct System{
 	}
 	template<class Component>
 	static void clear(){
-		p_get_components<remove_cvr<Component>>().clear();
-		p_get_ids<remove_cvr<Component>>().clear();
+		p_get_components<Utility::remove_cvr<Component>>().clear();
+		p_get_ids<Utility::remove_cvr<Component>>().clear();
 	}
 private:
 	template<class Component>
