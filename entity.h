@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cassert>
 
+//every Entity gets a unique Id
 namespace Impl{
 using Id = unsigned int;
 }
@@ -17,9 +18,14 @@ template<class H, class... T>
 struct System_iterator;
 constexpr Impl::Id max_id = std::numeric_limits<Impl::Id>::max();
 
+/*
+System keeps the components of all Entitys in a vector per component type and allows to iterate over Entitys with specified components.
+You only use System to iterate, use Entitys to add components.
+Limitations:
+	Cannot have multiple components of the same type in one Entity. You can get around that with a tuple or vector of components
+*/
 #if 0
-//causes a segfault on exit, don't know why
-namespace System{
+namespace System{ //this implementation should be better than the one below but causes a segfault on exit, don't know why
 	template<class T>
 	using remove_cvr = std::remove_cv_t<std::remove_reference_t<T>>;
 
@@ -89,23 +95,36 @@ private:
 
 #endif
 
+
+/*
+Iterator over Entitys with specifiable components.
+Iterating over Entitys with some specific components goes through all entities with any of the components
+TODO: It would be more ideomatic but less efficient to use begin and end style iterators.
+TODO: It would make sense to have a get function that returns a tuple of components. For that the struct layout (?) needs to be changed.
+TODO: Add casting/converting iterators. Removing a component would be fairly easy, adding a component would initiate searching. Unrelated iterators don't really make sense.
+*/
 template <class T>
 struct System_iterator<T>{
+	//advance to the next entity with all specified components
+	//if no more components are left you are at the end which is testable by converting to bool: true = at the end, false = not at the end
+	//returns the Id of the next entity that has the specified component
 	Impl::Id advance(){
 		if (System::get_ids<T>().at(current_index) == max_id)
 			return max_id;
 		return advance(System::get_ids<T>().at(current_index) + 1);
 	}
-
+	//same as regular advance, just that you go to the next target with an Id not smaller than the given target's
 	Impl::Id advance(Impl::Id target){
 		while (System::get_ids<T>().at(current_index) < target){
 			current_index++;
 		}
 		return System::get_ids<T>().at(current_index);
 	}
+	//check if we are at the end, returns true for at the end and false if not
 	operator bool(){
 		return System::get_ids<T>().at(current_index) != max_id;
 	}
+	//gets a component from the iterator, the iterator must actually iterate over that component type
 	template<class U>
 	U &get(){
 		static_assert(std::is_same<U, T>::value, "Invalid type for this iterator");
@@ -128,6 +147,7 @@ private:
 	std::size_t current_index = 0;
 };
 
+//see single component System_iterator above for comments
 template <class T, class... Rest>
 struct System_iterator{
 	Impl::Id advance(){
@@ -141,27 +161,19 @@ struct System_iterator{
 				return target;
 		}
 		return target;
-		/*
-		auto rest_target = rest.advance(target);
-		while (target != rest_target){
-			if (target < rest_target)
-				target = t.advance(rest_target);
-			else
-				rest_target = rest.advance(target);
-		}
-		return target;
-		*/
 	}
 	operator bool(){
 		return t;
 	}
-//    std::tuple<T&, (Rest &)...>
-//    operator *(){
-//        return std::tie(*t, (*rest)...);
-//    }
-//    std::tuple<const T&, const Rest &...> operator *() const{
-//        return std::tie(*t, *rest);
-//    }
+#if 0
+	std::tuple<T&, (Rest &)...>
+	operator *(){
+		return std::tie(*t, (*rest)...);
+	}
+	std::tuple<const T&, const Rest &...> operator *() const{
+		return std::tie(*t, *rest);
+	}
+#endif
 	template<class U>
 	std::enable_if_t<std::is_same<U, T>::value, U&> get(){
 		return t.template get<U>();
@@ -187,6 +199,8 @@ bool operator ==(const System_iterator<T...> &lhs, const System_iterator<T...> &
 	return lhs.current_index == rhs.current_index;
 }
 
+//an Entity can have any type of component added to it
+//note that you cannot add multiple components with the same type, use vector<component> or array<component> to get around that
 struct Entity
 {
 	Entity(){
@@ -210,6 +224,7 @@ struct Entity
 		components.emplace(begin(components) + (insert_position - begin(ids)), std::forward<Args>(c)...);
 		ids.insert(insert_position, id);
 	}
+	//get the component of a given type or nullptr if the Entity has no such component
 	template<class Component>
 	Component *get(){
 		auto &ids = System::get_ids<Component>();
