@@ -14,7 +14,6 @@ SOURCES += main.cpp \
     camera.cpp \
     weapon.cpp \
     hittable.cpp \
-    enemylist.cpp \
     entity.cpp \
     zombieai.cpp \
     physical.cpp \
@@ -33,7 +32,6 @@ HEADERS += \
     weapon.h \
     utility.h \
     hittable.h \
-    enemylist.h \
     components.h \
     entity.h \
     zombieai.h \
