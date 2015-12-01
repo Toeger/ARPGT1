@@ -12,11 +12,12 @@ struct Entity;
 
 namespace Components{
 	void add_CircleShape(Entity &entity, const float radius, const sf::Color color);
-	using CircleShape = sf::CircleShape;
+	using Circle_shape = sf::CircleShape;
 	void add_PhysicalCircle(Entity &entity, const float radius, const std::pair<float, float> position);
-	using PhysicalCircle = Utility::return_type_t<decltype(Physical::create_physical_circle)>;
+	using Physical_circle = Utility::return_type_t<decltype(Physical::create_physical_circle)>;
 	void add_PhysicalCircleShape(Entity &entity, const float radius, const std::pair<float, float> position, const sf::Color color);
 	using ZombieAi = ZombieAI::ZombieAI_component;
+	void add_circle_sensor(Entity &entity, const float radius, const std::pair<float, float> offset = {0,0});
 }
 
 #endif // COMPONENTS

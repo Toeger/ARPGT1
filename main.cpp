@@ -29,11 +29,10 @@ int main()
 
 	b2World world({0, 0});
 	Physical::world = &world;
-	/*TODO:
 	ON_SCOPE_EXIT(
-		System::clear<Components::PhysicalCircle>();
+		System::clear<Components::Physical_circle>();
+		Physical::world = nullptr;
 	);
-	*/
 
 	Player &p = Player::player;
 	p.set_window(&window);
@@ -42,7 +41,6 @@ int main()
 
 	PracticeDummy pd;
 	Components::add_PhysicalCircleShape(pd, 40/100.f, {10, 15}, sf::Color::White);
-	sf::CircleShape s;
 	std::vector<Entity> zombies(32);
 	int zcounter = 0;
 	for (auto &z : zombies){
@@ -100,7 +98,7 @@ int main()
 			//resolve physics
 			world.Step(1/30.f, 6, 2);
 			last_update_timepoint += logical_frame_duration;
-			auto &player_body = *p.get<Components::PhysicalCircle>();
+			auto &player_body = *p.get<Components::Physical_circle>();
 			//setting player direction and velocity
 			{
 				b2Vec2 vel{0, 0};
@@ -125,7 +123,7 @@ int main()
 						p.camera.rotate(camera_turning_speed);
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
-						const auto &dummy_body = *pd.get<Components::PhysicalCircle>();
+						const auto &dummy_body = *pd.get<Components::Physical_circle>();
 						const auto &dummy_pos = dummy_body->GetPosition();
 						const auto &player_pos = player_body->GetPosition();
 						p.camera.face(dummy_pos.x - player_pos.x, dummy_pos.y - player_pos.y);
@@ -148,12 +146,12 @@ int main()
 		for (auto sit = System::range<sf::Sprite>(); sit; sit.advance()){
 			window.draw(sit.get<sf::Sprite>());
 		}
-		auto &player_body = *p.get<Components::PhysicalCircle>();
+		auto &player_body = *p.get<Components::Physical_circle>();
 		const auto &pos = player_body->GetPosition();
 		p.camera.set_position(pos.x * 100, pos.y * 100);
-		for (auto sit = System::range<Components::CircleShape, Components::PhysicalCircle>(); sit; sit.advance()){
-			const auto &pos = sit.get<Components::PhysicalCircle>()->GetPosition();
-			auto &cs = sit.get<Components::CircleShape>();
+		for (auto sit = System::range<Components::Circle_shape, Components::Physical_circle>(); sit; sit.advance()){
+			const auto &pos = sit.get<Components::Physical_circle>()->GetPosition();
+			auto &cs = sit.get<Components::Circle_shape>();
 			auto sfmlpos = Utility::b2s_coords(pos);
 			//const auto &radius = cs.getRadius();
 			//sfmlpos.x -= radius;
@@ -189,6 +187,4 @@ int main()
 		}
 		window.display();
 	}
-	System::clear<Components::PhysicalCircle>();
-	Physical::world = nullptr;
 }

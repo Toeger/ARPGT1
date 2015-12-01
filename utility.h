@@ -32,7 +32,22 @@ namespace Utility {
 	template <class T>
 	using return_type_t = typename return_type<T>::type;
 
-
+	template <class Function>
+	struct RAII{
+		RAII(Function &&f) : f(std::move(f)){}
+		~RAII(){
+			f();
+		}
+	private:
+		Function f;
+	};
+	template <class Function>
+	RAII<Function> create_RAII(Function &&f){
+		return RAII<Function>(std::move(f));
+	}
+#define CAT(a,b) CAT_(a,b) // force expand
+#define CAT_(a,b) a##b // actually concatenate
+#define ON_SCOPE_EXIT(CODE) auto CAT(ON_SCOPE_EXIT_,__LINE__) = Utility::create_RAII([&](){CODE})
 }
 
 #endif // UTILITY

@@ -8,7 +8,6 @@
 #include "sensor.h"
 #include "utility.h"
 #include "hittable.h"
-#include "enemylist.h"
 #include "components.h"
 
 Player Player::player;
