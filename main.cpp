@@ -150,10 +150,10 @@ int main()
 		auto &player_body = *p.get<Components::Physical_circle>();
 		const auto &pos = player_body->GetPosition();
 		p.camera.set_position(pos.x * 100, pos.y * 100);
-		System::foreach([&window](System_iterator<Components::Circle_shape, Components::Physical_circle> &sit){
+		for (auto sit = System::range<Components::Circle_shape, Components::Physical_circle>(); sit; sit.advance()){
 			auto &cs = sit.template get<Components::Circle_shape>();
 			window.draw(cs);
-		});
+		}
 		for (auto sit = System::range<Components::Circle_shape, Components::Physical_circle>(); sit; sit.advance()){
 			const auto &pos = sit.get<Components::Physical_circle>()->GetPosition();
 			auto &cs = sit.get<Components::Circle_shape>();
