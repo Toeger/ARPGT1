@@ -15,6 +15,7 @@
 #include "utility.h"
 #include "zombieai.h"
 #include "physical.h"
+#include "make_function.h"
 
 int main()
 {
@@ -36,12 +37,12 @@ int main()
 
 	Player &p = Player::player;
 	p.set_window(&window);
-	Components::add_PhysicalCircleShape(p, 50/100.f, {10, 10}, sf::Color::Blue);
+	Components::add_PhysicalCircleShape(p, 53/100.f, {10, 10}, sf::Color::Blue);
 	p.camera.rotate(0);
 
 	PracticeDummy pd;
 	Components::add_PhysicalCircleShape(pd, 40/100.f, {10, 15}, sf::Color::White);
-	std::vector<Entity> zombies(32);
+	std::vector<Entity> zombies(7);
 	int zcounter = 0;
 	for (auto &z : zombies){
 		Components::add_PhysicalCircleShape(z, 40/100.f, {zcounter % 100, -zcounter / 100}, sf::Color::Red);
@@ -149,6 +150,10 @@ int main()
 		auto &player_body = *p.get<Components::Physical_circle>();
 		const auto &pos = player_body->GetPosition();
 		p.camera.set_position(pos.x * 100, pos.y * 100);
+		System::foreach([&window](System_iterator<Components::Circle_shape, Components::Physical_circle> &sit){
+			auto &cs = sit.template get<Components::Circle_shape>();
+			window.draw(cs);
+		});
 		for (auto sit = System::range<Components::Circle_shape, Components::Physical_circle>(); sit; sit.advance()){
 			const auto &pos = sit.get<Components::Physical_circle>()->GetPosition();
 			auto &cs = sit.get<Components::Circle_shape>();

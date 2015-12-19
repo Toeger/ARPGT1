@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     zombieai.cpp \
     physical.cpp \
     components.cpp \
-    bullet.cpp
+    bullet.cpp \
+    interactiveobject.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 LIBS += -lBox2D
@@ -36,7 +37,9 @@ HEADERS += \
     entity.h \
     zombieai.h \
     physical.h \
-    bullet.h
+    bullet.h \
+    interactiveobject.h \
+    make_function.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -Wno-unused-parameter -g
 #QMAKE_CFLAGS += -flto

@@ -60,6 +60,11 @@ namespace System{ //this implementation should be better than the one below but 
 		components<Utility::remove_cvr<Component>>.clear();
 		ids<Utility::remove_cvr<Component>>.clear();
 	}
+	template <class... Components>
+	void foreach (void (*f)(const System_iterator<Components...> &)){
+		for (auto it = range<Components...>(); it; it.advance())
+			f(it);
+	}
 }
 
 #else
@@ -83,6 +88,11 @@ struct System{
 	static void clear(){
 		p_get_components<Utility::remove_cvr<Component>>().clear();
 		p_get_ids<Utility::remove_cvr<Component>>().clear();
+	}
+	template <class... Components>
+	static void foreach (void (&f)(System_iterator<Components...> &)){
+		for (auto it = range<Components...>(); it; it.advance())
+			f(it);
 	}
 private:
 	template<class Component>
@@ -125,12 +135,17 @@ struct System_iterator<T>{
 		return System::get_ids<T>().at(current_index);
 	}
 	//check if we are at the end, returns true for at the end and false if not
-	operator bool(){
+	operator bool() const{
 		return System::get_ids<T>().at(current_index) != max_id;
 	}
 	//gets a component from the iterator, the iterator must actually iterate over that component type
 	template<class U>
 	U &get(){
+		static_assert(std::is_same<U, T>::value, "Invalid type for this iterator");
+		return *(*this);
+	}
+	template<class U>
+	const U &get() const{
 		static_assert(std::is_same<U, T>::value, "Invalid type for this iterator");
 		return *(*this);
 	}

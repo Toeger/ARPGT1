@@ -3,3 +3,26 @@ TODO
     Figure out Box2d sensors again
     Write tests
     Figure out why the template variable version of System has a segfault on exit
+
+Collision resolution:
+    Features:
+        Deterministic
+        Interpolation of positions
+        Independent of order of objects
+        linear in the number of objects
+        quickly save and load states
+        support primitives: circle, polygon, (ellipsis)
+        combine primitives into complex objects
+    Options:
+        Box2d (not deterministic, savestating unknown, order unknown)
+        OzCollide
+        some other library
+        do it myself
+    Idea:
+        Use collision detection only
+        For collision resolution: Just don't resolve -> you cannot push anything, you either stop or move through
+        Start with O(n^2) comparing everything to everything, make a tree for O(n log n) or maybe O(n) later
+        Requires calculating the collision point (difficult, find a library for that?)
+
+To Read:
+    k-d-Trees, other trees
