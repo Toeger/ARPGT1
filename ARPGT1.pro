@@ -19,7 +19,10 @@ SOURCES += main.cpp \
     physical.cpp \
     components.cpp \
     bullet.cpp \
-    interactiveobject.cpp
+    interactiveobject.cpp \
+    Physics/body.cpp \
+    Physics/circle.cpp \
+    Physics/utility.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 LIBS += -lBox2D
@@ -39,7 +42,10 @@ HEADERS += \
     physical.h \
     bullet.h \
     interactiveobject.h \
-    make_function.h
+    make_function.h \
+    Physics/body.h \
+    Physics/circle.h \
+    Physics/physics_utility.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -Wno-unused-parameter -g
 #QMAKE_CFLAGS += -flto

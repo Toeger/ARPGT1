@@ -20,6 +20,10 @@
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
+	{ //this should not do anything, but somehow prevents the window from not responding
+		sf::Event event;
+		window.pollEvent(event);
+	}
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
 	const auto lfps = 30;
@@ -49,6 +53,7 @@ int main()
 		z.emplace<Components::ZombieAi>();
 		zcounter++;
 	}
+
 	Entity background_picture;
 	{
 		sf::Sprite sprite;

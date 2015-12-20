@@ -89,11 +89,6 @@ struct System{
 		p_get_components<Utility::remove_cvr<Component>>().clear();
 		p_get_ids<Utility::remove_cvr<Component>>().clear();
 	}
-	template <class... Components>
-	static void foreach (void (&f)(System_iterator<Components...> &)){
-		for (auto it = range<Components...>(); it; it.advance())
-			f(it);
-	}
 private:
 	template<class Component>
 	static std::vector<Component> &p_get_components(){
