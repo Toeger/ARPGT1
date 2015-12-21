@@ -49,7 +49,8 @@ HEADERS += \
     Physics/physics_utility.h \
     Graphics/physicals.h
 
-QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -Wno-unused-parameter -g
+QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
+QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 #QMAKE_CFLAGS += -flto
 
 DISTFILES += \

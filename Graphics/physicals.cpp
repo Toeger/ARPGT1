@@ -15,7 +15,8 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 	for (auto sit = System::range<Physical::Body>(); sit; sit.advance()){
 		sit.get<Physical::Body>().apply(
 			[&window](auto &physical_object){
-			draw_physical(window, physical_object);
+			//draw_physical(window, physical_object);
+			(void)physical_object;
 		});
 	}
 }

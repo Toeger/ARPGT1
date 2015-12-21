@@ -29,7 +29,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{ //this should not do anything, but somehow prevents the window from not responding
 		sf::Event event;
-		window.pollEvent(event);
+		while (window.pollEvent(event));
 	}
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
@@ -48,9 +48,28 @@ int main()
 
 	Player &p = Player::player;
 	p.set_window(&window);
-	Components::add_PhysicalCircleShape(p, 53/100.f, {10, 10}, sf::Color::Blue);
+	Components::add_PhysicalCircleShape(p, 1/100.f, {0, 0}, sf::Color::Blue);
 	p.camera.rotate(0);
 
+	std::vector<Entity> balls(5);
+	{
+		sf::CircleShape c;
+		c.setFillColor(sf::Color::Red);
+		c.setRadius(10);
+		c.setPosition(-10, -10);
+		balls[0].add(c);
+		c.setPosition(-10, 10);
+		balls[1].add(c);
+		c.setPosition(10, 10);
+		balls[2].add(c);
+		c.setPosition(10, -10);
+		balls[3].add(c);
+		c.setPosition(5, 5);
+		c.setFillColor(sf::Color::Green);
+		balls[4].add(c);
+	}
+
+#if 0
 	PracticeDummy pd;
 	Components::add_PhysicalCircleShape(pd, 40/100.f, {10, 15}, sf::Color::White);
 	std::vector<Entity> zombies(7);
@@ -74,6 +93,7 @@ int main()
 		sprite.setTextureRect({0, 0, 2000000, 2000000});
 		background_picture.add(std::move(sprite));
 	}
+#endif
 #if 0
 	sf::Font font;
 	(void)font;
@@ -136,14 +156,26 @@ int main()
 						p.camera.rotate(camera_turning_speed);
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+#if 0
 						const auto &dummy_body = *pd.get<Components::Physical_circle>();
 						const auto &dummy_pos = dummy_body->GetPosition();
 						const auto &player_pos = player_body->GetPosition();
 						p.camera.face(dummy_pos.x - player_pos.x, dummy_pos.y - player_pos.y);
+#endif
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
 						//for now shoot a ball straight up
 
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)){
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+						auto &pos = balls[4].get<sf::CircleShape>()->getPosition();
+						Physical::Vector v{pos.x, pos.y};
+						Physical::Transformator t;
+						t.set_translation({0, 1});
+						v = t * v;
+						balls[4].get<sf::CircleShape>()->setPosition(v.x, v.y);
 					}
 					vel.Normalize();
 					vel *= 5;
@@ -175,6 +207,9 @@ int main()
 			//sfmlpos.y -= radius;
 			cs.setPosition(sfmlpos);
 			window.draw(cs);
+		}
+		for (auto sit = System::range<sf::CircleShape>(); sit; sit.advance()){
+			window.draw(sit.get<sf::CircleShape>());
 		}
 #if 0
 		{
