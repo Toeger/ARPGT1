@@ -6,15 +6,11 @@
 #include <initializer_list>
 #include <array>
 #include <typeinfo>
-#include <Box2D/Box2D.h>
 
 #include "player.h"
 #include "practicedummy.h"
 #include "entity.h"
-#include "components.h"
 #include "utility.h"
-#include "zombieai.h"
-#include "physical.h"
 #include "make_function.h"
 
 #include "Physics/body.h"
@@ -39,16 +35,8 @@ int main()
 
 	window.setVerticalSyncEnabled(true);
 
-	b2World world({0, 0});
-	Physical::world = &world;
-	ON_SCOPE_EXIT(
-		System::clear<Components::Physical_circle>();
-		Physical::world = nullptr;
-	);
-
 	Player &p = Player::player;
 	p.set_window(&window);
-	Components::add_PhysicalCircleShape(p, 1/100.f, {0, 0}, sf::Color::Blue);
 	p.camera.rotate(0);
 
 	std::vector<Entity> balls(5);
@@ -129,25 +117,18 @@ int main()
 		while (now() - last_update_timepoint > logical_frame_duration)
 		{
 			//resolve physics
-			world.Step(1/30.f, 6, 2);
 			last_update_timepoint += logical_frame_duration;
-			auto &player_body = *p.get<Components::Physical_circle>();
 			//setting player direction and velocity
 			{
-				b2Vec2 vel{0, 0};
 				if (window.hasFocus()){
 					const auto camera_turning_speed = 5.f; //in degree
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-						vel.y--;
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-						vel.x--;
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-						vel.y++;
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-						vel.x++;
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
 						p.camera.rotate(-camera_turning_speed);
@@ -156,12 +137,6 @@ int main()
 						p.camera.rotate(camera_turning_speed);
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
-#if 0
-						const auto &dummy_body = *pd.get<Components::Physical_circle>();
-						const auto &dummy_pos = dummy_body->GetPosition();
-						const auto &player_pos = player_body->GetPosition();
-						p.camera.face(dummy_pos.x - player_pos.x, dummy_pos.y - player_pos.y);
-#endif
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
 						//for now shoot a ball straight up
@@ -177,55 +152,18 @@ int main()
 						v = t * v;
 						balls[4].get<sf::CircleShape>()->setPosition(v.x, v.y);
 					}
-					vel.Normalize();
-					vel *= 5;
-					Utility::rotate(vel.x, vel.y, p.camera.get_rotation() * M_PI / 180);
 					//player_body->ApplyForce(vel, player_body->GetPosition(), true);
 				}
-				player_body->SetLinearVelocity(vel);
 			}
 		}
 		window.clear(sf::Color::Black);
 		//rendering system
-		ZombieAI::ZombieAI_system::update();
 		for (auto sit = System::range<sf::Sprite>(); sit; sit.advance()){
 			window.draw(sit.get<sf::Sprite>());
-		}
-		auto &player_body = *p.get<Components::Physical_circle>();
-		const auto &pos = player_body->GetPosition();
-		p.camera.set_position(pos.x * 100, pos.y * 100);
-		for (auto sit = System::range<Components::Circle_shape, Components::Physical_circle>(); sit; sit.advance()){
-			auto &cs = sit.template get<Components::Circle_shape>();
-			window.draw(cs);
-		}
-		for (auto sit = System::range<Components::Circle_shape, Components::Physical_circle>(); sit; sit.advance()){
-			const auto &pos = sit.get<Components::Physical_circle>()->GetPosition();
-			auto &cs = sit.get<Components::Circle_shape>();
-			auto sfmlpos = Utility::b2s_coords(pos);
-			//const auto &radius = cs.getRadius();
-			//sfmlpos.x -= radius;
-			//sfmlpos.y -= radius;
-			cs.setPosition(sfmlpos);
-			window.draw(cs);
 		}
 		for (auto sit = System::range<sf::CircleShape>(); sit; sit.advance()){
 			window.draw(sit.get<sf::CircleShape>());
 		}
-#if 0
-		{
-			static int fps;
-			fps++;
-			static auto starttime = std::chrono::high_resolution_clock::now();
-			const auto measure_time = std::chrono::milliseconds(500);
-			if (std::chrono::high_resolution_clock::now() - starttime < measure_time){
-				starttime += measure_time;
-				text.setString(std::to_string(fps*2));
-				std::cout << fps * 2;
-				fps = 0;
-			}
-			window.draw(text);
-		}
-#endif
 		{
 			static int fps;
 			fps++;

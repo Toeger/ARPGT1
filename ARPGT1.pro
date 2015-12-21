@@ -10,15 +10,9 @@ TEMPLATE = app
 SOURCES += main.cpp \
     player.cpp \
     practicedummy.cpp \
-    sensor.cpp \
     camera.cpp \
     weapon.cpp \
-    hittable.cpp \
     entity.cpp \
-    zombieai.cpp \
-    physical.cpp \
-    components.cpp \
-    bullet.cpp \
     interactiveobject.cpp \
     Physics/body.cpp \
     Physics/circle.cpp \
@@ -26,22 +20,14 @@ SOURCES += main.cpp \
     Graphics/physicals.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
-LIBS += -lBox2D
 
 HEADERS += \
     player.h \
     practicedummy.h \
-    conversions.h \
-    sensor.h \
     camera.h \
     weapon.h \
     utility.h \
-    hittable.h \
-    components.h \
     entity.h \
-    zombieai.h \
-    physical.h \
-    bullet.h \
     interactiveobject.h \
     make_function.h \
     Physics/body.h \

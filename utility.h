@@ -4,7 +4,6 @@
 #include <cmath>
 #include <limits>
 #include <SFML/Graphics.hpp>
-#include <Box2D/Box2D.h>
 
 namespace Utility {
 	inline void normalize(float &a, float &b){
@@ -24,10 +23,6 @@ namespace Utility {
 		auto a2 = a * cos(angle) - b * sin(angle);
 		b = a * sin(angle) + b * cos(angle);
 		a = a2;
-	}
-
-	inline sf::Vector2f b2s_coords(const b2Vec2 &v){
-		return {v.x * 100, v.y * 100};
 	}
 
 	template<class T>
