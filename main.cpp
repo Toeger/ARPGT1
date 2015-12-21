@@ -17,8 +17,15 @@
 #include "physical.h"
 #include "make_function.h"
 
+#include "Physics/body.h"
+#include "Physics/circle.h"
+#include "Graphics/physicals.h"
+
 int main()
 {
+	Physical::Body body;
+	body.attach(Physical::Circle({10, 20}, 10), {0, 0}, {0, 0});
+
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{ //this should not do anything, but somehow prevents the window from not responding
 		sf::Event event;
@@ -195,6 +202,7 @@ int main()
 				fps = 0;
 			}
 		}
+		Graphics::draw_physicals(window);
 		window.display();
 	}
 }

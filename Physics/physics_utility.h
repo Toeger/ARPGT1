@@ -16,8 +16,13 @@ namespace Physical {
 	//A Direction defines the direction an object is oriented towards
 	//A direction of (x=1, y=0) means the object is rotated by 0 degrees
 	//A direction of (x=1, y=1) means the object is rotated by 45 degrees counter clockwise
-	struct Direction : Vector{
-		//TODO: implement stuff
+	struct Direction{
+		Direction(float x = 0, float y = 0) :
+			x(x),
+			y(y)
+		{
+		}
+		float x, y;
 	};
 }
 
