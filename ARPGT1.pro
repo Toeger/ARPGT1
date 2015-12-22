@@ -13,7 +13,6 @@ SOURCES += main.cpp \
     camera.cpp \
     weapon.cpp \
     entity.cpp \
-    interactiveobject.cpp \
     Physics/body.cpp \
     Physics/circle.cpp \
     Physics/utility.cpp \
@@ -28,7 +27,6 @@ HEADERS += \
     weapon.h \
     utility.h \
     entity.h \
-    interactiveobject.h \
     make_function.h \
     Physics/body.h \
     Physics/circle.h \

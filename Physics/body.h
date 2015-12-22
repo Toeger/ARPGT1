@@ -4,7 +4,6 @@
 #include <vector>
 #include <limits>
 #include <array>
-#include <iostream>
 
 #include "utility.h"
 #include "Physics/physics_utility.h"
@@ -35,7 +34,6 @@ namespace Physical{
 		void attach(T &&t, Vector offset, Direction direction){
 			get_attached<Utility::remove_cvr<T>>().emplace_back(std::forward<T>(t), std::move(offset), std::move(direction));
 			auto pos = std::find_if(begin(attached_objects), end(attached_objects), [](auto &id){
-				std::cout << id << '\n' << invalid << '\n' << std::flush;
 				return id == invalid;
 			});
 			if (pos == end(attached_objects))

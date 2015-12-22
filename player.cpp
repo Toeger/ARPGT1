@@ -4,11 +4,7 @@
 #include <cmath>
 
 #include "player.h"
-#include "conversions.h"
-#include "sensor.h"
 #include "utility.h"
-#include "hittable.h"
-#include "components.h"
 
 Player Player::player;
 

@@ -1,6 +1,4 @@
 #include "practicedummy.h"
-#include "conversions.h"
-#include "hittable.h"
 #include <memory>
 
 PracticeDummy::PracticeDummy() :

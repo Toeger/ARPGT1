@@ -38,6 +38,8 @@ int main()
 	Player &p = Player::player;
 	p.set_window(&window);
 	p.camera.rotate(0);
+	p.camera.set_size(80, 60);
+	p.camera.set_position(0, 0);
 
 	std::vector<Entity> balls(5);
 	{
@@ -57,40 +59,6 @@ int main()
 		balls[4].add(c);
 	}
 
-#if 0
-	PracticeDummy pd;
-	Components::add_PhysicalCircleShape(pd, 40/100.f, {10, 15}, sf::Color::White);
-	std::vector<Entity> zombies(7);
-	int zcounter = 0;
-	for (auto &z : zombies){
-		Components::add_PhysicalCircleShape(z, 40/100.f, {zcounter % 100, -zcounter / 100}, sf::Color::Red);
-		z.emplace<Components::ZombieAi>();
-		zcounter++;
-	}
-
-	Entity background_picture;
-	{
-		sf::Sprite sprite;
-		background_picture.emplace<sf::Texture>();
-		auto &image = *background_picture.get<sf::Texture>();
-		sprite.setPosition(-1000000, -1000000);
-		image.loadFromFile("grass3.png");
-		sprite.setTexture(image);
-		image.setRepeated(true);
-		image.setSmooth(true);
-		sprite.setTextureRect({0, 0, 2000000, 2000000});
-		background_picture.add(std::move(sprite));
-	}
-#endif
-#if 0
-	sf::Font font;
-	(void)font;
-
-	if (!font.loadFromFile("Arctik 1.5.ttf"))
-		throw std::runtime_error("Missing font: Arctik 1.5.ttf");
-	sf::Text text;
-	text.setFont(font);
-#endif
 	while (window.isOpen()){
 		// check all the window's events that were triggered since the last iteration of the loop
 		sf::Event event;
@@ -155,6 +123,7 @@ int main()
 					//player_body->ApplyForce(vel, player_body->GetPosition(), true);
 				}
 			}
+
 		}
 		window.clear(sf::Color::Black);
 		//rendering system
