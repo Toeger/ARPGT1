@@ -26,6 +26,9 @@ namespace Physical {
 	inline std::ostream &operator << (std::ostream &os, const Vector &v){
 		return os << v.x << '\n' << v.y << '\n';
 	}
+	inline Vector operator -(const Vector &v){
+		return {-v.x, -v.y};
+	}
 
 	//A Direction defines the direction an object is oriented towards
 	//A direction of (x=1, y=0) means the object is rotated by 0 degrees
@@ -111,6 +114,15 @@ namespace Physical {
 		Transformator(std::array<float, 9> &&data) :
 			data(std::move(data)){
 		}
+		//static convinience constructors
+		static Transformator get_translation_matrix(const Vector &v){
+			return std::array<float, 9>{1, 0, v.x, 0, 1, v.y, 0, 0, 1};
+		}
+		static Transformator get_rotation_matrix(Direction d){
+			d.normalize();
+			return std::array<float, 9>{d.x, -d.y, 0, d.y, d.x, 0, 0, 0, 1};
+		}
+
 		//data
 		std::array<float, 9> data;
 	};
