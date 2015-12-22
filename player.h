@@ -9,10 +9,10 @@
 class Player : public Entity
 {
 public:
-    Player(sf::RenderWindow *window = nullptr);
-    void set_window(sf::RenderWindow *window);
-    Camera camera;
-    static Player player;
+	Player(sf::RenderWindow *window = nullptr);
+	void set_window(sf::RenderWindow *window);
+	Camera camera;
+	static Player player;
 private:
 };
 

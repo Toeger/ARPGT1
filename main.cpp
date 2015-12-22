@@ -125,6 +125,7 @@ int main()
 			}
 
 		}
+		p.camera.set_position(0, 0);
 		window.clear(sf::Color::Black);
 		//rendering system
 		for (auto sit = System::range<sf::Sprite>(); sit; sit.advance()){

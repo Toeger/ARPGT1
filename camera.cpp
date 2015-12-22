@@ -49,10 +49,8 @@ float Camera::get_rotation() const
 	return view.getRotation();
 }
 
-#include <iostream>
 void Camera::set_zoom(float z)
 {
-	std::cout << z << std::endl;
 	view.zoom(z);
 }
 
