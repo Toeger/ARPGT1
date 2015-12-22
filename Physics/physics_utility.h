@@ -4,6 +4,8 @@
 #include <array>
 #include <math.h>
 #include <limits>
+#include <SFML/System/Vector2.hpp>
+#include <ostream>
 
 namespace Physical {
 	//A Vector defines a position through its x and y coordinate
@@ -14,8 +16,16 @@ namespace Physical {
 			y(y)
 		{
 		}
+		Vector(const sf::Vector2f &v) :
+			x(v.x),
+			y(v.y)
+		{
+		}
 		float x, y;
 	};
+	inline std::ostream &operator << (std::ostream &os, const Vector &v){
+		return os << v.x << '\n' << v.y << '\n';
+	}
 
 	//A Direction defines the direction an object is oriented towards
 	//A direction of (x=1, y=0) means the object is rotated by 0 degrees
@@ -82,9 +92,9 @@ namespace Physical {
 			//data[4] = data[0] = cos(phi);
 			//data[3] = sin(phi);
 			//data[1] = -data[3]; //-sin(phi);
-			data[4] = data[0] = d.y;
-			data[1] = -d.x;
-			data[3] = d.x;
+			data[4] = data[0] = d.x;
+			data[1] = -d.y;
+			data[3] = d.y;
 		}
 		//constructors and operators
 		Transformator(const Transformator &other) :
@@ -101,10 +111,11 @@ namespace Physical {
 		Transformator(std::array<float, 9> &&data) :
 			data(std::move(data)){
 		}
-
+		//data
 		std::array<float, 9> data;
 	};
 
+	//mathmatical operations
 	inline Transformator operator *(const Transformator &lhs, const Transformator &rhs){
 		return Transformator({
 								 lhs.data[0] * rhs.data[0] + lhs.data[1] * rhs.data[3] + lhs.data[2] * rhs.data[6],
@@ -119,7 +130,7 @@ namespace Physical {
 							 });
 	}
 	inline Vector operator *(const Transformator &lhs, const Vector &rhs){
-		return {lhs.data[0] * rhs.x + lhs.data[1] * rhs.y + lhs.data[2], lhs.data[3] * rhs.x + lhs.data[4] * rhs.y * lhs.data[5]};
+		return {lhs.data[0] * rhs.x + lhs.data[1] * rhs.y + lhs.data[2], lhs.data[3] * rhs.x + lhs.data[4] * rhs.y + lhs.data[5]};
 	}
 
 	inline Transformator &Transformator::operator *=(const Transformator &other)
@@ -127,6 +138,15 @@ namespace Physical {
 		//TODO: this can probably be optimized
 		return *this = *this * other;
 	}
+
+	//printing
+	inline std::ostream &operator << (std::ostream & os, const Transformator &t){
+		for (int y = 0; y < 3; y++){
+			os << t.data[3 * y] << ',' << t.data[3 * y + 1] << ',' << t.data[3 * y + 2] << '\n';
+		}
+		return os;
+	}
+
 }
 
 #endif // UTILITY_H
