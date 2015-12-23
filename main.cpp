@@ -82,28 +82,17 @@ int main()
 				p.camera.set_zoom(pow(1 - zoom_factor, event.mouseWheel.delta));
 			}
 			if (event.type == sf::Event::KeyPressed){
-				if (event.key.code == sf::Keyboard::R){
-					/*
-					auto &green_ball = *balls[4].get<Physical::Circle>();
-					auto &red_ball = *balls[2].get<Physical::Circle>();
-					green_ball =
-							red_ball *
-							Physical::Transformator::get_rotation_matrix({10, 1}) *
-							-red_ball *
-							green_ball;
-					Physical::Vector r(balls[2].get<sf::CircleShape>()->getPosition());
-					Physical::Transformator t =
-							Physical::Transformator::get_translation_matrix(r) *
-							Physical::Transformator::get_rotation_matrix({10, 1}) *
-							Physical::Transformator::get_translation_matrix(-r);
-					std::cout << v;
-					std::cout << t;
-					auto transformed_v = t * v;
-					std::cout << transformed_v;
-					balls[4].get<sf::CircleShape>()->setPosition(transformed_v.x, transformed_v.y);
-					*/
-					std::cout << Physical::Transformator::get_rotation_matrix({3, 4}, {5, 6});
-					std::cout << std::flush;
+				switch (event.key.code){
+				case sf::Keyboard::Num0: case sf::Keyboard::Num1: case sf::Keyboard::Num2: case sf::Keyboard::Num3:
+				{
+					int index = event.key.code - sf::Keyboard::Num0;
+					auto &green_ball = *balls[4].get<sf::CircleShape>();
+					auto &red_ball = *balls[index].get<sf::CircleShape>();
+					green_ball.setPosition(Physical::Transformator::get_rotation_matrix({2,1}, red_ball.getPosition()) * green_ball.getPosition());
+				}
+				break;
+				default:
+				break;
 				}
 			}
 		}

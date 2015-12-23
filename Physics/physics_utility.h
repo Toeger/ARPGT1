@@ -21,6 +21,10 @@ namespace Physical {
 			y(v.y)
 		{
 		}
+		 operator sf::Vector2f(){
+			return {x, y};
+		}
+
 		float x, y;
 	};
 	inline std::ostream &operator << (std::ostream &os, const Vector &v){
@@ -68,9 +72,6 @@ namespace Physical {
 			data[3] = 0;
 			data[4] = 1;
 			data[5] = 0;
-			data[6] = 0;
-			data[7] = 0;
-			data[8] = 1;
 		}
 		//make the transformation move the object by given vector from 0/0
 		void set_translation(const Vector &v){
@@ -110,36 +111,36 @@ namespace Physical {
 			std::copy(begin(other.data), end(other.data), begin(data));
 			return *this;
 		}
+		Transformator &assign(const Transformator &other){ //to assign through inheritance
+			return *this = other;
+		}
 		Transformator &operator *=(const Transformator &other);
-		Transformator(std::array<float, 9> &&data) :
+		Transformator(std::array<float, 6> &&data) :
 			data(std::move(data)){
 		}
 		//static convinience constructors
 		static Transformator get_translation_matrix(const Vector &v){
-			return std::array<float, 9>{1, 0, v.x, 0, 1, v.y, 0, 0, 1};
+			return std::array<float, 6>{1, 0, v.x, 0, 1, v.y};
 		}
 		static Transformator get_rotation_matrix(Direction d){
 			d.normalize();
-			return std::array<float, 9>{d.x, -d.y, 0, d.y, d.x, 0, 0, 0, 1};
+			return std::array<float, 6>{d.x, -d.y, 0, d.y, d.x, 0};
 		}
 		static Transformator get_rotation_matrix(Direction d, const Vector &rotpoint);
 
 		//data
-		std::array<float, 9> data;
+		std::array<float, 6> data;
 	};
 
 	//mathmatical operations
 	inline Transformator operator *(const Transformator &lhs, const Transformator &rhs){
 		return Transformator({
-								 lhs.data[0] * rhs.data[0] + lhs.data[1] * rhs.data[3] + lhs.data[2] * rhs.data[6],
-								 lhs.data[0] * rhs.data[1] + lhs.data[1] * rhs.data[4] + lhs.data[2] * rhs.data[7],
-								 lhs.data[0] * rhs.data[2] + lhs.data[1] * rhs.data[5] + lhs.data[2] * rhs.data[8],
-								 lhs.data[3] * rhs.data[0] + lhs.data[4] * rhs.data[3] + lhs.data[5] * rhs.data[6],
-								 lhs.data[3] * rhs.data[1] + lhs.data[4] * rhs.data[4] + lhs.data[5] * rhs.data[7],
-								 lhs.data[3] * rhs.data[2] + lhs.data[4] * rhs.data[5] + lhs.data[5] * rhs.data[8],
-								 lhs.data[6] * rhs.data[0] + lhs.data[7] * rhs.data[3] + lhs.data[8] * rhs.data[6],
-								 lhs.data[6] * rhs.data[1] + lhs.data[7] * rhs.data[4] + lhs.data[8] * rhs.data[7],
-								 lhs.data[6] * rhs.data[2] + lhs.data[7] * rhs.data[5] + lhs.data[8] * rhs.data[8],
+								 lhs.data[0] * rhs.data[0] + lhs.data[1] * rhs.data[3],
+								 lhs.data[0] * rhs.data[1] + lhs.data[1] * rhs.data[4],
+								 lhs.data[0] * rhs.data[2] + lhs.data[1] * rhs.data[5] + lhs.data[2],
+								 lhs.data[3] * rhs.data[0] + lhs.data[4] * rhs.data[3],
+								 lhs.data[3] * rhs.data[1] + lhs.data[4] * rhs.data[4],
+								 lhs.data[3] * rhs.data[2] + lhs.data[4] * rhs.data[5] + lhs.data[5],
 							 });
 	}
 	inline Vector operator *(const Transformator &lhs, const Vector &rhs){
@@ -154,16 +155,14 @@ namespace Physical {
 
 	//printing
 	inline std::ostream &operator << (std::ostream & os, const Transformator &t){
-		for (int y = 0; y < 3; y++){
-			os << t.data[3 * y] << ',' << t.data[3 * y + 1] << ',' << t.data[3 * y + 2] << '\n';
-		}
-		return os;
+		return os << t.data[0] << ',' << t.data[1] << ',' << t.data[2] << '\n'
+				  << t.data[3] << ',' << t.data[4] << ',' << t.data[5] << '\n';
 	}
 
 	//implementations for Transformator function:
-	inline Transformator Transformator::get_rotation_matrix(Direction d, const Vector &rotpoint){
+	inline Transformator Transformator::get_rotation_matrix(Direction d, const Vector &r){
 		d.normalize();
-		return get_translation_matrix(rotpoint) * Transformator(std::array<float, 9>{d.x, -d.y, 0, d.y, d.x, 0, 0, 0, 1}) * get_translation_matrix(-rotpoint);
+		return std::array<float, 6>{d.x, -d.y, r.x*(1 - d.x) + d.y * r.y, d.y, d.x, r.y * (1 - d.x) - d.y * r.x};
 	}
 }
 
