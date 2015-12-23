@@ -20,10 +20,12 @@
 int main()
 {
 	Physical::Body body;
-	body.attach(Physical::Circle({10, 20}, 10), {0, 0}, {0, 0});
+	body.attach(Physical::Circle(Physical::Transformator::get_translation_matrix({20, 10}), 10), {0, 0}, {0, 0});
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
-	{ //this should not do anything, but somehow prevents the window from not responding
+	{
+		//this should not do anything, but somehow sometimes prevents the window from not responding
+		//see http://en.sfml-dev.org/forums/index.php?topic=19513.0
 		sf::Event event;
 		while (window.pollEvent(event));
 	}
@@ -37,15 +39,16 @@ int main()
 
 	Player &p = Player::player;
 	p.set_window(&window);
-	p.camera.rotate(0);
-	p.camera.set_size(80, 60);
-	p.camera.set_position(0, 0);
+	//p.camera.rotate(0);
+	//p.camera.set_size(40, 30);
+	//p.camera.set_position(0, 0);
+	//p.camera.set_zoom(20);
 
 	std::vector<Entity> balls(5);
 	{
 		sf::CircleShape c;
 		c.setFillColor(sf::Color::Red);
-		c.setRadius(10);
+		c.setRadius(1);
 		c.setPosition(-10, -10);
 		balls[0].add(c);
 		c.setPosition(-10, 10);
@@ -78,6 +81,31 @@ int main()
 				const auto zoom_factor = 0.1f;
 				p.camera.set_zoom(pow(1 - zoom_factor, event.mouseWheel.delta));
 			}
+			if (event.type == sf::Event::KeyPressed){
+				if (event.key.code == sf::Keyboard::R){
+					/*
+					auto &green_ball = *balls[4].get<Physical::Circle>();
+					auto &red_ball = *balls[2].get<Physical::Circle>();
+					green_ball =
+							red_ball *
+							Physical::Transformator::get_rotation_matrix({10, 1}) *
+							-red_ball *
+							green_ball;
+					Physical::Vector r(balls[2].get<sf::CircleShape>()->getPosition());
+					Physical::Transformator t =
+							Physical::Transformator::get_translation_matrix(r) *
+							Physical::Transformator::get_rotation_matrix({10, 1}) *
+							Physical::Transformator::get_translation_matrix(-r);
+					std::cout << v;
+					std::cout << t;
+					auto transformed_v = t * v;
+					std::cout << transformed_v;
+					balls[4].get<sf::CircleShape>()->setPosition(transformed_v.x, transformed_v.y);
+					*/
+					std::cout << Physical::Transformator::get_rotation_matrix({3, 4}, {5, 6});
+					std::cout << std::flush;
+				}
+			}
 		}
 		if (!window.isOpen())
 			continue;
@@ -109,8 +137,6 @@ int main()
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
 						//for now shoot a ball straight up
 
-					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)){
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
 						auto &pos = balls[4].get<sf::CircleShape>()->getPosition();

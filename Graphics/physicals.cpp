@@ -4,7 +4,8 @@
 
 static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c){
 	sf::CircleShape s(c.radius);
-	s.setPosition(c.position.x, c.position.y);
+	auto pos = c.get_translation();
+	s.setPosition(pos.x, pos.y);
 	s.setFillColor(sf::Color::Magenta);
 	window.draw(s);
 }

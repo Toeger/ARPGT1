@@ -122,6 +122,7 @@ namespace Physical {
 			d.normalize();
 			return std::array<float, 9>{d.x, -d.y, 0, d.y, d.x, 0, 0, 0, 1};
 		}
+		static Transformator get_rotation_matrix(Direction d, const Vector &rotpoint);
 
 		//data
 		std::array<float, 9> data;
@@ -159,6 +160,11 @@ namespace Physical {
 		return os;
 	}
 
+	//implementations for Transformator function:
+	inline Transformator Transformator::get_rotation_matrix(Direction d, const Vector &rotpoint){
+		d.normalize();
+		return get_translation_matrix(rotpoint) * Transformator(std::array<float, 9>{d.x, -d.y, 0, d.y, d.x, 0, 0, 0, 1}) * get_translation_matrix(-rotpoint);
+	}
 }
 
 #endif // UTILITY_H
