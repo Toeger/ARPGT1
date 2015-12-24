@@ -132,6 +132,7 @@ namespace Physical{
 			//should find a way to auto-generate these cases
 			switch (ao.type_number()){
 			case 0:
+				assert((get_attached<std::tuple_element<0, supported_types>::type>().size() > ao.index()));
 				f(get_attached<std::tuple_element<0, supported_types>::type>(), ao.index());
 			break;
 			default:
