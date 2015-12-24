@@ -20,7 +20,7 @@ namespace Physical{
 		//from https://stackoverflow.com/a/18063608/3484570
 		//this is used to get the index for a type in a tuple
 		//example: Index<int, std::tuple<float, char, int, double>>::value returns 2 at compile time
-		//if the type does not exist you get a nasty compilation error
+		//if the type does not exist you get a compilation error
 		//if the type exists multiple times you get the first index with a match
 		template <class T, class Tuple>
 		struct Index;
@@ -94,7 +94,8 @@ namespace Physical{
 		}
 		~Body(){
 			for (auto &ao : attached_objects){
-				remove_attached(ao);
+				if (ao.is_valid())
+					remove_attached(ao);
 			}
 		}
 
@@ -113,9 +114,11 @@ namespace Physical{
 		template<class Function>
 		void apply(Function &&f){
 			for (auto &ao : attached_objects){
-				private_apply(ao, [fun = std::forward<Function>(f)](const auto &v, std::size_t index){
-					fun(v[index].ao);
-				});
+				if (ao.is_valid()){
+					private_apply(ao, [fun = std::forward<Function>(f)](const auto &v, std::size_t index){
+						fun(v[index].ao);
+					});
+				}
 			}
 		}
 
