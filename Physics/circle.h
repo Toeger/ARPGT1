@@ -4,18 +4,19 @@
 #include "physics_utility.h"
 
 namespace Physical {
-	struct Circle : Transformator
+	struct Circle
 	{
 		Circle(const Circle &other) = default;
 		Circle &operator =(const Circle &) = default;
 		Circle(const Transformator &t, float radius) :
-			Transformator(t),
+			transformator(t),
 			radius(radius)
 		{}
 		Circle(const Vector &pos, float radius) :
-			Transformator(Transformator::get_translation_matrix(pos)),
+			transformator(Transformator::get_translation_matrix(pos)),
 			radius(radius)
 		{}
+		Transformator transformator;
 		float radius;
 	};
 

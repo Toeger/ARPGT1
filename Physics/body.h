@@ -102,13 +102,14 @@ namespace Physical{
 		//attach an object to this Body with the given offset and Direction
 		template <class T>
 		void attach(T &&t, Vector offset, Direction direction){
-			get_attached<Utility::remove_cvr<T>>().emplace_back(std::forward<T>(t), std::move(offset), std::move(direction));
+			auto &attached_vector = get_attached<Utility::remove_cvr<T>>();
+			attached_vector.emplace_back(std::forward<T>(t), std::move(offset), std::move(direction));
 			auto pos = std::find_if(begin(attached_objects), end(attached_objects), [](auto &id){
 				return id.is_invalid();
 			});
 			if (pos == end(attached_objects))
 				throw std::length_error("Trying to attach more than maximum allowed number of objects");
-			pos->template set<T>(get_attached<Utility::remove_cvr<T>>().size());
+			pos->template set<T>(attached_vector.size() - 1);
 		}
 
 		template<class Function>
