@@ -4,21 +4,70 @@
 #include <vector>
 #include <limits>
 #include <array>
+#include <cassert>
+#include <tuple>
 
 #include "utility.h"
 #include "Physics/physics_utility.h"
 #include "Physics/circle.h"
 
 namespace Physical{
-	//helper stuff
-	template <std::size_t id>
-	struct Type_holder;
-	template <>
-	struct Type_holder<0>{
-		using type = Physical::Circle;
+	//add types here to allow attaching them to a body
+	//all attachable types must be listed here
+	using supported_types = std::tuple<Physical::Circle>;
+
+	namespace Helper{
+		//from https://stackoverflow.com/a/18063608/3484570
+		//this is used to get the index for a type in a tuple
+		//example: Index<int, std::tuple<float, char, int, double>>::value returns 2 at compile time
+		//if the type does not exist you get a nasty compilation error
+		//if the type exists multiple times you get the first index with a match
+		template <class T, class Tuple>
+		struct Index;
+
+		template <class T, class... Types>
+		struct Index<T, std::tuple<T, Types...>> {
+			static const std::size_t value = 0;
+		};
+
+		template <class T, class U, class... Types>
+		struct Index<T, std::tuple<U, Types...>> {
+			static const std::size_t value = 1 + Index<T, std::tuple<Types...>>::value;
+		};
+	}
+
+	static const constexpr std::size_t number_of_supported_types = std::tuple_size<supported_types>::value;
+	//This class represents a reference to an attached object and its type number
+	struct Attached_Object_Reference{
+		bool is_valid() const{
+			return id != invalid;
+		}
+		bool is_invalid() const{
+			return id == invalid;
+		}
+		std::size_t index() const{
+			assert(is_valid());
+			return id / number_of_supported_types;
+		}
+		std::size_t type_number() const{
+			assert(is_valid());
+			return id % number_of_supported_types;
+		}
+		template <class T>
+		void set(std::size_t index){
+			id = index * number_of_supported_types + Helper::Index<Utility::remove_cvr<T>, supported_types>::value;
+		}
+		void set_invalid(){
+			id = invalid;
+		}
+
+		static void swap(Attached_Object_Reference &lhs, Attached_Object_Reference &rhs){
+			std::swap(lhs.id, rhs.id);
+		}
+	private:
+		static constexpr const std::size_t invalid = std::numeric_limits<std::size_t>::max();
+		std::size_t id = invalid;
 	};
-	template <std::size_t id>
-	using Type_holder_t = typename Type_holder<id>::type;
 
 	//A physical body consists of basic physical objects such as circles and polygons
 	//you create a physical body by attaching multiple such primitives to it by specifying the offset vector and direction vector
@@ -29,22 +78,18 @@ namespace Physical{
 		Direction direction;
 		Body(const Vector &position, const Direction &direction) :
 			position(position),
-			direction(direction){
-			std::fill(begin(attached_objects), end(attached_objects), invalid);
+			direction(direction)
+		{
 		}
 		Body() : Body({}, {}){}
 		Body(const Vector &position) : Body(position, {}){}
 		Body(const Direction &direction) : Body({}, direction){}
 		Body(Body &&other) :
 			attached_objects(other.attached_objects){
-			std::fill(begin(other.attached_objects), end(other.attached_objects), invalid);
+			swap(attached_objects, other.attached_objects);
 		}
 		Body &operator =(Body &&other){
-			for (auto &ao : attached_objects){
-				remove_attached(ao);
-			}
-			attached_objects = other.attached_objects;
-			std::fill(begin(other.attached_objects), end(other.attached_objects), invalid);
+			swap(attached_objects, other.attached_objects);
 			return *this;
 		}
 		~Body(){
@@ -58,37 +103,39 @@ namespace Physical{
 		void attach(T &&t, Vector offset, Direction direction){
 			get_attached<Utility::remove_cvr<T>>().emplace_back(std::forward<T>(t), std::move(offset), std::move(direction));
 			auto pos = std::find_if(begin(attached_objects), end(attached_objects), [](auto &id){
-				return id == invalid;
+				return id.is_invalid();
 			});
 			if (pos == end(attached_objects))
 				throw std::length_error("Trying to attach more than maximum allowed number of objects");
-			*pos = get_attached<Utility::remove_cvr<T>>().size() * number_of_types + type_id<Utility::remove_cvr<T>>;
+			pos->template set<T>(get_attached<Utility::remove_cvr<T>>().size());
 		}
-		//iterate over all objects of this Body and call given function
+
 		template<class Function>
 		void apply(Function &&f){
-			for (auto id : attached_objects){
-				if (id == invalid)
-					continue;
-				auto type = id % number_of_types;
-				auto index = id / number_of_types;
-				switch (type){
-				case 0:
-					f(get_attached<Type_holder_t<0>>()[index].ao);
-				break;
-				default:
-					throw std::invalid_argument("Invalid type");
-				}
+			for (auto &ao : attached_objects){
+				private_apply(ao, [fun = std::forward<Function>(f)](const auto &v, std::size_t index){
+					fun(v[index].ao);
+				});
 			}
-			//TODO
-			//f();
-			(void)f;
 		}
 
 	private:
+		//iterate over all objects of this Body and call given function
+		template<class Function>
+		void private_apply(Attached_Object_Reference &ao, Function &&f){
+			//this switch essentially converts a runtime variable to a compile time variable
+			//need to match the cases with the number of supported_types
+			//should find a way to auto-generate these cases
+			switch (ao.type_number()){
+			case 0:
+				f(get_attached<std::tuple_element<0, supported_types>>(), ao.index());
+			break;
+			default:
+				throw std::invalid_argument("Invalid type");
+			}
+		}
+
 		static const int max_attached_objects = 8; //maximum number of objects you can attach to a body
-		static const std::size_t number_of_types = 4; //the number of types supported by Body
-		static constexpr const std::size_t invalid = std::numeric_limits<std::size_t>::max();
 		template <class T>
 		static const std::size_t type_id;
 		//type_id<Square> = 1;
@@ -111,21 +158,12 @@ namespace Physical{
 			Vector offset;
 			Direction direction;
 		};
-		void remove_attached(std::size_t id){
-			if (id == invalid)
-				return;
-			auto type = id % number_of_types;
-			auto index = id / number_of_types;
-			switch (type){
-			case 0:
-			{
-				auto &attached = get_attached<Type_holder_t<0>>();
-				attached.erase(begin(attached) + index);
-			}
-			break;
-			default:
-				throw std::invalid_argument("Invalid type");
-			}
+
+		void remove_attached(Attached_Object_Reference &ao){
+			private_apply(ao, [](auto &vec, std::size_t index){
+				vec.erase(begin(vec) + index);
+			});
+			ao.set_invalid();
 		}
 
 		template<class Attached_object>
@@ -133,8 +171,9 @@ namespace Physical{
 			static std::vector<Attached<Attached_object>> attached;
 			return attached;
 		}
+
 		//data members
-		std::array<std::size_t, max_attached_objects> attached_objects;
+		std::array<Attached_Object_Reference, max_attached_objects> attached_objects;
 	};
 }
 
