@@ -128,7 +128,7 @@ namespace Physical{
 			//should find a way to auto-generate these cases
 			switch (ao.type_number()){
 			case 0:
-				f(get_attached<std::tuple_element<0, supported_types>>(), ao.index());
+				f(get_attached<std::tuple_element<0, supported_types>::type>(), ao.index());
 			break;
 			default:
 				throw std::invalid_argument("Invalid type");
@@ -168,6 +168,7 @@ namespace Physical{
 
 		template<class Attached_object>
 		static std::vector<Attached<Attached_object>> &get_attached(){
+			static_assert(Helper::Index<Attached_object, supported_types>::value < 1000000, "Requesting unsupported type"); //just need to instantiate the template, comparison doesn't matter
 			static std::vector<Attached<Attached_object>> attached;
 			return attached;
 		}
