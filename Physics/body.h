@@ -74,7 +74,7 @@ namespace Physical{
 				auto index = id / number_of_types;
 				switch (type){
 				case 0:
-					f(get_attached<Type_holder_t<0>>()[index]);
+					f(get_attached<Type_holder_t<0>>()[index].ao);
 				break;
 				default:
 					throw std::invalid_argument("Invalid type");

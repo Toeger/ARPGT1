@@ -85,7 +85,7 @@ void render_frame(sf::RenderWindow &window){
 
 int main(){
 	Physical::Body body;
-	body.attach(Physical::Circle(Physical::Transformator::get_translation_matrix({20, 10}), 10), {0, 0}, {0, 0});
+	body.attach(Physical::Circle({20, 10}, 100), {0, 0}, {0, 0});
 
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{

@@ -7,10 +7,13 @@ namespace Physical {
 	struct Circle : Transformator
 	{
 		Circle(const Circle &other) = default;
-		Circle(Circle &&other) = default;
 		Circle &operator =(const Circle &) = default;
 		Circle(const Transformator &t, float radius) :
 			Transformator(t),
+			radius(radius)
+		{}
+		Circle(const Vector &pos, float radius) :
+			Transformator(Transformator::get_translation_matrix(pos)),
 			radius(radius)
 		{}
 		float radius;
