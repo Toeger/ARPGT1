@@ -39,6 +39,11 @@ int main()
 
 	Player &p = Player::player;
 	p.set_window(&window);
+	{
+		Physical::Body b;
+		b.attach(Physical::Circle(Physical::Transformator(), 10), {}, {});
+		p.add(std::move(b));
+	}
 	//p.camera.rotate(0);
 	//p.camera.set_size(40, 30);
 	//p.camera.set_position(0, 0);
@@ -85,9 +90,8 @@ int main()
 				switch (event.key.code){
 				case sf::Keyboard::Num0: case sf::Keyboard::Num1: case sf::Keyboard::Num2: case sf::Keyboard::Num3:
 				{
-					int index = event.key.code - sf::Keyboard::Num0;
 					auto &green_ball = *balls[4].get<sf::CircleShape>();
-					auto &red_ball = *balls[index].get<sf::CircleShape>();
+					auto &red_ball = *balls[event.key.code - sf::Keyboard::Num0].get<sf::CircleShape>();
 					green_ball.setPosition(Physical::Transformator::get_rotation_matrix({2,1}, red_ball.getPosition()) * green_ball.getPosition());
 				}
 				break;

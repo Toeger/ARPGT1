@@ -10,6 +10,7 @@
 #include "Physics/circle.h"
 
 namespace Physical{
+	//helper stuff
 	template <std::size_t id>
 	struct Type_holder;
 	template <>
@@ -18,6 +19,7 @@ namespace Physical{
 	};
 	template <std::size_t id>
 	using Type_holder_t = typename Type_holder<id>::type;
+
 	//A physical body consists of basic physical objects such as circles and polygons
 	//you create a physical body by attaching multiple such primitives to it by specifying the offset vector and direction vector
 	class Body
@@ -25,8 +27,30 @@ namespace Physical{
 	public:
 		Vector position;
 		Direction direction;
-		Body(){
+		Body(const Vector &position, const Direction &direction) :
+			position(position),
+			direction(direction){
 			std::fill(begin(attached_objects), end(attached_objects), invalid);
+		}
+		Body() : Body({}, {}){}
+		Body(const Vector &position) : Body(position, {}){}
+		Body(const Direction &direction) : Body({}, direction){}
+		Body(Body &&other) :
+			attached_objects(other.attached_objects){
+			std::fill(begin(other.attached_objects), end(other.attached_objects), invalid);
+		}
+		Body &operator =(Body &&other){
+			for (auto &ao : attached_objects){
+				remove_attached(ao);
+			}
+			attached_objects = other.attached_objects;
+			std::fill(begin(other.attached_objects), end(other.attached_objects), invalid);
+			return *this;
+		}
+		~Body(){
+			for (auto &ao : attached_objects){
+				remove_attached(ao);
+			}
 		}
 
 		//attach an object to this Body with the given offset and Direction
@@ -51,6 +75,9 @@ namespace Physical{
 				switch (type){
 				case 0:
 					f(get_attached<Type_holder_t<0>>()[index]);
+				break;
+				default:
+					throw std::invalid_argument("Invalid type");
 				}
 			}
 			//TODO
@@ -58,7 +85,6 @@ namespace Physical{
 			(void)f;
 		}
 
-		~Body(){}
 	private:
 		static const int max_attached_objects = 8; //maximum number of objects you can attach to a body
 		static const std::size_t number_of_types = 4; //the number of types supported by Body
@@ -85,14 +111,30 @@ namespace Physical{
 			Vector offset;
 			Direction direction;
 		};
+		void remove_attached(std::size_t id){
+			if (id == invalid)
+				return;
+			auto type = id % number_of_types;
+			auto index = id / number_of_types;
+			switch (type){
+			case 0:
+			{
+				auto &attached = get_attached<Type_holder_t<0>>();
+				attached.erase(begin(attached) + index);
+			}
+			break;
+			default:
+				throw std::invalid_argument("Invalid type");
+			}
+		}
 
 		template<class Attached_object>
 		static std::vector<Attached<Attached_object>> &get_attached(){
 			static std::vector<Attached<Attached_object>> attached;
 			return attached;
 		}
-
-		std::array<std::size_t, max_attached_objects> attached_objects; //the attached objects
+		//data members
+		std::array<std::size_t, max_attached_objects> attached_objects;
 	};
 }
 

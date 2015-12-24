@@ -16,6 +16,9 @@ namespace Physical {
 			y(y)
 		{
 		}
+		Vector(const Vector &) = default;
+
+		//compatibility with sf::Vector2f
 		Vector(const sf::Vector2f &v) :
 			x(v.x),
 			y(v.y)
@@ -25,6 +28,7 @@ namespace Physical {
 			return {x, y};
 		}
 
+		//data
 		float x, y;
 	};
 	inline std::ostream &operator << (std::ostream &os, const Vector &v){
@@ -57,7 +61,7 @@ namespace Physical {
 		float x, y;
 	};
 
-	//a 3x3 matrix that can move and rotate objects
+	//a 3x2 matrix that can move and rotate objects (TODO: scale?)
 	struct Transformator{
 		/* Matrix indexes:
 		 * 012
