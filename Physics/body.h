@@ -64,6 +64,11 @@ namespace Physical{
 		static void swap(Attached_Object_Reference &lhs, Attached_Object_Reference &rhs){
 			std::swap(lhs.id, rhs.id);
 		}
+		Attached_Object_Reference(const Attached_Object_Reference &) = delete;
+		Attached_Object_Reference() = default;
+		Attached_Object_Reference(Attached_Object_Reference &&) = default;
+		Attached_Object_Reference &operator =(const Attached_Object_Reference &) = delete;
+		Attached_Object_Reference &operator =(Attached_Object_Reference &&) = default;
 	private:
 		static constexpr const std::size_t invalid = std::numeric_limits<std::size_t>::max();
 		std::size_t id = invalid;
@@ -84,8 +89,7 @@ namespace Physical{
 		Body() : Body({}, {}){}
 		Body(const Vector &position) : Body(position, {}){}
 		Body(const Direction &direction) : Body({}, direction){}
-		Body(Body &&other) :
-			attached_objects(other.attached_objects){
+		Body(Body &&other){
 			swap(attached_objects, other.attached_objects);
 		}
 		Body &operator =(Body &&other){
@@ -166,6 +170,7 @@ namespace Physical{
 
 		void remove_attached(Attached_Object_Reference &ao){
 			private_apply(ao, [](auto &vec, std::size_t index){
+				assert(false);
 				vec.erase(begin(vec) + index);
 			});
 			ao.set_invalid();
