@@ -5,7 +5,7 @@
 static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c){
 	sf::CircleShape s(c.radius);
 	auto pos = c.transformator.get_translation();
-	s.setPosition(pos.x, pos.y);
+	s.setPosition(pos.x - c.radius, pos.y - c.radius);
 	s.setFillColor(sf::Color::Magenta);
 	window.draw(s);
 }

@@ -70,8 +70,8 @@ namespace Physical{
 		Attached_Object_Reference &operator =(const Attached_Object_Reference &) = delete;
 		Attached_Object_Reference &operator =(Attached_Object_Reference &&) = default;
 	private:
-		static constexpr const std::size_t invalid = std::numeric_limits<std::size_t>::max();
 		std::size_t id = invalid;
+		static constexpr const std::size_t invalid = std::numeric_limits<decltype(id)>::max();
 	};
 
 	//A physical body consists of basic physical objects such as circles and polygons
@@ -140,7 +140,7 @@ namespace Physical{
 				f(get_attached<std::tuple_element<0, supported_types>::type>(), ao.index());
 			break;
 			default:
-				throw std::invalid_argument("Invalid type");
+				assert(!"Invalid type number");
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace Physical{
 
 		void remove_attached(Attached_Object_Reference &ao){
 			private_apply(ao, [](auto &vec, std::size_t index){
-				assert(false);
+				assert(false);//removing objects like this invalidates Attached_Object_References, need to fix that
 				vec.erase(begin(vec) + index);
 			});
 			ao.set_invalid();
