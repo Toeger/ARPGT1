@@ -58,7 +58,9 @@ namespace Physical {
 			x /= q;
 			y /= q;
 		}
-
+		float to_angle() const{
+			return atan2(y, x);
+		}
 		float x, y;
 	};
 
@@ -104,6 +106,9 @@ namespace Physical {
 			data[4] = data[0] = d.x;
 			data[1] = -d.y;
 			data[3] = d.y;
+		}
+		Direction get_rotation() const{
+			return {data[0], data[3]};
 		}
 		//constructors and operators
 		Transformator(const Transformator &other) = default;
