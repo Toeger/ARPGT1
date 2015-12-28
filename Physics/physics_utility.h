@@ -52,6 +52,7 @@ namespace Physical {
 			if (sq < std::numeric_limits<float>::epsilon()){
 				x = 1;
 				y = 0;
+				return;
 			}
 			float q = sqrt(sq);
 			x /= q;
@@ -105,16 +106,11 @@ namespace Physical {
 			data[3] = d.y;
 		}
 		//constructors and operators
-		Transformator(const Transformator &other) :
-			data(other.data){
-		}
+		Transformator(const Transformator &other) = default;
 		Transformator(){
 			clear();
 		}
-		Transformator &operator =(const Transformator &other){
-			std::copy(begin(other.data), end(other.data), begin(data));
-			return *this;
-		}
+		Transformator &operator =(const Transformator &other) = default;
 		Transformator &assign(const Transformator &other){ //to assign through inheritance
 			return *this = other;
 		}
