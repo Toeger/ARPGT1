@@ -7,6 +7,7 @@ static void draw_physical(sf::RenderWindow &window, const std::pair<Physical::Ci
 	auto &t = obj.second;
 	sf::CircleShape s(c.radius);
 	auto pos = t.get_translation();
+	//s.setRotation(t.get_rotation().to_angle()); //don't need to set the rotation when drawing a circle because it doesn't do anything
 	s.setPosition(pos.x - c.radius, pos.y - c.radius);
 	s.setFillColor(sf::Color::Magenta);
 	window.draw(s);
