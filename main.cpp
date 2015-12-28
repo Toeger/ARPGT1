@@ -106,7 +106,7 @@ int main(){
 	p.set_window(&window);
 	{
 		Physical::Body b;
-		b.attach(Physical::Circle(Physical::Transformator(), 10), {}, {});
+		b.attach(Physical::Circle(Physical::Transformator(), 100), {}, {});
 		p.add(std::move(b));
 	}
 

@@ -14,7 +14,8 @@
 namespace Physical{
 	//add types here to allow attaching them to a body
 	//all attachable types must be listed here
-	using supported_types = std::tuple<Physical::Circle>;
+	using Supported_types = std::tuple<Physical::Circle>;
+	static const constexpr std::size_t number_of_supported_types = std::tuple_size<Supported_types>::value;
 
 	namespace Helper{
 		//from https://stackoverflow.com/a/18063608/3484570
@@ -34,45 +35,37 @@ namespace Physical{
 		struct Index<T, std::tuple<U, Types...>> {
 			static const std::size_t value = 1 + Index<T, std::tuple<Types...>>::value;
 		};
+
+		//this essentially declares a "template<class T> std::vector<T> my_vectors;", but that is not allowed in C++14
+		//instead we end up with this clusterfuck:
+		template <class ...Types>
+		struct VectorHolder;
+		template <>
+		struct VectorHolder<>{};
+		template <class T, class ...Rest>
+		struct VectorHolder<T, Rest...>{
+			template <class U>
+			std::enable_if_t<std::is_same<T, U>::value, std::vector<std::pair<U, Transformator>> &>
+			get(){
+				return data;
+			}
+			template <class U>
+			std::enable_if_t<!std::is_same<T, U>::value, std::vector<std::pair<U, Transformator>> &>
+			get(){
+				return rest.template get<U>();
+			}
+
+			std::vector<std::pair<T, Transformator>> data;
+			struct VectorHolder<Rest...> rest;
+		};
+
+		template <class>
+		struct VectorHolderFromTuple;
+		template <class ...Types>
+		struct VectorHolderFromTuple<std::tuple<Types...>>{
+			using type = VectorHolder<Types...>;
+		};
 	}
-
-	static const constexpr std::size_t number_of_supported_types = std::tuple_size<supported_types>::value;
-	//This class represents a reference to an attached object and its type number
-	struct Attached_Object_Reference{
-		bool is_valid() const{
-			return id != invalid;
-		}
-		bool is_invalid() const{
-			return id == invalid;
-		}
-		std::size_t index() const{
-			assert(is_valid());
-			return id / number_of_supported_types;
-		}
-		std::size_t type_number() const{
-			assert(is_valid());
-			return id % number_of_supported_types;
-		}
-		template <class T>
-		void set(std::size_t index){
-			id = index * number_of_supported_types + Helper::Index<Utility::remove_cvr<T>, supported_types>::value;
-		}
-		void set_invalid(){
-			id = invalid;
-		}
-
-		static void swap(Attached_Object_Reference &lhs, Attached_Object_Reference &rhs){
-			std::swap(lhs.id, rhs.id);
-		}
-		Attached_Object_Reference(const Attached_Object_Reference &) = delete;
-		Attached_Object_Reference() = default;
-		Attached_Object_Reference(Attached_Object_Reference &&) = default;
-		Attached_Object_Reference &operator =(const Attached_Object_Reference &) = delete;
-		Attached_Object_Reference &operator =(Attached_Object_Reference &&) = default;
-	private:
-		std::size_t id = invalid;
-		static constexpr const std::size_t invalid = std::numeric_limits<decltype(id)>::max();
-	};
 
 	//A physical body consists of basic physical objects such as circles and polygons
 	//you create a physical body by attaching multiple such primitives to it by specifying the offset vector and direction vector
@@ -90,101 +83,54 @@ namespace Physical{
 		Body(const Vector &position) : Body(position, {}){}
 		Body(const Direction &direction) : Body({}, direction){}
 		Body(Body &&other){
+			using std::swap;
 			swap(attached_objects, other.attached_objects);
 		}
 		Body &operator =(Body &&other){
+			using std::swap;
 			swap(attached_objects, other.attached_objects);
 			return *this;
 		}
-		~Body(){
-			for (auto &ao : attached_objects){
-				if (ao.is_valid())
-					remove_attached(ao);
-			}
-		}
+		~Body() = default;
 
 		//attach an object to this Body with the given offset and Direction
 		template <class T>
 		void attach(T &&t, Vector offset, Direction direction){
-			auto &attached_vector = get_attached<Utility::remove_cvr<T>>();
-			attached_vector.emplace_back(std::forward<T>(t), std::move(offset), std::move(direction));
-			auto pos = std::find_if(begin(attached_objects), end(attached_objects), [](auto &id){
-				return id.is_invalid();
-			});
-			if (pos == end(attached_objects))
-				throw std::length_error("Trying to attach more than maximum allowed number of objects");
-			pos->template set<T>(attached_vector.size() - 1);
+			static_assert(Helper::Index<T, Supported_types>::value < 1000000, "Requesting unsupported type"); //just need to instantiate the template, comparison doesn't matter
+			auto &attached_vector = attached_objects.get<Utility::remove_cvr<T>>();
+			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), Transformator{offset, direction}));
 		}
 
-		template<class Function>
+		template<class Function, class T>
 		void apply(Function &&f){
-			for (auto &ao : attached_objects){
-				if (ao.is_valid()){
-					private_apply(ao, [fun = std::forward<Function>(f)](const auto &v, std::size_t index){
-						fun(v[index].ao);
-					});
-				}
+			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
+				f(ao);
 			}
+		}
+		template <class Function, class T1, class T2, class... Rest>
+		void apply(Function &&f){
+			apply<T1>(f);
+			apply<T2, Rest...>(f);
+		}
+		template <class Function, std::size_t type_number>
+		std::enable_if_t<type_number == number_of_supported_types>
+		apply(Function &&){}
+
+		template <class Function, std::size_t type_number>
+		std::enable_if_t<type_number < number_of_supported_types>
+		apply(Function &&f){
+			apply<decltype((f)), decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
+			apply<decltype((f)), type_number + 1>(f);
+		}
+
+		template <class Function>
+		void apply(Function &&f){
+			apply<decltype((f)), 0>(f);
 		}
 
 	private:
-		//iterate over all objects of this Body and call given function
-		template<class Function>
-		void private_apply(Attached_Object_Reference &ao, Function &&f){
-			//this switch essentially converts a runtime variable to a compile time variable
-			//need to match the cases with the number of supported_types
-			//should find a way to auto-generate these cases
-			switch (ao.type_number()){
-			case 0:
-				assert((get_attached<std::tuple_element<0, supported_types>::type>().size() > ao.index()));
-				f(get_attached<std::tuple_element<0, supported_types>::type>(), ao.index());
-			break;
-			default:
-				assert(!"Invalid type number");
-			}
-		}
-
-		static const int max_attached_objects = 8; //maximum number of objects you can attach to a body
-		template <class T>
-		static const std::size_t type_id;
-		//type_id<Square> = 1;
-		template <class Attached_object>
-		struct Attached{
-			Attached(const Attached_object &ao, Vector offset, Direction direction) :
-				ao(ao),
-				offset(offset),
-				direction(direction)
-			{
-			}
-			Attached(Attached_object &&ao, Vector offset, Direction direction) :
-				ao(std::move(ao)),
-				offset(offset),
-				direction(direction)
-			{
-			}
-
-			Attached_object ao;
-			Vector offset;
-			Direction direction;
-		};
-
-		void remove_attached(Attached_Object_Reference &ao){
-			private_apply(ao, [](auto &vec, std::size_t index){
-				assert(false);//removing objects like this invalidates Attached_Object_References, need to fix that
-				vec.erase(begin(vec) + index);
-			});
-			ao.set_invalid();
-		}
-
-		template<class Attached_object>
-		static std::vector<Attached<Attached_object>> &get_attached(){
-			static_assert(Helper::Index<Attached_object, supported_types>::value < 1000000, "Requesting unsupported type"); //just need to instantiate the template, comparison doesn't matter
-			static std::vector<Attached<Attached_object>> attached;
-			return attached;
-		}
-
-		//data members
-		std::array<Attached_Object_Reference, max_attached_objects> attached_objects;
+		//storing attached objects
+		Helper::VectorHolderFromTuple<Supported_types>::type attached_objects;
 	};
 }
 

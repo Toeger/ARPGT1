@@ -12,10 +12,6 @@ namespace Physical {
 			transformator(t),
 			radius(radius)
 		{}
-		Circle(const Vector &pos, float radius) :
-			transformator(Transformator::get_translation_matrix(pos)),
-			radius(radius)
-		{}
 		Transformator transformator;
 		float radius;
 	};
