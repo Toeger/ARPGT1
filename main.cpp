@@ -36,7 +36,6 @@ void handle_events(sf::RenderWindow &window, Player &p){
 		switch (event.type){
 		case sf::Event::Closed: //closed the window
 		{
-			p.set_window(nullptr);
 			window.close();
 		}
 		return;
@@ -54,9 +53,18 @@ void handle_events(sf::RenderWindow &window, Player &p){
 			p.camera.set_zoom(pow(1 - zoom_factor, event.mouseWheel.delta));
 		}
 		break;
-		default:
+		case sf::Event::KeyPressed:
 		{
+			switch (event.key.code){
+			case sf::Keyboard::Escape:
+				window.close();
+				return;
+			default:
+			break;
+			}
 		}
+		break;
+		default:
 		break;
 		}
 	}
@@ -84,9 +92,6 @@ void render_frame(sf::RenderWindow &window){
 }
 
 int main(){
-	Physical::Body body;
-	body.attach(Physical::Circle(100), {0, 0}, {0, 0});
-
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{
 		//this should not do anything, but somehow sometimes prevents the window from not responding
@@ -101,11 +106,12 @@ int main(){
 	const auto lfps = 30; //logical frames per second, independent of graphical fps
 	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
 
-
 	Player &p = Player::player;
 	p.set_window(&window);
 	{
 		Physical::Body b;
+		b.attach(Physical::Circle(30), {100, -50}, {});
+		b.attach(Physical::Circle(30), {-100, -50}, {});
 		b.attach(Physical::Circle(100), {}, {});
 		p.add(std::move(b));
 	}
@@ -119,4 +125,5 @@ int main(){
 		render_frame(window);
 		handle_events(window, p);
 	}
+	p.set_window(nullptr); //prevent the camera from crashing due to not having a window
 }

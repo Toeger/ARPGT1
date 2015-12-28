@@ -115,6 +115,15 @@ namespace Physical {
 		Transformator(){
 			clear();
 		}
+		Transformator(const Vector &position, Direction direction){
+			direction.normalize();
+			data[0] = direction.x;
+			data[1] = -direction.y;
+			data[2] = position.x;
+			data[3] = direction.y;
+			data[4] = direction.x;
+			data[5] = position.y;
+		}
 		Transformator &operator =(const Transformator &other) = default;
 		Transformator &assign(const Transformator &other){ //to assign through inheritance
 			return *this = other;
@@ -123,7 +132,7 @@ namespace Physical {
 		Transformator(std::array<float, 6> &&data) :
 			data(std::move(data)){
 		}
-		//static convinience constructors
+		//static convenience constructors
 		static Transformator get_translation_matrix(const Vector &v){
 			return std::array<float, 6>{1, 0, v.x, 0, 1, v.y};
 		}
@@ -132,10 +141,7 @@ namespace Physical {
 			return std::array<float, 6>{d.x, -d.y, 0, d.y, d.x, 0};
 		}
 		static Transformator get_rotation_matrix(const Vector &rotpoint, Direction d);
-		Transformator(const Vector &rotpoint, const Direction &d){
-			//TODO: rewrite this with direct initialization instead of copying
-			*this = get_rotation_matrix(rotpoint, d);
-		}
+
 		//data
 		std::array<float, 6> data;
 	};
