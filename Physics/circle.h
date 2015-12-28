@@ -8,11 +8,9 @@ namespace Physical {
 	{
 		Circle(const Circle &other) = default;
 		Circle &operator =(const Circle &) = default;
-		Circle(const Transformator &t, float radius) :
-			transformator(t),
+		Circle(float radius) :
 			radius(radius)
 		{}
-		Transformator transformator;
 		float radius;
 	};
 
