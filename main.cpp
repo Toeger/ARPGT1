@@ -20,8 +20,8 @@
 void handle_events(sf::RenderWindow &window){
 	auto &p = Player::player;
 	//check immediate action buttons
-	p.move_direction.x = 0;
-	p.move_direction.y = 0;
+	p.move_offset.x = 0;
+	p.move_offset.y = 0;
 	if (window.hasFocus()){
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
 			p.turn(-p.turnspeed);
@@ -30,16 +30,16 @@ void handle_events(sf::RenderWindow &window){
 			p.turn(p.turnspeed);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-			p.move_direction.y -= 1;
+			p.move_offset.y -= 1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-			p.move_direction.x -= 1;
+			p.move_offset.x -= 1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-			p.move_direction.y += 1;
+			p.move_offset.y += 1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-			p.move_direction.x += 1;
+			p.move_offset.x += 1;
 		}
 	}
 
@@ -87,10 +87,11 @@ void handle_events(sf::RenderWindow &window){
 void update_logical_frame(){
 	//movement, collision detection, ...
 	auto &p = Player::player;
-	if (p.move_direction.x || p.move_direction.y){
-		p.move_direction.normalize();
-		auto &playerpos = *p.get<Physical::Body>();
-		playerpos.transformator.add_translation({p.move_direction.x * p.movespeed, p.move_direction.y * p.movespeed});
+	auto length = p.move_offset.length();
+	if (length){
+		p.move_offset *= p.movespeed / length;
+		auto &playerbody = *p.get<Physical::Body>();
+		playerbody.transformator.move_in_direction(p.move_offset);
 	}
 }
 

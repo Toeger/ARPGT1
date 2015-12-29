@@ -14,9 +14,9 @@ public:
 	void set_window(sf::RenderWindow *window);
 	Camera camera;
 	static Player player;
-	Physical::Direction move_direction;
+	Physical::Vector move_offset;
 	float movespeed = 100;
-	float turnspeed = 10;
+	float turnspeed = .1;
 	void center_camera();
 	void turn(float angle);
 private:

@@ -2,7 +2,7 @@
 #define UTILITY_H
 
 #include <array>
-#include <math.h>
+#include <cmath>
 #include <limits>
 #include <SFML/System/Vector2.hpp>
 #include <ostream>
@@ -24,8 +24,16 @@ namespace Physical {
 			y(v.y)
 		{
 		}
-		 operator sf::Vector2f(){
+		operator sf::Vector2f(){
 			return {x, y};
+		}
+		float length() const{
+			return std::sqrt(x*x + y*y);
+		}
+		Vector &operator *= (float scale){
+			x *= scale;
+			y *= scale;
+			return *this;
 		}
 
 		//data
@@ -54,12 +62,12 @@ namespace Physical {
 				y = 0;
 				return;
 			}
-			float q = sqrt(sq);
+			float q = std::sqrt(sq);
 			x /= q;
 			y /= q;
 		}
 		float to_angle() const{
-			return atan2(y, x);
+			return std::atan2(y, x);
 		}
 		float x, y;
 	};
@@ -89,24 +97,25 @@ namespace Physical {
 			data[2] += v.x;
 			data[5] += v.y;
 		}
-		void clear_translation(){
-			data[2] = 0;
-			data[5] = 0;
-		}
 		Vector get_translation() const{
 			return {data[2], data[5]};
 		}
+		void move_in_direction(const Vector &v){
+			//TODO: optimize this
+			*this *= Transformator::get_translation_matrix(v);
+		}
+
 		//make the transfromation rotate the object by angle given by direction
 		void set_rotation(Direction d){
 			d.normalize();
-			//float phi = atan2(d.y, d.x);
-			//data[4] = data[0] = cos(phi);
-			//data[3] = sin(phi);
-			//data[1] = -data[3]; //-sin(phi);
 			data[4] = data[0] = d.x;
 			data[1] = -d.y;
 			data[3] = d.y;
 		}
+		void add_rotation(const Direction &d){
+			set_rotation({data[0] + d.x, data[3] + d.y});
+		}
+
 		Direction get_rotation() const{
 			return {data[0], data[3]};
 		}
