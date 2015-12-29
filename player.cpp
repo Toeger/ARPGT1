@@ -29,7 +29,7 @@ void Player::center_camera()
 void Player::turn(float angle)
 {
 	auto &t = get<Physical::Body>()->transformator;
-	t = Physical::Transformator::get_rotation_matrix(t.get_translation(), {cos(angle), sin(angle)}) * t;
+	t = Physical::Transformator::get_rotation_matrix(t.get_translation(), {std::cos(angle), std::sin(angle)}) * t;
 }
 
 float degreeToRadians(float degree){
