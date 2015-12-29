@@ -72,11 +72,9 @@ namespace Physical{
 	class Body
 	{
 	public:
-		Vector position;
-		Direction direction;
+		Transformator transformator;
 		Body(const Vector &position, const Direction &direction) :
-			position(position),
-			direction(direction)
+			transformator(position, direction)
 		{
 		}
 		Body() : Body({}, {}){}
@@ -104,7 +102,7 @@ namespace Physical{
 		template<class Function, class T>
 		void apply(Function &&f){
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
-				f(ao);
+				f(ao.first, transformator * ao.second);
 			}
 		}
 		template <class Function, class T1, class T2, class... Rest>

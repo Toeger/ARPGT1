@@ -17,8 +17,11 @@
 #include "Physics/circle.h"
 #include "Graphics/physicals.h"
 
-void handle_events(sf::RenderWindow &window, Player &p){
+void handle_events(sf::RenderWindow &window){
+	auto &p = Player::player;
 	//check immediate action buttons
+	p.move_direction.x = 0;
+	p.move_direction.y = 0;
 	if (window.hasFocus()){
 		const auto camera_turning_speed = 5.f; //in degree
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
@@ -26,6 +29,18 @@ void handle_events(sf::RenderWindow &window, Player &p){
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
 			p.camera.rotate(camera_turning_speed);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+			p.move_direction.y -= 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+			p.move_direction.x -= 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+			p.move_direction.y += 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+			p.move_direction.x += 1;
 		}
 	}
 
@@ -71,7 +86,13 @@ void handle_events(sf::RenderWindow &window, Player &p){
 }
 
 void update_logical_frame(){
-	//TODO: movement, collision detection, ...
+	//movement, collision detection, ...
+	auto &p = Player::player;
+	if (p.move_direction.x || p.move_direction.y){
+		p.move_direction.normalize();
+		auto &playerpos = *p.get<Physical::Body>();
+		playerpos.transformator.add_translation({p.move_direction.x * p.speed, p.move_direction.y * p.speed});
+	}
 }
 
 void render_frame(sf::RenderWindow &window){
@@ -123,7 +144,7 @@ int main(){
 		}
 		p.camera.set_position(0, 0);
 		render_frame(window);
-		handle_events(window, p);
+		handle_events(window);
 	}
 	p.set_window(nullptr); //prevent the camera from crashing due to not having a window
 }

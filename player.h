@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "weapon.h"
 #include "entity.h"
+#include "Physics/physics_utility.h"
 
 class Player : public Entity
 {
@@ -13,6 +14,8 @@ public:
 	void set_window(sf::RenderWindow *window);
 	Camera camera;
 	static Player player;
+	Physical::Direction move_direction;
+	float speed = 1;
 private:
 };
 
