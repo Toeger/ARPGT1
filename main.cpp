@@ -91,7 +91,7 @@ void update_logical_frame(){
 	if (p.move_direction.x || p.move_direction.y){
 		p.move_direction.normalize();
 		auto &playerpos = *p.get<Physical::Body>();
-		playerpos.transformator.add_translation({p.move_direction.x * p.speed, p.move_direction.y * p.speed});
+		playerpos.transformator.add_translation({p.move_direction.x * p.movespeed, p.move_direction.y * p.movespeed});
 	}
 }
 
@@ -127,6 +127,16 @@ int main(){
 	const auto lfps = 30; //logical frames per second, independent of graphical fps
 	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
 
+	Entity temp;
+	{
+		Physical::Body b;
+		b.attach(Physical::Circle(10), {1000, 1000}, {});
+		b.attach(Physical::Circle(10), {-1000, 1000}, {});
+		b.attach(Physical::Circle(10), {1000, -1000}, {});
+		b.attach(Physical::Circle(10), {-1000, -1000}, {});
+		temp.add(std::move(b));
+	}
+
 	Player &p = Player::player;
 	p.set_window(&window);
 	{
@@ -142,7 +152,7 @@ int main(){
 			last_update_timepoint += logical_frame_duration;
 			update_logical_frame();
 		}
-		p.camera.set_position(0, 0);
+		p.center_camera();
 		render_frame(window);
 		handle_events(window);
 	}

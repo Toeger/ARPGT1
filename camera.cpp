@@ -16,12 +16,17 @@ void Camera::set_window(sf::RenderWindow *window)
 		window->setView(view);
 }
 
-void Camera::set_position(float x, float y)
+void Camera::set_position(const Physical::Vector &pos)
 {
-	view.setCenter(x, y);
+	view.setCenter(pos.x, pos.y);
 	//view.move(x, y);
 	//view.setRotation(x);
 	window->setView(view); //required even though the documentation says otherwise
+}
+
+void Camera::set_rotation(const Physical::Direction &rot)
+{
+	set_rotation(rot.to_angle());
 }
 
 void Camera::set_rotation(float angle)
@@ -29,9 +34,9 @@ void Camera::set_rotation(float angle)
 	view.setRotation(angle);
 }
 
-void Camera::face(float x, float y)
+void Camera::face(const Physical::Vector &pos)
 {
-	view.setRotation(atan2(y, x) * 180 / M_PI + 90);
+	view.setRotation(atan2(pos.y, pos.x) * 180 / M_PI + 90);
 }
 
 void Camera::rotate(float turningangle)

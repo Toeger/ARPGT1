@@ -15,7 +15,9 @@ public:
 	Camera camera;
 	static Player player;
 	Physical::Direction move_direction;
-	float speed = 1;
+	float movespeed = 100;
+	float turnspeed = 10;
+	void center_camera();
 private:
 };
 
