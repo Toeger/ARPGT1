@@ -18,6 +18,7 @@ public:
 	float movespeed = 100;
 	float turnspeed = 10;
 	void center_camera();
+	void turn(float angle);
 private:
 };
 

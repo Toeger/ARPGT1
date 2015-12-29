@@ -23,12 +23,11 @@ void handle_events(sf::RenderWindow &window){
 	p.move_direction.x = 0;
 	p.move_direction.y = 0;
 	if (window.hasFocus()){
-		const auto camera_turning_speed = 5.f; //in degree
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-			p.camera.rotate(-camera_turning_speed);
+			p.turn(-p.turnspeed);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
-			p.camera.rotate(camera_turning_speed);
+			p.turn(p.turnspeed);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
 			p.move_direction.y -= 1;

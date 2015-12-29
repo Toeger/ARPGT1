@@ -26,6 +26,12 @@ void Player::center_camera()
 	camera.set_rotation(t.get_rotation().to_angle());
 }
 
+void Player::turn(float angle)
+{
+	auto &t = get<Physical::Body>()->transformator;
+	t = Physical::Transformator::get_rotation_matrix(t.get_translation(), {cos(angle), sin(angle)}) * t;
+}
+
 float degreeToRadians(float degree){
 	return degree * M_PI / 180;
 }
