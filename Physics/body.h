@@ -72,15 +72,28 @@ namespace Physical{
 	class Body
 	{
 	public:
-		Transformator transformator;
+		Transformator &current_transformator(){
+			return current_is_1 ? transformator1 : transformator2;
+		}
+		Transformator &next_transformator(){
+			return current_is_1 ? transformator2 : transformator1;
+		}
+		static void end_frame(){
+			current_is_1 = !current_is_1;
+		}
+
 		Body(const Vector &position, const Direction &direction) :
-			transformator(position, direction)
+			transformator1(position, direction),
+			transformator2(transformator1)
 		{
 		}
 		Body() : Body({}, {}){}
 		Body(const Vector &position) : Body(position, {}){}
 		Body(const Direction &direction) : Body({}, direction){}
-		Body(Body &&other){
+		Body(Body &&other) :
+			transformator1(other.transformator1),
+			transformator2(other.transformator2)
+		{
 			using std::swap;
 			swap(attached_objects, other.attached_objects);
 		}
@@ -102,7 +115,7 @@ namespace Physical{
 		template<class Function, class T>
 		void apply(Function &&f){
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
-				f(ao.first, transformator * ao.second);
+				f(ao.first, current_transformator() * ao.second);
 			}
 		}
 		template <class Function, class T1, class T2, class... Rest>
@@ -127,6 +140,8 @@ namespace Physical{
 		}
 
 	private:
+		Transformator transformator1, transformator2;
+		static bool current_is_1; //true when currently using transformator1, else using transformator2
 		//storing attached objects
 		Helper::VectorHolderFromTuple<Supported_types>::type attached_objects;
 	};

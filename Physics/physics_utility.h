@@ -102,6 +102,7 @@ namespace Physical {
 		}
 		void move_in_direction(const Vector &v){
 			//TODO: optimize this
+
 			*this *= Transformator::get_translation_matrix(v);
 		}
 
