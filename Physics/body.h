@@ -80,6 +80,9 @@ namespace Physical{
 			return current_is_1 ? transformator2 : transformator1;
 		}
 		static void end_frame(){
+			for (auto r = System::range<Body>(); r; r.advance()){
+				r.get<Body>().next_transformator() = r.get<Body>().current_transformator();
+			}
 			current_is_1 = !current_is_1;
 		}
 
@@ -141,16 +144,16 @@ namespace Physical{
 		}
 		//operators
 		Body &operator +=(const Vector &vector){
-			current_transformator() += vector;
-			if (colliding()){
-				current_transformator() -= vector;
+			auto next = current_transformator() + vector;
+			if (!colliding()){
+				next_transformator() = next;
 			}
 			return *this;
 		}
 		Body &operator +=(const Direction &direction){
-			current_transformator() += direction;
-			if (colliding()){
-				current_transformator() -= direction;
+			auto next = current_transformator() += direction;
+			if (!colliding()){
+				next_transformator() = next;
 			}
 			return *this;
 		}
