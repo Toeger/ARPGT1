@@ -44,7 +44,8 @@ namespace Physical{
 			return *this;
 		}
 		void clear(){
-			left = right = bottom = top = 0;
+			left = bottom = std::numeric_limits<float>::max();
+			right = top = std::numeric_limits<float>::min();
 		}
 	};
 	inline bool collides(const AABB &b1, const AABB &b2){
