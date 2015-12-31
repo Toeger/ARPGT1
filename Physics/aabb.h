@@ -44,14 +44,13 @@ namespace Physical{
 		}
 		void clear(){
 			left = bottom = std::numeric_limits<float>::max();
-			right = top = std::numeric_limits<float>::min();
+			right = top = -std::numeric_limits<float>::max(); //std::numeric_limits<float>::min() returns a positive number
 		}
 	};
 	inline std::ostream &operator <<(std::ostream &os, const AABB &aabb){
 		return os << '[' << aabb.left << ',' << aabb.top << ',' << aabb.right << ',' << aabb.bottom << ']';
 	}
 	inline bool collides(const AABB &b1, const AABB &b2){
-		std::cout << b1 << ' ' << b2 << std::endl;
 		return b1.left < b2.right && b1.right > b2.left && b1.bottom < b2.top && b1.top > b2.bottom;
 	}
 }
