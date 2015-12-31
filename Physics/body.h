@@ -138,14 +138,14 @@ namespace Physical{
 
 		//operators
 		Body &operator +=(const Vector &vector){
-			auto new_transformator = current_transformator() + vector;
+			auto new_transformator = next_transformator() + vector;
 			if (!colliding(new_transformator)){
 				next_transformator() = new_transformator;
 			}
 			return *this;
 		}
 		Body &operator +=(const Direction &direction){
-			auto new_transformator = current_transformator() + direction;
+			auto new_transformator = next_transformator() + direction;
 			if (!colliding(new_transformator)){
 				next_transformator() = new_transformator;
 			}
