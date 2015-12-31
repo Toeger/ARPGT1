@@ -10,6 +10,7 @@
 #include "utility.h"
 #include "Physics/physics_utility.h"
 #include "Physics/circle.h"
+#include "entity.h"
 
 namespace Physical{
 	//add types here to allow attaching them to a body
@@ -141,14 +142,34 @@ namespace Physical{
 		//operators
 		Body &operator +=(const Vector &vector){
 			current_transformator() += vector;
+			if (colliding()){
+				current_transformator() -= vector;
+			}
 			return *this;
 		}
 		Body &operator +=(const Direction &direction){
 			current_transformator() += direction;
+			if (colliding()){
+				current_transformator() -= direction;
+			}
 			return *this;
 		}
 
 	private:
+		bool colliding(){
+			//TODO:
+			/*
+			for (auto r = System::range<Body>(); r; r.advance()){
+				if (collides(r.get<Body>().aabb, this->aabb)){
+					if (collides(r.get<Body>(), *this)){
+						return true;
+					}
+				}
+			}
+			*/
+			return false;
+		}
+
 		Transformator transformator1, transformator2;
 		static bool current_is_1; //true when currently using transformator1, else using transformator2
 		//storing attached objects

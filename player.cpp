@@ -28,7 +28,7 @@ void Player::center_camera()
 
 void Player::turn(float angle)
 {
-	(*get<Physical::Body>()) += Physical::Direction(angle);
+	(*get<Physical::Body>()) += Physical::Direction::from_radians(angle);
 }
 
 float degreeToRadians(float degree){

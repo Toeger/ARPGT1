@@ -55,10 +55,6 @@ namespace Physical {
 			x(1),
 			y(0)
 		{}
-		Direction(float angle):
-			x(std::cos(angle)),
-			y(std::sin(angle))
-		{}
 		Direction(float x, float y) :
 			x(x),
 			y(y)
@@ -83,7 +79,20 @@ namespace Physical {
 			x = newx;
 			return *this;
 		}
-
+		Direction &operator -=(const Direction &other){
+			auto newx = x * other.x + y * other.y;
+			y = y * other.x - x * other.y;
+			x = newx;
+			return *this;
+		}
+		static Direction from_radians(float radians){
+			return {std::cos(radians), std::sin(radians)};
+		}
+		static Direction from_degrees(float degrees){
+			return from_radians(degrees * M_PI / 180);
+		}
+		Direction(const Direction &) = default;
+		Direction &operator =(const Direction &) = default;
 	private:
 		void normalize(){
 			auto sq = x * x + y * y;
@@ -114,8 +123,15 @@ namespace Physical {
 			vector.y += direction.get_y() * offset.x + direction.get_x() * offset.y;
 			return *this;
 		}
+		Transformator &operator -= (const Vector &offset){
+			return *this += -offset;
+		}
 		Transformator &operator += (const Direction &dir){
 			direction += dir;
+			return *this;
+		}
+		Transformator &operator -= (const Direction &dir){
+			direction -= dir;
 			return *this;
 		}
 		Transformator &operator += (const Transformator &other){
