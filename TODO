@@ -1,6 +1,7 @@
 Issues
 TODO
     Figure out why the template variable version of System has a segfault on exit
+    Make resizing of window not change zoom
 
 Collision resolution:
     Features:

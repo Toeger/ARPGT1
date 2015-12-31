@@ -95,18 +95,8 @@ namespace Physical{
 		Body() : Body({}, {}){}
 		Body(const Vector &position) : Body(position, {}){}
 		Body(const Direction &direction) : Body({}, direction){}
-		Body(Body &&other) :
-			transformator1(other.transformator1),
-			transformator2(other.transformator2)
-		{
-			using std::swap;
-			swap(attached_objects, other.attached_objects);
-		}
-		Body &operator =(Body &&other){
-			using std::swap;
-			swap(attached_objects, other.attached_objects);
-			return *this;
-		}
+		Body(Body &&other) = default;
+		Body &operator =(Body &&other) = default;
 		~Body() = default;
 
 		//attach an object to this Body with the given offset and Direction
@@ -159,7 +149,9 @@ namespace Physical{
 			}
 			return *this;
 		}
-
+		const AABB &get_aabb() const{
+			return aabb;
+		}
 	private:
 		bool colliding(Transformator &new_transformator){ //takes a mutable Transformator and temporarily mutates it, but turns it back, so it is sort of const
 			auto new_aabb = get_aabb(new_transformator);

@@ -128,6 +128,18 @@ int main(){
 	const auto lfps = 30; //logical frames per second, independent of graphical fps
 	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
 
+	Entity dots[4];
+	{
+		int counter = 0;
+		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};
+		for (auto &p : ps){
+			Physical::Body b;
+			b.attach(Physical::Circle(10), p, {});
+			 dots[counter++].add(std::move(b));
+		}
+	}
+
+	/*
 	Entity temp;
 	{
 		Physical::Body b;
@@ -137,6 +149,7 @@ int main(){
 		b.attach(Physical::Circle(10), {-1000, -1000}, {});
 		temp.add(std::move(b));
 	}
+	*/
 
 	Player &p = Player::player;
 	p.set_window(&window);

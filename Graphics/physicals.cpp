@@ -1,6 +1,7 @@
 #include "physicals.h"
 #include "entity.h"
 #include "Physics/body.h"
+#include "Physics/aabb.h"
 
 static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t){
 	sf::CircleShape s(c.radius);
@@ -18,5 +19,11 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 					[&window](auto &physical_object, const Physical::Transformator &t){
 			draw_physical(window, physical_object, t);
 		});
+		const auto &aabb = sit.get<Physical::Body>().get_aabb();
+		sf::RectangleShape r({aabb.right - aabb.left, aabb.top - aabb.bottom});
+		r.setOutlineColor(sf::Color::Red);
+		r.setOutlineThickness(1);
+		r.setPosition(aabb.left, aabb.bottom);
+		window.draw(r);
 	}
 }
