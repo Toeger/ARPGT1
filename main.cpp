@@ -111,6 +111,7 @@ void render_frame(sf::RenderWindow &window){
 	}
 	Graphics::draw_physicals(window);
 	window.display();
+	window.display();
 }
 
 int main(){
