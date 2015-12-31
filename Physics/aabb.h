@@ -1,16 +1,18 @@
 #ifndef AABB_H
 #define AABB_H
 
+#include <limits>
+
 #include "physics_utility.h"
 #include "circle.h"
 
 namespace Physical{
 	struct AABB{
 		AABB() :
-		left(0),
-		right(0),
-		bottom(0),
-		top(0)
+		left(std::numeric_limits<float>::max()),
+		right(std::numeric_limits<float>::min()),
+		bottom(std::numeric_limits<float>::max()),
+		top(std::numeric_limits<float>::min())
 		{}
 		AABB(const Vector &bottom_left, float width, float height) :
 			left(bottom_left.x),
@@ -35,9 +37,6 @@ namespace Physical{
 		AABB &operator = (const AABB &other) = default;
 		float left, right, bottom, top;
 		AABB &combine(const AABB &other){
-			if (is_clear()){
-				return *this = other;
-			}
 			left = std::min(left, other.left);
 			right = std::max(right, other.right);
 			bottom = std::min(bottom, other.bottom);
@@ -46,9 +45,6 @@ namespace Physical{
 		}
 		void clear(){
 			left = right = bottom = top = 0;
-		}
-		bool is_clear() const{
-			return left == 0 && right == 0 && bottom == 0 && top == 0;
 		}
 	};
 	inline bool collides(const AABB &b1, const AABB &b2){

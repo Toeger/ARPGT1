@@ -1,7 +1,6 @@
 Issues
 TODO
     Figure out why the template variable version of System has a segfault on exit
-    Figure out which combination of values from Transformator to use to get the direction. Use an assert to make sure they match? Do I even need to save them in 4 variables? Maybe 2 are enough?
 
 Collision resolution:
     Features:
