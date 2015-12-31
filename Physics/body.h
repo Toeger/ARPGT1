@@ -12,6 +12,7 @@
 #include "Physics/circle.h"
 #include "entity.h"
 #include "aabb.h"
+#include "collision.h"
 
 namespace Physical{
 	//add types here to allow attaching them to a body
@@ -57,6 +58,17 @@ namespace Physical{
 				return rest.template get<U>();
 			}
 
+			template <class U>
+			std::enable_if_t<std::is_same<T, U>::value, const std::vector<std::pair<U, Transformator>> &>
+			get() const{
+				return data;
+			}
+			template <class U>
+			std::enable_if_t<!std::is_same<T, U>::value, const std::vector<std::pair<U, Transformator>> &>
+			get() const{
+				return rest.template get<U>();
+			}
+
 			std::vector<std::pair<T, Transformator>> data;
 			struct VectorHolder<Rest...> rest;
 		};
@@ -78,6 +90,12 @@ namespace Physical{
 			return current_is_1 ? transformator1 : transformator2;
 		}
 		Transformator &next_transformator(){
+			return current_is_1 ? transformator2 : transformator1;
+		}
+		const Transformator &current_transformator() const{
+			return current_is_1 ? transformator1 : transformator2;
+		}
+		const Transformator &next_transformator() const{
 			return current_is_1 ? transformator2 : transformator1;
 		}
 		static void end_frame(){
@@ -136,6 +154,32 @@ namespace Physical{
 			apply<decltype((f)), 0>(f);
 		}
 
+		template<class Function, class T>
+		void apply(Function &&f) const{
+			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
+				f(ao.first, current_transformator() + ao.second);
+			}
+		}
+		template <class Function, class T1, class T2, class... Rest>
+		void apply(Function &&f) const{
+			apply<T1>(f);
+			apply<T2, Rest...>(f);
+		}
+		template <class Function, std::size_t type_number>
+		std::enable_if_t<type_number == number_of_supported_types>
+		apply(Function &&) const
+		{}
+		template <class Function, std::size_t type_number>
+		std::enable_if_t<type_number < number_of_supported_types>
+		apply(Function &&f) const{
+			apply<decltype((f)), decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
+			apply<decltype((f)), type_number + 1>(f);
+		}
+		template <class Function>
+		void apply(Function &&f) const{
+			apply<decltype((f)), 0>(f);
+		}
+
 		//operators
 		Body &operator +=(const Vector &vector){
 			auto new_transformator = next_transformator() + vector;
@@ -191,9 +235,19 @@ namespace Physical{
 		//storing attached objects
 		Helper::VectorHolderFromTuple<Supported_types>::type attached_objects;
 		AABB aabb;
-		static bool collides(const Body &, const Body &){
+		static bool collides(const Body &b1, const Body &b2){
+			bool collided = false;
+			b1.apply([&collided, &b2](const auto &obj1, const Transformator &t1){
+				if (!collided){
+					b2.apply([&collided, &obj1, &t1](const auto obj2, const Transformator &t2){
+						if (!collided){
+							collided = Physical::collides(obj1, t1, obj2, t2);
+						}
+					});
+				}
+			});
 			//TODO: do exact collision detection between all attached shapes
-			return true;
+			return collided;
 		}
 	};
 }
