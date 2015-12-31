@@ -147,6 +147,9 @@ namespace Physical {
 	inline Transformator operator +(Transformator lhs, const Vector &rhs){
 		return lhs += rhs;
 	}
+	inline Transformator operator +(Transformator lhs, const Direction &rhs){
+		return lhs += rhs;
+	}
 }
 
 #endif // UTILITY_H

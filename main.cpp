@@ -93,6 +93,7 @@ void update_logical_frame(){
 		auto &playerbody = *p.get<Physical::Body>();
 		playerbody += p.move_offset;
 	}
+	Physical::Body::end_frame();
 }
 
 void render_frame(sf::RenderWindow &window){

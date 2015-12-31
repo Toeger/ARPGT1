@@ -11,6 +11,7 @@
 #include "Physics/physics_utility.h"
 #include "Physics/circle.h"
 #include "entity.h"
+#include "aabb.h"
 
 namespace Physical{
 	//add types here to allow attaching them to a body
@@ -81,7 +82,7 @@ namespace Physical{
 		}
 		static void end_frame(){
 			for (auto r = System::range<Body>(); r; r.advance()){
-				r.get<Body>().next_transformator() = r.get<Body>().current_transformator();
+				r.get<Body>().current_transformator() = r.get<Body>().next_transformator();
 			}
 			current_is_1 = !current_is_1;
 		}
@@ -113,9 +114,10 @@ namespace Physical{
 		void attach(T &&t, Vector offset, Direction direction){
 			static_assert(Helper::Index<T, Supported_types>::value < 1000000, "Requesting unsupported type"); //just need to instantiate the template, comparison doesn't matter
 			auto &attached_vector = attached_objects.get<Utility::remove_cvr<T>>();
-			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), Transformator{offset, direction}));
+			Transformator transformator{offset, direction};
+			aabb.combine(AABB(t, transformator));
+			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), std::move(transformator)));
 		}
-
 		template<class Function, class T>
 		void apply(Function &&f){
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
@@ -129,54 +131,76 @@ namespace Physical{
 		}
 		template <class Function, std::size_t type_number>
 		std::enable_if_t<type_number == number_of_supported_types>
-		apply(Function &&){}
-
+		apply(Function &&)
+		{}
 		template <class Function, std::size_t type_number>
 		std::enable_if_t<type_number < number_of_supported_types>
 		apply(Function &&f){
 			apply<decltype((f)), decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
 			apply<decltype((f)), type_number + 1>(f);
 		}
-
 		template <class Function>
 		void apply(Function &&f){
 			apply<decltype((f)), 0>(f);
 		}
+
 		//operators
 		Body &operator +=(const Vector &vector){
-			auto next = current_transformator() + vector;
-			if (!colliding()){
-				next_transformator() = next;
+			auto new_transformator = current_transformator() + vector;
+			if (!colliding(new_transformator)){
+				next_transformator() = new_transformator;
 			}
 			return *this;
 		}
 		Body &operator +=(const Direction &direction){
-			auto next = current_transformator() += direction;
-			if (!colliding()){
-				next_transformator() = next;
+			auto new_transformator = current_transformator() + direction;
+			if (!colliding(new_transformator)){
+				next_transformator() = new_transformator;
 			}
 			return *this;
 		}
 
 	private:
-		bool colliding(){
-			//TODO:
-			/*
+		bool colliding(Transformator &new_transformator){ //takes a mutable Transformator and temporarily mutates it, but turns it back, so it is sort of const
+			auto new_aabb = get_aabb(new_transformator);
 			for (auto r = System::range<Body>(); r; r.advance()){
-				if (collides(r.get<Body>().aabb, this->aabb)){
-					if (collides(r.get<Body>(), *this)){
+				auto &other = r.get<Body>();
+				if (&other == this)
+					continue;
+				if (Physical::collides(other.aabb, new_aabb)){
+					if (collides(other, *this)){
 						return true;
 					}
 				}
 			}
-			*/
 			return false;
+		}
+		AABB get_aabb(Transformator &t){
+			using std::swap;
+			swap(t, current_transformator());
+			AABB aabb;
+			apply([&aabb](auto &type, const Transformator &t){
+				aabb.combine(AABB(type, t));
+			});
+			swap(t, current_transformator());
+			return aabb;
+		}
+		void update_aabb(){
+			aabb.clear();
+			apply([this](auto &type, const Transformator &t){
+				aabb.combine(AABB(type, t));
+			});
 		}
 
 		Transformator transformator1, transformator2;
 		static bool current_is_1; //true when currently using transformator1, else using transformator2
 		//storing attached objects
 		Helper::VectorHolderFromTuple<Supported_types>::type attached_objects;
+		AABB aabb;
+		static bool collides(const Body &, const Body &){
+			//TODO: do exact collision detection between all attached shapes
+			return true;
+		}
 	};
 }
 
