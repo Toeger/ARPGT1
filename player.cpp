@@ -22,14 +22,13 @@ void Player::set_window(sf::RenderWindow *window)
 void Player::center_camera()
 {
 	auto &t = get<Physical::Body>()->current_transformator();
-	camera.set_position(t.get_translation());
-	camera.set_rotation(t.get_rotation().to_angle() * 180 / M_PI);
+	camera.set_position(t.vector);
+	camera.set_rotation(t.direction.to_degrees());
 }
 
 void Player::turn(float angle)
 {
-	auto &t = get<Physical::Body>()->current_transformator();
-	t = Physical::Transformator::get_rotation_matrix(t.get_translation(), {std::cos(angle), std::sin(angle)}) * t;
+	(*get<Physical::Body>()) += Physical::Direction(angle);
 }
 
 float degreeToRadians(float degree){

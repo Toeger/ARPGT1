@@ -4,8 +4,7 @@
 
 static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t){
 	sf::CircleShape s(c.radius);
-	auto pos = t.get_translation();
-	//s.setRotation(t.get_rotation().to_angle()); //don't need to set the rotation when drawing a circle because it doesn't do anything
+	auto pos = t.vector;
 	s.setPosition(pos.x - c.radius, pos.y - c.radius);
 	auto r = (const unsigned char *)&c.radius;
 	s.setFillColor(sf::Color(r[0], r[1] + 127, r[2]));

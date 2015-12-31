@@ -91,7 +91,7 @@ void update_logical_frame(){
 	if (length){
 		p.move_offset *= p.movespeed / length;
 		auto &playerbody = *p.get<Physical::Body>();
-		playerbody.current_transformator().move_in_direction(p.move_offset);
+		playerbody += p.move_offset;
 	}
 }
 

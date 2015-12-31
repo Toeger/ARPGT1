@@ -115,7 +115,7 @@ namespace Physical{
 		template<class Function, class T>
 		void apply(Function &&f){
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
-				f(ao.first, current_transformator() * ao.second);
+				f(ao.first, current_transformator() + ao.second);
 			}
 		}
 		template <class Function, class T1, class T2, class... Rest>
@@ -137,6 +137,15 @@ namespace Physical{
 		template <class Function>
 		void apply(Function &&f){
 			apply<decltype((f)), 0>(f);
+		}
+		//operators
+		Body &operator +=(const Vector &vector){
+			current_transformator() += vector;
+			return *this;
+		}
+		Body &operator +=(const Direction &direction){
+			current_transformator() += direction;
+			return *this;
 		}
 
 	private:

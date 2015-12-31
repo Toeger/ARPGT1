@@ -48,13 +48,43 @@ namespace Physical {
 
 	//A Direction defines the direction an object is oriented towards
 	//A direction of (x=1, y=0) means the object is rotated by 0 degrees
-	//A direction of (x=1, y=1) means the object is rotated by 45 degrees counter clockwise
+	//A direction of (x=sqrt(0.5), y=sqrt(0.5)) means the object is rotated by 45 degrees counter clockwise
+	//Direction automatically normalizes its values
 	struct Direction{
-		Direction(float x = 0, float y = 0) :
+		Direction() :
+			x(1),
+			y(0)
+		{}
+		Direction(float angle):
+			x(std::cos(angle)),
+			y(std::sin(angle))
+		{}
+		Direction(float x, float y) :
 			x(x),
 			y(y)
 		{
+			normalize();
 		}
+		float to_radians() const{
+			return std::atan2(y, x);
+		}
+		float to_degrees() const{
+			return std::atan2(y, x) * 180 / M_PI;
+		}
+		float get_x(){
+			return x;
+		}
+		float get_y(){
+			return y;
+		}
+		Direction &operator +=(const Direction &other){
+			auto newx = x * other.x - y * other.y;
+			y = y * other.x + x * other.y;
+			x = newx;
+			return *this;
+		}
+
+	private:
 		void normalize(){
 			auto sq = x * x + y * y;
 			if (sq < std::numeric_limits<float>::epsilon()){
@@ -66,127 +96,37 @@ namespace Physical {
 			x /= q;
 			y /= q;
 		}
-		float to_angle() const{
-			return std::atan2(y, x);
-		}
 		float x, y;
 	};
 
-	//a 3x2 matrix that can move and rotate objects (TODO: scale?)
+	//a Transformator contains a position vector and a direction vector
+	//applying a Transformator will translate by the position vector and then turn it by the direction vector
 	struct Transformator{
-		/* Matrix indexes:
-		 * 012
-		 * 345
-		 * 678
-		*/
-		void clear(){
-			//set to identity matrix
-			data[0] = 1;
-			data[1] = 0;
-			data[2] = 0;
-			data[3] = 0;
-			data[4] = 1;
-			data[5] = 0;
+		Vector vector;
+		Direction direction;
+		Transformator(const Vector &vector, const Direction &direction) :
+			vector(vector),
+			direction(direction)
+		{}
+		//operators
+		Transformator &operator += (const Vector &offset){
+			vector.x += direction.get_x() * offset.x - direction.get_y() * offset.y;
+			vector.y += direction.get_y() * offset.x + direction.get_x() * offset.y;
+			return *this;
 		}
-		//make the transformation move the object by given vector from 0/0
-		void set_translation(const Vector &v){
-			data[2] = v.x;
-			data[5] = v.y;
+		Transformator &operator += (const Direction &dir){
+			direction += dir;
+			return *this;
 		}
-		void add_translation(const Vector &v){
-			data[2] += v.x;
-			data[5] += v.y;
+		Transformator &operator += (const Transformator &other){
+			*this += other.vector; //oder of evaluation matters
+			direction += other.direction;
+			return *this;
 		}
-		Vector get_translation() const{
-			return {data[2], data[5]};
-		}
-		void move_in_direction(const Vector &v){
-			//TODO: optimize this
-
-			*this *= Transformator::get_translation_matrix(v);
-		}
-
-		//make the transfromation rotate the object by angle given by direction
-		void set_rotation(Direction d){
-			d.normalize();
-			data[4] = data[0] = d.x;
-			data[1] = -d.y;
-			data[3] = d.y;
-		}
-		void add_rotation(const Direction &d){
-			set_rotation({data[0] + d.x, data[3] + d.y});
-		}
-
-		Direction get_rotation() const{
-			return {data[0], data[3]};
-		}
-		//constructors and operators
-		Transformator(const Transformator &other) = default;
-		Transformator(){
-			clear();
-		}
-		Transformator(const Vector &position, Direction direction){
-			direction.normalize();
-			data[0] = direction.x;
-			data[1] = -direction.y;
-			data[2] = position.x;
-			data[3] = direction.y;
-			data[4] = direction.x;
-			data[5] = position.y;
-		}
-		Transformator &operator =(const Transformator &other) = default;
-		Transformator &assign(const Transformator &other){ //to assign through inheritance
-			return *this = other;
-		}
-		Transformator &operator *=(const Transformator &other);
-		Transformator(std::array<float, 6> &&data) :
-			data(std::move(data)){
-		}
-		//static convenience constructors
-		static Transformator get_translation_matrix(const Vector &v){
-			return std::array<float, 6>{1, 0, v.x, 0, 1, v.y};
-		}
-		static Transformator get_rotation_matrix(Direction d){
-			d.normalize();
-			return std::array<float, 6>{d.x, -d.y, 0, d.y, d.x, 0};
-		}
-		static Transformator get_rotation_matrix(const Vector &rotpoint, Direction d);
-
-		//data
-		std::array<float, 6> data;
 	};
-
-	//mathmatical operations
-	inline Transformator operator *(const Transformator &lhs, const Transformator &rhs){
-		return Transformator({
-								 lhs.data[0] * rhs.data[0] + lhs.data[1] * rhs.data[3],
-								 lhs.data[0] * rhs.data[1] + lhs.data[1] * rhs.data[4],
-								 lhs.data[0] * rhs.data[2] + lhs.data[1] * rhs.data[5] + lhs.data[2],
-								 lhs.data[3] * rhs.data[0] + lhs.data[4] * rhs.data[3],
-								 lhs.data[3] * rhs.data[1] + lhs.data[4] * rhs.data[4],
-								 lhs.data[3] * rhs.data[2] + lhs.data[4] * rhs.data[5] + lhs.data[5],
-							 });
-	}
-	inline Vector operator *(const Transformator &lhs, const Vector &rhs){
-		return {lhs.data[0] * rhs.x + lhs.data[1] * rhs.y + lhs.data[2], lhs.data[3] * rhs.x + lhs.data[4] * rhs.y + lhs.data[5]};
-	}
-
-	inline Transformator &Transformator::operator *=(const Transformator &other)
-	{
-		//TODO: this can probably be optimized
-		return *this = *this * other;
-	}
-
-	//printing
-	inline std::ostream &operator << (std::ostream & os, const Transformator &t){
-		return os << t.data[0] << ',' << t.data[1] << ',' << t.data[2] << '\n'
-				  << t.data[3] << ',' << t.data[4] << ',' << t.data[5] << '\n';
-	}
-
-	//implementations for Transformator function:
-	inline Transformator Transformator::get_rotation_matrix(const Vector &r, Direction d){
-		d.normalize();
-		return std::array<float, 6>{d.x, -d.y, r.x*(1 - d.x) + d.y * r.y, d.y, d.x, r.y * (1 - d.x) - d.y * r.x};
+	//Transformator operators
+	inline Transformator operator +(Transformator lhs, const Transformator &rhs){
+		return lhs += rhs;
 	}
 }
 

@@ -26,7 +26,7 @@ void Camera::set_position(const Physical::Vector &pos)
 
 void Camera::set_rotation(const Physical::Direction &rot)
 {
-	set_rotation(rot.to_angle());
+	set_rotation(rot.to_radians());
 }
 
 void Camera::set_rotation(float angle)
