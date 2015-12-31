@@ -82,7 +82,9 @@ namespace Physical{
 		}
 		static void end_frame(){
 			for (auto r = System::range<Body>(); r; r.advance()){
-				r.get<Body>().current_transformator() = r.get<Body>().next_transformator();
+				auto &body = r.get<Body>();
+				body.current_transformator() = body.next_transformator();
+				body.update_aabb();
 			}
 			current_is_1 = !current_is_1;
 		}
@@ -139,7 +141,6 @@ namespace Physical{
 			auto new_transformator = current_transformator() + vector;
 			if (!colliding(new_transformator)){
 				next_transformator() = new_transformator;
-				update_aabb();
 			}
 			return *this;
 		}
@@ -147,7 +148,6 @@ namespace Physical{
 			auto new_transformator = current_transformator() + direction;
 			if (!colliding(new_transformator)){
 				next_transformator() = new_transformator;
-				update_aabb();
 			}
 			return *this;
 		}

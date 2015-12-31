@@ -20,14 +20,13 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 			draw_physical(window, physical_object, t);
 		});
 		const auto &aabb = sit.get<Physical::Body>().get_aabb();
-		const auto &t = sit.get<Physical::Body>().current_transformator();
 		const auto &width = aabb.right - aabb.left;
 		const auto &height = aabb.top - aabb.bottom;
 		sf::RectangleShape r({width, height});
 		r.setOutlineColor(sf::Color::Red);
 		r.setFillColor(sf::Color::Transparent);
 		r.setOutlineThickness(5);
-		r.setPosition(t.vector.x - width / 2, t.vector.y - height / 2);
+		r.setPosition(aabb.left, aabb.bottom);
 		window.draw(r);
 	}
 }
