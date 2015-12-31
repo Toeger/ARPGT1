@@ -139,6 +139,7 @@ namespace Physical{
 			auto new_transformator = current_transformator() + vector;
 			if (!colliding(new_transformator)){
 				next_transformator() = new_transformator;
+				update_aabb();
 			}
 			return *this;
 		}
@@ -146,6 +147,7 @@ namespace Physical{
 			auto new_transformator = current_transformator() + direction;
 			if (!colliding(new_transformator)){
 				next_transformator() = new_transformator;
+				update_aabb();
 			}
 			return *this;
 		}

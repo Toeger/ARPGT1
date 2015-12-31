@@ -23,7 +23,7 @@ void Player::center_camera()
 {
 	auto &t = get<Physical::Body>()->current_transformator();
 	camera.set_position(t.vector);
-	camera.set_rotation(t.direction.to_degrees());
+	//camera.set_rotation(t.direction.to_degrees());
 }
 
 void Player::turn(float angle)
