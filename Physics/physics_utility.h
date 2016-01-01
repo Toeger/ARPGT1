@@ -45,6 +45,9 @@ namespace Physical {
 	inline Vector operator -(const Vector &v){
 		return {-v.x, -v.y};
 	}
+	inline Vector operator -(const Vector &lhs, const Vector &rhs){
+		return {lhs.x - rhs.x, lhs.y - rhs.y};
+	}
 
 	//A Direction defines the direction an object is oriented towards
 	//A direction of (x=1, y=0) means the object is rotated by 0 degrees
