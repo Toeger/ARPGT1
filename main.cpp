@@ -159,7 +159,7 @@ int main(){
 		b.attach(Physical::Circle(30), {100, -50}, {});
 		b.attach(Physical::Circle(30), {-100, -50}, {});
 		b.attach(Physical::Circle(100), {}, {});
-		b.attach(Physical::Line(100, 0), {}, {0, -1});
+		b.attach(Physical::Line(150, 0), {}, {0, 1});
 		p.add(std::move(b));
 	}
 
