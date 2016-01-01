@@ -25,6 +25,11 @@ namespace Utility {
 		a = a2;
 	}
 
+	template<class T, size_t size>
+	constexpr size_t element_count(const T (&)[size]){
+		return size;
+	}
+
 	template<class T>
 	using remove_cvr = std::remove_cv_t<std::remove_reference_t<T>>;
 

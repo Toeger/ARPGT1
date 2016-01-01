@@ -9,7 +9,7 @@
 
 #include "utility.h"
 #include "Physics/physics_utility.h"
-#include "Physics/circle.h"
+#include "Physics/shapes.h"
 #include "entity.h"
 #include "aabb.h"
 #include "collision.h"
@@ -17,7 +17,7 @@
 namespace Physical{
 	//add types here to allow attaching them to a body
 	//all attachable types must be listed here
-	using Supported_types = std::tuple<Physical::Circle>;
+	using Supported_types = std::tuple<Physical::Circle, Physical::Line>;
 	static const constexpr std::size_t number_of_supported_types = std::tuple_size<Supported_types>::value;
 
 	namespace Helper{

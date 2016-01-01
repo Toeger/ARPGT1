@@ -14,7 +14,7 @@
 #include "make_function.h"
 
 #include "Physics/body.h"
-#include "Physics/circle.h"
+#include "Physics/shapes.h"
 #include "Graphics/physicals.h"
 
 void handle_events(sf::RenderWindow &window){
@@ -159,6 +159,7 @@ int main(){
 		b.attach(Physical::Circle(30), {100, -50}, {});
 		b.attach(Physical::Circle(30), {-100, -50}, {});
 		b.attach(Physical::Circle(100), {}, {});
+		b.attach(Physical::Line(100, 0), {}, {0, -1});
 		p.add(std::move(b));
 	}
 

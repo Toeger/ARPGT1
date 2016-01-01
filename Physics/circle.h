@@ -4,6 +4,7 @@
 #include "physics_utility.h"
 
 namespace Physical {
+	//define a physical circle with center 0/0
 	struct Circle
 	{
 		Circle(const Circle &other) = default;

@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "physics_utility.h"
-#include "circle.h"
+#include "shapes.h"
 
 namespace Physical{
 	struct AABB{
@@ -31,6 +31,15 @@ namespace Physical{
 		bottom(t.vector.y - c.radius),
 		top(t.vector.y + c.radius)
 		{}
+		AABB(const Physical::Line &c, const Transformator &t)
+		{
+			const auto &p1 = t.vector;
+			const auto &p2 = t + c.vector;
+			left = std::min(p1.x, p2.vector.x);
+			right = std::max(p1.x, p2.vector.x);
+			bottom = std::min(p1.y, p2.vector.y);
+			top = std::max(p1.y, p2.vector.y);
+		}
 		AABB(const AABB &other) = default;
 		~AABB() = default;
 		AABB &operator = (const AABB &other) = default;
@@ -51,6 +60,7 @@ namespace Physical{
 		return os << '[' << aabb.left << ',' << aabb.top << ',' << aabb.right << ',' << aabb.bottom << ']';
 	}
 	inline bool collides(const AABB &b1, const AABB &b2){
+		return true;
 		return b1.left < b2.right && b1.right > b2.left && b1.bottom < b2.top && b1.top > b2.bottom;
 	}
 }
