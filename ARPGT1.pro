@@ -30,7 +30,8 @@ HEADERS += \
     Physics/physics_utility.h \
     Graphics/physicals.h \
     Physics/collision.h \
-    Physics/aabb.h
+    Physics/aabb.h \
+    Physics/line.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
 QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
