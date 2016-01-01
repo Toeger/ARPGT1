@@ -32,13 +32,14 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 			draw_physical(window, physical_object, t);
 		});
 		const auto &aabb = sit.get<Physical::Body>().get_aabb();
-		const auto &width = aabb.right - aabb.left;
-		const auto &height = aabb.top - aabb.bottom;
-		sf::RectangleShape r({width, height});
-		r.setOutlineColor(sf::Color::Red);
-		r.setFillColor(sf::Color::Transparent);
-		r.setOutlineThickness(5);
-		r.setPosition(aabb.left, aabb.bottom);
-		window.draw(r);
+		sf::Vertex line[] =
+		{
+			sf::Vertex(sf::Vector2f(aabb.left, aabb.top), sf::Color::Red),
+			sf::Vertex(sf::Vector2f(aabb.right, aabb.top), sf::Color::Red),
+			sf::Vertex(sf::Vector2f(aabb.right, aabb.bottom), sf::Color::Red),
+			sf::Vertex(sf::Vector2f(aabb.left, aabb.bottom), sf::Color::Red),
+			sf::Vertex(sf::Vector2f(aabb.left, aabb.top), sf::Color::Red),
+		};
+		window.draw(line, Utility::element_count(line), sf::LinesStrip);
 	}
 }
