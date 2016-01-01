@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "camera.h"
-#include "weapon.h"
 #include "entity.h"
 #include "Physics/physics_utility.h"
 
