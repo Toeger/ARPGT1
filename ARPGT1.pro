@@ -12,11 +12,8 @@ SOURCES += main.cpp \
     player.cpp \
     practicedummy.cpp \
     camera.cpp \
-    weapon.cpp \
     entity.cpp \
     Physics/body.cpp \
-    Physics/circle.cpp \
-    Physics/utility.cpp \
     Graphics/physicals.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
@@ -25,7 +22,6 @@ HEADERS += \
     player.h \
     practicedummy.h \
     camera.h \
-    weapon.h \
     utility.h \
     entity.h \
     make_function.h \
