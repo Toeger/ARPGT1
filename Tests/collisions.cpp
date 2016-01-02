@@ -57,10 +57,41 @@ static void test_line_line_collisions(){
 }
 
 static void test_line_circle_collision(){
-	Physical::Line l(10, 0);
-	Physical::Circle c(10);
+	Physical::Line l(5, 0);
+	Physical::Circle c(1);
 	Physical::Transformator t1({}, {}), t2({}, {});
 	assert(Physical::collides(c, t1, l, t2));
+	t1.vector.x = 2;
+	t1.vector.y = 2;
+	assert(!Physical::collides(c, t1, l, t2));
+	t1.vector.y = 2;
+	assert(!Physical::collides(c, t1, l, t2));
+	t1.vector.x = t1.vector.y = -1;
+	assert(!Physical::collides(c, t1, l, t2));
+	t1.vector.y = 1;
+	assert(!Physical::collides(c, t1, l, t2));
+	t1.vector.x = 6;
+	assert(!Physical::collides(c, t1, l, t2));
+	t1.vector.y = -1;
+	assert(!Physical::collides(c, t1, l, t2));
+
+	c.radius = 2;
+	t1.vector.x = t1.vector.y = -1;
+	assert(Physical::collides(c, t1, l, t2));
+	t1.vector.y = 1;
+	assert(Physical::collides(c, t1, l, t2));
+	t1.vector.x = 6;
+	assert(Physical::collides(c, t1, l, t2));
+	t1.vector.y = -1;
+	assert(Physical::collides(c, t1, l, t2));
+
+	c.radius = 3;
+	t1.vector.x = 2;
+	t1.vector.y = 2;
+	assert(Physical::collides(c, t1, l, t2));
+	t1.vector.y = 2;
+	assert(Physical::collides(c, t1, l, t2));
+
 }
 
 void test_collisions(){
