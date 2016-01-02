@@ -92,6 +92,33 @@ static void test_line_circle_collision(){
 	t1.vector.y = 2;
 	assert(Physical::collides(c, t1, l, t2));
 
+	l.vector.x = -2;
+	l.vector.y = -6;
+	c.radius = 1;
+	t1.vector.x = 0;
+	t1.vector.y = 0;
+	Physical::Transformator transformators[] = {{{}, {}}, {{199, 323}, {23, 49}}, {{199, -323}, {-23, 49}}, {{-199, 323}, {23, -49}}, {{-199, 323}, {-23, 49}}};
+	for (auto &t : transformators){
+		t2.vector.x = -2;
+		t2.vector.y = -2;
+		assert(!Physical::collides(l, t + t1, c, t + t2));
+		t2.vector.x = 0;
+		t2.vector.y = -4;
+		assert(!Physical::collides(l, t + t1, c, t + t2));
+		t2.vector.x = 1;
+		t2.vector.y = 1;
+		assert(!Physical::collides(l, t + t1, c, t + t2));
+		t2.vector.x = -3;
+		t2.vector.y = -7;
+		assert(!Physical::collides(l, t + t1, c, t + t2));
+		t2.vector.x = -1;
+		t2.vector.y = -2;
+		assert(Physical::collides(l, t + t1, c, t + t2));
+		t2.vector.x = -1;
+		t2.vector.y = -4;
+		assert(Physical::collides(l, t + t1, c, t + t2));
+	}
+
 }
 
 void test_collisions(){
