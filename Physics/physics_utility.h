@@ -70,10 +70,10 @@ namespace Physical {
 		float to_degrees() const{
 			return std::atan2(y, x) * 180 / M_PI;
 		}
-		float get_x(){
+		float get_x() const{
 			return x;
 		}
-		float get_y(){
+		float get_y() const{
 			return y;
 		}
 		Direction &operator +=(const Direction &other){
@@ -87,6 +87,9 @@ namespace Physical {
 			y = y * other.x - x * other.y;
 			x = newx;
 			return *this;
+		}
+		Direction operator -() const{
+			return {x, -y};
 		}
 		static Direction from_radians(float radians){
 			return {std::cos(radians), std::sin(radians)};
@@ -110,6 +113,9 @@ namespace Physical {
 		}
 		float x, y;
 	};
+	inline Direction operator -(Direction lhs, const Direction &rhs){
+		return lhs -= rhs;
+	}
 
 	//a Transformator contains a position vector and a direction vector
 	//applying a Transformator will translate by the position vector and then turn it by the direction vector

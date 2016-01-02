@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include <array>
 #include <typeinfo>
+#include <cassert>
 
 #include "player.h"
 #include "practicedummy.h"
@@ -16,6 +17,7 @@
 #include "Physics/body.h"
 #include "Physics/shapes.h"
 #include "Graphics/physicals.h"
+#include "Tests/tester.h"
 
 void handle_events(sf::RenderWindow &window){
 	auto &p = Player::player;
@@ -115,6 +117,7 @@ void render_frame(sf::RenderWindow &window){
 }
 
 int main(){
+	assert(Tester::run());
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{
 		//this should not do anything, but somehow sometimes prevents the window from not responding

@@ -14,7 +14,9 @@ SOURCES += main.cpp \
     camera.cpp \
     entity.cpp \
     Physics/body.cpp \
-    Graphics/physicals.cpp
+    Graphics/physicals.cpp \
+    Tests/tester.cpp \
+    Tests/collisions.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -32,7 +34,9 @@ HEADERS += \
     Physics/collision.h \
     Physics/aabb.h \
     Physics/line.h \
-    Physics/shapes.h
+    Physics/shapes.h \
+    Tests/tester.h \
+    Tests/collisions.h
 
 QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
 QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
