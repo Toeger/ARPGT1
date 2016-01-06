@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "Physics/collision.h"
+#include "Tests/tests_utility.h"
 
 static void test_circle_circle_collisions(){
 	Physical::Transformator t1({0, 0}, {}), t2({0, 0}, {});
@@ -99,6 +100,14 @@ static void test_line_circle_collision(){
 	t1.vector.y = 0;
 	Physical::Transformator transformators[] = {{{}, {}}, {{199, 323}, {23, 49}}, {{199, -323}, {-23, 49}}, {{-199, 323}, {23, -49}}, {{-199, 323}, {-23, 49}}};
 	for (auto &t : transformators){
+		Physical::Transformator cleared = t + t.right_inverse();
+		assert_equal(cleared.vector.length(), 0);
+		assert_equal(cleared.direction.get_x(), 1);
+		assert_equal(cleared.direction.get_y(), 0);
+		cleared = t.left_inverse() + t;
+		assert_equal(cleared.vector.length(), 0);
+		assert_equal(cleared.direction.get_x(), 1);
+		assert_equal(cleared.direction.get_y(), 0);
 		t2.vector.x = -2;
 		t2.vector.y = -2;
 		assert(!Physical::collides(l, t + t1, c, t + t2));

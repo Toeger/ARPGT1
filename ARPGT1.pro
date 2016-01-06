@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     Physics/body.cpp \
     Graphics/physicals.cpp \
     Tests/tester.cpp \
-    Tests/collisions.cpp
+    Tests/collisions.cpp \
+    Tests/physics_utility.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -36,9 +37,11 @@ HEADERS += \
     Physics/line.h \
     Physics/shapes.h \
     Tests/tester.h \
-    Tests/collisions.h
+    Tests/collisions.h \
+    Tests/physics_utility.h \
+    Tests/tests_utility.h
 
-QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
+QMAKE_CXXFLAGS += -Wall -Werror -std=c++1z -g
 QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 #QMAKE_CFLAGS += -flto
 

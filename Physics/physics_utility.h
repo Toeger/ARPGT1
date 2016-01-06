@@ -14,16 +14,14 @@ namespace Physical {
 		Vector(float x = 0, float y = 0) :
 			x(x),
 			y(y)
-		{
-		}
+		{}
 		Vector(const Vector &) = default;
 
 		//compatibility with sf::Vector2f
 		Vector(const sf::Vector2f &v) :
 			x(v.x),
 			y(v.y)
-		{
-		}
+		{}
 		operator sf::Vector2f(){
 			return {x, y};
 		}
@@ -113,6 +111,9 @@ namespace Physical {
 		}
 		float x, y;
 	};
+	inline Direction operator +(Direction lhs, const Direction &rhs){
+		return lhs += rhs;
+	}
 	inline Direction operator -(Direction lhs, const Direction &rhs){
 		return lhs -= rhs;
 	}
@@ -122,6 +123,8 @@ namespace Physical {
 	struct Transformator{
 		Vector vector;
 		Direction direction;
+		Transformator()
+		{}
 		Transformator(const Vector &vector, const Direction &direction) :
 			vector(vector),
 			direction(direction)
@@ -144,9 +147,23 @@ namespace Physical {
 			return *this;
 		}
 		Transformator &operator += (const Transformator &other){
-			*this += other.vector; //oder of evaluation matters
+			*this += other.vector; //order of evaluation matters
 			direction += other.direction;
 			return *this;
+		}
+		Transformator &operator = (const Transformator &other) = default;
+		//inverting transformations
+		Transformator left_inverse() const{
+			Transformator t;
+			t -= direction;
+			t -= vector;
+			return t;
+		}
+		Transformator right_inverse() const{
+			Transformator t;
+			t -= direction;
+			t -= vector;
+			return t;
 		}
 	};
 	//Transformator operators
