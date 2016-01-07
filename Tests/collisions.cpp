@@ -98,6 +98,23 @@ static void test_line_circle_collision(){
 	c.radius = 1;
 	t1.vector.x = 0;
 	t1.vector.y = 0;
+
+	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};
+	for (auto  x : testnumbers){
+		for (auto y : testnumbers){
+			for (auto dx : testnumbers){
+				for (auto dy : testnumbers){
+					Physical::Transformator t({x, y}, {dx, dy});
+					for (auto &cleared : {t + t.right_inverse(), t.left_inverse() + t}){
+						assert_equal(cleared.vector.x, 0);
+						assert_equal(cleared.vector.y, 0);
+						assert_equal(cleared.direction.get_x(), 1);
+						assert_equal(cleared.direction.get_y(), 0);
+					}
+				}
+			}
+		}
+	}
 	Physical::Transformator transformators[] = {{{}, {}}, {{199, 323}, {23, 49}}, {{199, -323}, {-23, 49}}, {{-199, 323}, {23, -49}}, {{-199, 323}, {-23, 49}}};
 	for (auto &t : transformators){
 		Physical::Transformator cleared = t + t.right_inverse();

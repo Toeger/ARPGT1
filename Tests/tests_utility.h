@@ -19,7 +19,7 @@ template <class T, class U>
 std::enable_if_t<std::is_floating_point<T>::value || std::is_floating_point<U>::value>
 assert_equal(const T &a, const U &b){
 	if (std::abs(b) < 1){
-		assert(a - b < 0.00005);
+		assert(a - b < 0.0005);
 	}
 	else{
 		assert(std::abs(a / b) - 1 < 0.000005);

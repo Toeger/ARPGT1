@@ -38,8 +38,6 @@ namespace Physical {
 		Transformator t = t2.left_inverse();
 		//rotate by inverse of l.vector direction so l.vector.y will be 0 and l.vector.x will be positive
 		t -= Direction(l.vector.x, l.vector.y);
-		auto cleared = t + t2 + l.vector;
-		(void)cleared; //make sure cleared.vector.x == l.vector.length() and cleared.vector.y == 0
 
 		t += t1;
 		using Helper::collides;
