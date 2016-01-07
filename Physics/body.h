@@ -112,7 +112,7 @@ namespace Physical{
 			transformator2(transformator1)
 		{
 		}
-		Body() : Body({}, {}){}
+		Body() = default;
 		Body(const Vector &position) : Body(position, {}){}
 		Body(const Direction &direction) : Body({}, direction){}
 		Body(Body &&other) = default;
@@ -246,7 +246,6 @@ namespace Physical{
 					});
 				}
 			});
-			//TODO: do exact collision detection between all attached shapes
 			return collided;
 		}
 	};
