@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <iostream>
+#include <algorithm>
 
 #include "physics_utility.h"
 #include "shapes.h"
@@ -35,15 +36,15 @@ namespace Physical{
 		{
 			const auto &p1 = t.vector;
 			const auto &p2 = t + c.vector;
-			left = std::min(p1.x, p2.vector.x);
-			right = std::max(p1.x, p2.vector.x);
+			auto left_right = std::minmax(p1.x, p2.vector.x);
+			left = left_right.first;
+			right = left_right.second;
 			bottom = std::min(p1.y, p2.vector.y);
 			top = std::max(p1.y, p2.vector.y);
 		}
 		AABB(const AABB &other) = default;
 		~AABB() = default;
 		AABB &operator = (const AABB &other) = default;
-		float left, right, bottom, top;
 		AABB &combine(const AABB &other){
 			left = std::min(left, other.left);
 			right = std::max(right, other.right);
@@ -55,6 +56,9 @@ namespace Physical{
 			left = bottom = std::numeric_limits<float>::max();
 			right = top = -std::numeric_limits<float>::max(); //std::numeric_limits<float>::min() returns a positive number
 		}
+
+		//Data
+		float left, right, bottom, top;
 	};
 	inline std::ostream &operator <<(std::ostream &os, const AABB &aabb){
 		return os << '[' << aabb.left << ',' << aabb.top << ',' << aabb.right << ',' << aabb.bottom << ']';
