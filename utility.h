@@ -6,25 +6,6 @@
 #include <SFML/Graphics.hpp>
 
 namespace Utility {
-	inline void normalize(float &a, float &b){
-		auto length = sqrt(a * a + b * b);
-		if (length < std::numeric_limits<float>::epsilon()){
-			//probably not the correct way to handle normalization of a nullvector, throw an exception instead?
-			a = 1;
-			b = 0;
-			return;
-		}
-		a /= length;
-		b /= length;
-	}
-	inline void rotate(float &a, float &b, float angle){
-		//do I need to manually cache results of sin(angle) and cos(angle)?
-		//is there a way to provide angle as a vector and would it be more efficient?
-		auto a2 = a * cos(angle) - b * sin(angle);
-		b = a * sin(angle) + b * cos(angle);
-		a = a2;
-	}
-
 	template<class T, size_t size>
 	constexpr size_t element_count(const T (&)[size]){
 		return size;
