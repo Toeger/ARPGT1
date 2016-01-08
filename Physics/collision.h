@@ -9,13 +9,26 @@ namespace Physical {
 			return n * n;
 		}
 
+		struct Point{
+			float x, y;
+		};
+
+		struct Rect{
+			float left, right, bottom, top;
+			bool valid() const{
+				return left <= right && bottom <= top;
+
+			}
+		};
+
 		//check if a point x/y collides with an axis aligned rectangle with coordinates defined by left, right, bottom, top
-		inline bool collides(float x, float y, float left, float right, float bottom, float top){
-			return x > left && x < right && y > bottom && y < top;
+		inline bool collides(Point p, Rect rect){
+			assert(rect.valid());
+			return p.x > rect.left && p.x < rect.right && p.y > rect.bottom && p.y < rect.top;
 		}
-		//check if point x/y collides with circle with center at cx/cy and radius cr
-		inline bool collides(float x, float y, float cx, float cy, float cr){
-			return square(x - cx) + square(y - cy) < square(cr);
+		//check if point p collides with circle with center at cx/cy and radius cr
+		inline bool collides(Point p, Point circle_center, float circle_radius){
+			return square(p.x - circle_center.x) + square(p.y - circle_center.y) < square(circle_radius);
 		}
 	}
 
@@ -41,9 +54,9 @@ namespace Physical {
 
 		t += t1;
 		using Helper::collides;
-		bool collides_with_rect = collides(t.vector.x, t.vector.y, 0, l.vector.length(), -c.radius, c.radius);
-		bool collides_with_00 = collides(0, 0, t.vector.x, t.vector.y, c.radius);
-		bool collides_with_vec = collides(l.vector.length(), 0, t.vector.x, t.vector.y, c.radius);
+		bool collides_with_rect = collides({t.vector.x, t.vector.y}, {0, l.vector.length(), -c.radius, c.radius});
+		bool collides_with_00 = collides({0, 0}, {t.vector.x, t.vector.y}, c.radius);
+		bool collides_with_vec = collides({l.vector.length(), 0}, {t.vector.x, t.vector.y}, c.radius);
 		return  collides_with_rect || collides_with_00 || collides_with_vec;
 	}
 	inline bool collides(const Physical::Line &l, const Transformator &t1, const Physical::Circle &c, const Transformator &t2){
