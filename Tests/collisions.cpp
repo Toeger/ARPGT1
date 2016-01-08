@@ -3,6 +3,44 @@
 #include "Physics/collision.h"
 #include "Tests/tests_utility.h"
 
+static void test_helper_collides_point_circle(){
+	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};
+	for (float dx : testnumbers){
+		for (float dy : testnumbers){
+			for (float radius : {1.f, 0.1f, 100.f}){
+				assert(Physical::Helper::collides({dx, dy}, {dx, dy}, radius));
+				assert(Physical::Helper::collides({dx + radius * 0.8f, dy}, {dx, dy}, radius));
+				assert(Physical::Helper::collides({dx - radius * 0.8f, dy}, {dx, dy}, radius));
+				assert(Physical::Helper::collides({dx, dy + radius * 0.8f}, {dx, dy}, radius));
+				assert(Physical::Helper::collides({dx, dy + radius * 0.8f}, {dx, dy}, radius));
+				for (float sign1 : {1, -1}){
+					for (float sign2 : {1, -1}){
+						assert(Physical::Helper::collides({dx + sign1 * radius * 0.7f, dy + sign2 * radius * 0.7f}, {dx, dy}, radius));
+						assert(!Physical::Helper::collides({dx + sign1 * radius * 1.1f, dy}, {dx, dy}, radius));
+						assert(!Physical::Helper::collides({dx, dy + sign1 * radius * 1.1f}, {dx, dy}, radius));
+						assert(!Physical::Helper::collides({dx + sign1 * radius * 0.8f, dy + sign2 * radius * 0.8f}, {dx, dy}, radius));
+					}
+				}
+			}
+		}
+	}
+}
+
+static void test_helper_collides_point_rect(){
+	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};
+	for (float x : testnumbers){
+		for (float y : testnumbers){
+			for (float d : {0.1f, 1.f, 10.f, 33.f, 444.f}){
+				assert(Physical::Helper::collides({x, y}, {x - d, x + d, y - d, y + d}));
+				assert(!Physical::Helper::collides({x, y}, {x + d, x + 2 * d, y - d, y + d}));
+				assert(!Physical::Helper::collides({x, y}, {x - 2 * d, x - d, y - d, y + d}));
+				assert(!Physical::Helper::collides({x, y}, {x - d, x + d, y + d, y + 2 * d}));
+				assert(!Physical::Helper::collides({x, y}, {x - d, x + d, y - 2 * d, y - d}));
+			}
+		}
+	}
+}
+
 static void test_circle_circle_collisions(){
 	Physical::Transformator t1({0, 0}, {}), t2({0, 0}, {});
 	Physical::Circle c1(10), c2(20);
@@ -148,6 +186,8 @@ static void test_line_circle_collision(){
 }
 
 void test_collisions(){
+	test_helper_collides_point_circle();
+	test_helper_collides_point_rect();
 	test_circle_circle_collisions();
 	test_line_line_collisions();
 	test_line_circle_collision();
