@@ -46,12 +46,12 @@ static void test_transformator(){
 	assert_equal(t3.vector.y, 99);
 	assert_equal(t3.direction.to_degrees(), 60);
 
-	auto t4 = t3.left_inverse();
+	auto t4 = -t3;
 	assert_equal((t4 + t3).direction.to_degrees(), 0);
 	assert_equal((t4 + t3).vector.x, 0);
 	assert_equal((t4 + t3).vector.y, 0);
 
-	t4 = t3.right_inverse();
+	t4 = -t3;
 	assert_equal((t3 + t4).direction.to_degrees(), 0);
 	assert_equal((t3 + t4).vector.x, 0);
 	assert_equal((t3 + t4).vector.y, 0);

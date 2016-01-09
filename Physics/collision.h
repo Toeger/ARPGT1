@@ -48,11 +48,12 @@ namespace Physical {
 	inline bool collides(const Physical::Circle &c, const Transformator &t1, const Physical::Line &l, const Transformator &t2){
 		//Idea: create a transformator that transforms l to be at points (0/0)-(length/0), then apply that transformator to c and do very simple collision detection
 		//undo t2 transformation to have l's start point at (0/0)
-		Transformator t = t2.left_inverse();
+		Transformator t = -t2;
 		//rotate by inverse of l.vector direction so l.vector.y will be 0 and l.vector.x will be positive
-		t -= Direction(l.vector.x, l.vector.y);
 
 		t += t1;
+		t = Transformator(-Direction(l.vector.x, l.vector.y)) + t;
+
 		using Helper::collides;
 		bool collides_with_rect = collides({t.vector.x, t.vector.y}, {0, l.vector.length(), -c.radius, c.radius});
 		bool collides_with_00 = collides({0, 0}, {t.vector.x, t.vector.y}, c.radius);

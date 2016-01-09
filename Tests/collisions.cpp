@@ -143,7 +143,7 @@ static void test_line_circle_collision(){
 			for (auto dx : testnumbers){
 				for (auto dy : testnumbers){
 					Physical::Transformator t({x, y}, {dx, dy});
-					for (auto &cleared : {t + t.right_inverse(), t.left_inverse() + t}){
+					for (auto &cleared : {t + -t, -t + t}){
 						assert_equal(cleared.vector.x, 0);
 						assert_equal(cleared.vector.y, 0);
 						assert_equal(cleared.direction.get_x(), 1);
@@ -155,11 +155,11 @@ static void test_line_circle_collision(){
 	}
 	Physical::Transformator transformators[] = {{{}, {}}, {{199, 323}, {23, 49}}, {{199, -323}, {-23, 49}}, {{-199, 323}, {23, -49}}, {{-199, 323}, {-23, 49}}};
 	for (auto &t : transformators){
-		Physical::Transformator cleared = t + t.right_inverse();
+		Physical::Transformator cleared = t + -t;
 		assert_equal(cleared.vector.length(), 0);
 		assert_equal(cleared.direction.get_x(), 1);
 		assert_equal(cleared.direction.get_y(), 0);
-		cleared = t.left_inverse() + t;
+		cleared = -t + t;
 		assert_equal(cleared.vector.length(), 0);
 		assert_equal(cleared.direction.get_x(), 1);
 		assert_equal(cleared.direction.get_y(), 0);

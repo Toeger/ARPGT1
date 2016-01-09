@@ -125,6 +125,9 @@ namespace Physical {
 		Direction direction;
 		Transformator()
 		{}
+		Transformator(const Direction &direction) :
+			direction(direction)
+		{}
 		Transformator(const Vector &vector, const Direction &direction) :
 			vector(vector),
 			direction(direction)
@@ -153,13 +156,7 @@ namespace Physical {
 		}
 		Transformator &operator = (const Transformator &other) = default;
 		//inverting transformations
-		Transformator left_inverse() const{
-			Transformator t;
-			t -= direction;
-			t -= vector;
-			return t;
-		}
-		Transformator right_inverse() const{
+		Transformator operator -() const{
 			Transformator t;
 			t -= direction;
 			t -= vector;
