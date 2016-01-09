@@ -206,7 +206,7 @@ namespace Physical{
 				if (&other == this)
 					continue;
 				if (Physical::collides(other.aabb, new_aabb)){
-					if (collides(other, *this)){
+					if (collides(other, *this, new_transformator - current_transformator())){
 						return true;
 					}
 				}
@@ -239,6 +239,20 @@ namespace Physical{
 					b2.apply([&collided, &obj1, &t1](const auto obj2, const Transformator &t2){
 						if (!collided){
 							collided = Physical::collides(obj1, t1, obj2, t2);
+						}
+					});
+				}
+			});
+			return collided;
+		}
+		static bool collides(const Body &b1, const Body &b2, const Transformator &offset){
+			//checks collision, except that the transformator for b2 has the given offset from b2.current_transformator()
+			bool collided = false;
+			b1.apply([&collided, &b2, &offset](const auto &obj1, const Transformator &t1){
+				if (!collided){
+					b2.apply([&collided, &obj1, &t1, &offset](const auto obj2, const Transformator &t2){
+						if (!collided){
+							collided = Physical::collides(obj1, t1, obj2, t2 + offset);
 						}
 					});
 				}
