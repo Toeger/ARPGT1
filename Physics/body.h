@@ -199,7 +199,7 @@ namespace Physical{
 			return aabb;
 		}
 	private:
-		bool colliding(Transformator &new_transformator){ //takes a mutable Transformator and temporarily mutates it, but turns it back, so it is sort of const
+		bool colliding(const Transformator &new_transformator){
 			auto new_aabb = get_aabb(new_transformator);
 			for (auto r = System::range<Body>(); r; r.advance()){
 				auto &other = r.get<Body>();
@@ -213,14 +213,11 @@ namespace Physical{
 			}
 			return false;
 		}
-		AABB get_aabb(Transformator &t){
-			using std::swap;
-			swap(t, current_transformator());
+		AABB get_aabb(const Transformator &t) const{
 			AABB aabb;
-			apply([&aabb](auto &type, const Transformator &t){
+			apply([&aabb, &t](auto &type, const Transformator &){
 				aabb.combine(AABB(type, t));
 			});
-			swap(t, current_transformator());
 			return aabb;
 		}
 		void update_aabb(){
