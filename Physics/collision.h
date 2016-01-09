@@ -48,17 +48,18 @@ namespace Physical {
 	inline bool collides(const Physical::Circle &c, const Transformator &t1, const Physical::Line &l, const Transformator &t2){
 		//Idea: create a transformator that transforms l to be at points (0/0)-(length/0), then apply that transformator to c and do very simple collision detection
 		//undo t2 transformation to have l's start point at (0/0)
-		Transformator t = -t2;
 		//rotate by inverse of l.vector direction so l.vector.y will be 0 and l.vector.x will be positive
-
-		t += t1;
-		t = Transformator(-Direction(l.vector.x, l.vector.y)) + t;
-
+		auto t = Transformator(-Direction(l.vector.x, l.vector.y)) + (-t2 + t1);
 		using Helper::collides;
+		/*
 		bool collides_with_rect = collides({t.vector.x, t.vector.y}, {0, l.vector.length(), -c.radius, c.radius});
 		bool collides_with_00 = collides({0, 0}, {t.vector.x, t.vector.y}, c.radius);
 		bool collides_with_vec = collides({l.vector.length(), 0}, {t.vector.x, t.vector.y}, c.radius);
 		return  collides_with_rect || collides_with_00 || collides_with_vec;
+		*/
+		return collides({t.vector.x, t.vector.y}, {0, l.vector.length(), -c.radius, c.radius}) ||
+				collides({0, 0}, {t.vector.x, t.vector.y}, c.radius) ||
+				collides({l.vector.length(), 0}, {t.vector.x, t.vector.y}, c.radius);
 	}
 	inline bool collides(const Physical::Line &l, const Transformator &t1, const Physical::Circle &c, const Transformator &t2){
 		return collides(c, t2, l, t1);
