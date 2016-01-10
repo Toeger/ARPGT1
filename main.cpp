@@ -94,6 +94,7 @@ void handle_events(sf::RenderWindow &window){
 					});
 				}
 				std::cout << std::flush;
+				*p.get<Physical::Body>() += Physical::Vector{0, 0};
 			}
 			break;
 			default:
