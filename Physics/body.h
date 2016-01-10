@@ -252,7 +252,7 @@ namespace Physical{
 				if (!collided){
 					b2.apply([&collided, &obj1, &t1, &offset](const auto obj2, const Transformator &t2){
 						if (!collided){
-							collided = Physical::collides(obj1, t1, obj2, t2 + offset);
+							collided = Physical::collides(obj1, t1, obj2, offset + t2);
 						}
 					});
 				}

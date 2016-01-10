@@ -19,6 +19,15 @@
 #include "Graphics/physicals.h"
 #include "Tests/tester.h"
 
+void debug_print(const Physical::Circle &c, const Physical::Transformator &t){
+	std::cout << "circle: x: " << t.vector.x << " y: " << t.vector.y << " r: " << c.radius << '\n';
+}
+
+void debug_print(const Physical::Line &l, const Physical::Transformator &t){
+	auto pos = t + l.vector;
+	std::cout << "line: x1: " << t.vector.x << " y1: " << t.vector.y << " x2: " << pos.vector.x << " y2: " << pos.vector.y << '\n';
+}
+
 void handle_events(sf::RenderWindow &window){
 	auto &p = Player::player;
 	//check immediate action buttons
@@ -26,19 +35,19 @@ void handle_events(sf::RenderWindow &window){
 	p.move_offset.y = 0;
 	if (window.hasFocus()){
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-			p.turn(-p.turnspeed);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
 			p.turn(p.turnspeed);
 		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
+			p.turn(-p.turnspeed);
+		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-			p.move_offset.y -= 1;
+			p.move_offset.y += 1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
 			p.move_offset.x -= 1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-			p.move_offset.y += 1;
+			p.move_offset.y -= 1;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
 			p.move_offset.x += 1;
@@ -75,6 +84,18 @@ void handle_events(sf::RenderWindow &window){
 			case sf::Keyboard::Escape:
 				window.close();
 				return;
+			case sf::Keyboard::Space:
+			{
+				//Debug: print out all physical entities
+				for (auto sit = System::range<Physical::Body>(); sit; sit.advance()){
+					sit.get<Physical::Body>().apply(
+								[](auto &physical_object, const Physical::Transformator &t){
+						debug_print(physical_object, t);
+					});
+				}
+				std::cout << std::flush;
+			}
+			break;
 			default:
 			break;
 			}
@@ -159,8 +180,8 @@ int main(){
 	p.set_window(&window);
 	{
 		Physical::Body b;
-		b.attach(Physical::Circle(30), {100, -50}, {});
-		b.attach(Physical::Circle(30), {-100, -50}, {});
+		b.attach(Physical::Circle(30), {100, 50}, {});
+		b.attach(Physical::Circle(30), {-100, 50}, {});
 		b.attach(Physical::Circle(100), {}, {});
 		b.attach(Physical::Line(350, 0), {}, {0, 1});
 		p.add(std::move(b));

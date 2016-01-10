@@ -18,7 +18,7 @@ void Camera::set_window(sf::RenderWindow *window)
 
 void Camera::set_position(const Physical::Vector &pos)
 {
-	view.setCenter(pos.x, pos.y);
+	view.setCenter(pos.x, -pos.y);
 	//view.move(x, y);
 	//view.setRotation(x);
 	window->setView(view); //required even though the documentation says otherwise
