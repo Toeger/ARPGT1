@@ -41,8 +41,8 @@ HEADERS += \
     Tests/physics_utility.h \
     Tests/tests_utility.h
 
-QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
-QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
+debug:QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
+debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 #QMAKE_CFLAGS += -flto
 
 DISTFILES += \
