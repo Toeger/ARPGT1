@@ -134,11 +134,6 @@ namespace Physical{
 				f(ao.first, current_transformator() + ao.second);
 			}
 		}
-		template <class Function, class T1, class T2, class... Rest>
-		void apply(Function &&f){
-			apply<T1>(f);
-			apply<T2, Rest...>(f);
-		}
 		template <class Function, std::size_t type_number>
 		std::enable_if_t<type_number == number_of_supported_types>
 		apply(Function &&)
@@ -159,11 +154,6 @@ namespace Physical{
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
 				f(ao.first, current_transformator() + ao.second);
 			}
-		}
-		template <class Function, class T1, class T2, class... Rest>
-		void apply(Function &&f) const{
-			apply<T1>(f);
-			apply<T2, Rest...>(f);
 		}
 		template <class Function, std::size_t type_number>
 		std::enable_if_t<type_number == number_of_supported_types>
