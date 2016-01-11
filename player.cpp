@@ -21,7 +21,7 @@ void Player::set_window(sf::RenderWindow *window)
 
 void Player::center_camera()
 {
-	auto &t = get<Physical::Body>()->current_transformator();
+	auto &t = get<Physical::Body>()->get_current_transformator();
 	camera.set_position(t.vector);
 	camera.set_rotation(-t.direction.to_degrees());
 }

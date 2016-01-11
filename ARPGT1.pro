@@ -13,7 +13,6 @@ SOURCES += main.cpp \
     practicedummy.cpp \
     camera.cpp \
     entity.cpp \
-    Physics/body.cpp \
     Graphics/physicals.cpp \
     Tests/tester.cpp \
     Tests/collisions.cpp \

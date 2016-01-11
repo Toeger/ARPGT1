@@ -88,8 +88,8 @@ namespace Physical{
 	public:
 		//special member functions
 		Body(const Vector &position, const Direction &direction) :
-			transformator1(position, direction),
-			transformator2(transformator1)
+			current_transformator(position, direction),
+			next_transformator(current_transformator)
 		{}
 		Body() = default;
 		Body(const Vector &position) : Body(position, {}){}
@@ -97,28 +97,13 @@ namespace Physical{
 		Body(Body &&other) = default;
 		Body &operator =(Body &&other) = default;
 
-		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
-		Transformator &current_transformator(){
-			return current_is_1 ? transformator1 : transformator2;
-		}
-		const Transformator &current_transformator() const{
-			return current_is_1 ? transformator1 : transformator2;
-		}
-		Transformator &next_transformator(){
-			return current_is_1 ? transformator2 : transformator1;
-		}
-		const Transformator &next_transformator() const{
-			return current_is_1 ? transformator2 : transformator1;
-		}
-
 		//end_frame is called after all physics has been resolved and we switch from one logical frame to the next
 		static void end_frame(){
 			for (auto r = System::range<Body>(); r; r.advance()){
 				auto &body = r.get<Body>();
-				body.current_transformator() = body.next_transformator();
+				body.current_transformator = body.next_transformator;
 				body.update_aabb();
 			}
-			current_is_1 = !current_is_1;
 		}
 
 		//attach an object to this Body with the given offset and Direction. The attached object will move when the body moves and take part in collision of the body.
@@ -144,21 +129,28 @@ namespace Physical{
 
 		//operators
 		Body &operator +=(const Vector &vector){
-			auto new_transformator = next_transformator() + vector;
+			auto new_transformator = next_transformator + vector;
 			if (!colliding(new_transformator)){
-				next_transformator() = new_transformator;
+				next_transformator = new_transformator;
 			}
 			return *this;
 		}
 		Body &operator +=(const Direction &direction){
-			auto new_transformator = next_transformator() + direction;
+			auto new_transformator = next_transformator + direction;
 			if (!colliding(new_transformator)){
-				next_transformator() = new_transformator;
+				next_transformator = new_transformator;
 			}
 			return *this;
 		}
 		const AABB &get_aabb() const{
 			return aabb;
+		}
+		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
+		const Transformator &get_current_transformator() const{
+			return current_transformator;
+		}
+		const Transformator &get_next_transformator() const{
+			return next_transformator;
 		}
 	private:
 		//overloads of apply:
@@ -166,13 +158,13 @@ namespace Physical{
 		template<class T, class Function>
 		void apply(Function &&f){
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
-				f(ao.first, current_transformator() + ao.second);
+				f(ao.first, current_transformator + ao.second);
 			}
 		}
 		template<class T, class Function>
 		void apply(Function &&f) const{
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
-				f(ao.first, current_transformator() + ao.second);
+				f(ao.first, current_transformator + ao.second);
 			}
 		}
 		//this overload ends iterating over the types
@@ -205,7 +197,7 @@ namespace Physical{
 				if (&other == this)
 					continue;
 				if (Physical::collides(other.aabb, new_aabb)){
-					if (collides(other, *this, new_transformator - current_transformator())){
+					if (collides(other, *this, new_transformator - current_transformator)){
 						return true;
 					}
 				}
@@ -226,8 +218,6 @@ namespace Physical{
 			});
 		}
 
-		Transformator transformator1, transformator2;
-		static bool current_is_1; //true when currently using transformator1, else using transformator2
 		//storing attached objects
 		Helper::VectorHolderFromTuple<Supported_types>::type attached_objects;
 		AABB aabb;
@@ -258,6 +248,8 @@ namespace Physical{
 			});
 			return collided;
 		}
+		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
+		Transformator current_transformator, next_transformator;
 	};
 }
 
