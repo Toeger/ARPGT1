@@ -128,46 +128,46 @@ namespace Physical{
 			aabb.combine(AABB(t, transformator));
 			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), std::move(transformator)));
 		}
-		template<class Function, class T>
+		template<class T, class Function>
 		void apply(Function &&f){
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
 				f(ao.first, current_transformator() + ao.second);
 			}
 		}
-		template <class Function, std::size_t type_number>
+		template <std::size_t type_number, class Function>
 		std::enable_if_t<type_number == number_of_supported_types>
 		apply(Function &&)
 		{}
-		template <class Function, std::size_t type_number>
+		template <std::size_t type_number, class Function>
 		std::enable_if_t<type_number < number_of_supported_types>
 		apply(Function &&f){
-			apply<decltype((f)), decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
-			apply<decltype((f)), type_number + 1>(f);
+			apply<decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
+			apply<type_number + 1>(f);
 		}
 		template <class Function>
 		void apply(Function &&f){
-			apply<decltype((f)), 0>(f);
+			apply<0>(f);
 		}
 
-		template<class Function, class T>
+		template<class T, class Function>
 		void apply(Function &&f) const{
 			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
 				f(ao.first, current_transformator() + ao.second);
 			}
 		}
-		template <class Function, std::size_t type_number>
+		template <std::size_t type_number, class Function>
 		std::enable_if_t<type_number == number_of_supported_types>
 		apply(Function &&) const
 		{}
-		template <class Function, std::size_t type_number>
+		template <std::size_t type_number, class Function>
 		std::enable_if_t<type_number < number_of_supported_types>
 		apply(Function &&f) const{
-			apply<decltype((f)), decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
-			apply<decltype((f)), type_number + 1>(f);
+			apply<decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
+			apply<type_number + 1>(f);
 		}
 		template <class Function>
 		void apply(Function &&f) const{
-			apply<decltype((f)), 0>(f);
+			apply<0>(f);
 		}
 
 		//operators
