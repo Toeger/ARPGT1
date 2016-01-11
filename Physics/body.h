@@ -86,18 +86,32 @@ namespace Physical{
 	class Body
 	{
 	public:
+		//special member functions
+		Body(const Vector &position, const Direction &direction) :
+			transformator1(position, direction),
+			transformator2(transformator1)
+		{}
+		Body() = default;
+		Body(const Vector &position) : Body(position, {}){}
+		Body(const Direction &direction) : Body({}, direction){}
+		Body(Body &&other) = default;
+		Body &operator =(Body &&other) = default;
+
+		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator &current_transformator(){
+			return current_is_1 ? transformator1 : transformator2;
+		}
+		const Transformator &current_transformator() const{
 			return current_is_1 ? transformator1 : transformator2;
 		}
 		Transformator &next_transformator(){
 			return current_is_1 ? transformator2 : transformator1;
 		}
-		const Transformator &current_transformator() const{
-			return current_is_1 ? transformator1 : transformator2;
-		}
 		const Transformator &next_transformator() const{
 			return current_is_1 ? transformator2 : transformator1;
 		}
+
+		//end_frame is called after all physics has been resolved and we switch from one logical frame to the next
 		static void end_frame(){
 			for (auto r = System::range<Body>(); r; r.advance()){
 				auto &body = r.get<Body>();
@@ -107,19 +121,7 @@ namespace Physical{
 			current_is_1 = !current_is_1;
 		}
 
-		Body(const Vector &position, const Direction &direction) :
-			transformator1(position, direction),
-			transformator2(transformator1)
-		{
-		}
-		Body() = default;
-		Body(const Vector &position) : Body(position, {}){}
-		Body(const Direction &direction) : Body({}, direction){}
-		Body(Body &&other) = default;
-		Body &operator =(Body &&other) = default;
-		~Body() = default;
-
-		//attach an object to this Body with the given offset and Direction
+		//attach an object to this Body with the given offset and Direction. The attached object will move when the body moves and take part in collision of the body.
 		template <class T>
 		void attach(T &&t, Vector offset, Direction direction){
 			static_assert(Helper::Index<T, Supported_types>::value < 1000000, "Requesting unsupported type"); //just need to instantiate the template, comparison doesn't matter
@@ -128,42 +130,12 @@ namespace Physical{
 			aabb.combine(AABB(t, transformator));
 			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), std::move(transformator)));
 		}
-		template<class T, class Function>
-		void apply(Function &&f){
-			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
-				f(ao.first, current_transformator() + ao.second);
-			}
-		}
-		template <std::size_t type_number, class Function>
-		std::enable_if_t<type_number == number_of_supported_types>
-		apply(Function &&)
-		{}
-		template <std::size_t type_number, class Function>
-		std::enable_if_t<type_number < number_of_supported_types>
-		apply(Function &&f){
-			apply<decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
-			apply<type_number + 1>(f);
-		}
+
+		//apply a function f to all objects attached to this body, iterating over all types of attached objects
+		//there must be an overload of f for every type in Physical::Supported_types
 		template <class Function>
 		void apply(Function &&f){
 			apply<0>(f);
-		}
-
-		template<class T, class Function>
-		void apply(Function &&f) const{
-			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
-				f(ao.first, current_transformator() + ao.second);
-			}
-		}
-		template <std::size_t type_number, class Function>
-		std::enable_if_t<type_number == number_of_supported_types>
-		apply(Function &&) const
-		{}
-		template <std::size_t type_number, class Function>
-		std::enable_if_t<type_number < number_of_supported_types>
-		apply(Function &&f) const{
-			apply<decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
-			apply<type_number + 1>(f);
 		}
 		template <class Function>
 		void apply(Function &&f) const{
@@ -189,6 +161,43 @@ namespace Physical{
 			return aabb;
 		}
 	private:
+		//overloads of apply:
+		//this overload of apply applies f to a specific type T that gets explicitly specified
+		template<class T, class Function>
+		void apply(Function &&f){
+			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
+				f(ao.first, current_transformator() + ao.second);
+			}
+		}
+		template<class T, class Function>
+		void apply(Function &&f) const{
+			for (auto &ao : attached_objects.get<Utility::remove_cvr<T>>()){
+				f(ao.first, current_transformator() + ao.second);
+			}
+		}
+		//this overload ends iterating over the types
+		template <std::size_t type_number, class Function>
+		std::enable_if_t<type_number == number_of_supported_types>
+		apply(Function &&)
+		{}
+		template <std::size_t type_number, class Function>
+		std::enable_if_t<type_number == number_of_supported_types>
+		apply(Function &&) const
+		{}
+		//this overload applies f to Supported_types[type_number] and recursively applies f to all following type_numbers
+		template <std::size_t type_number, class Function>
+		std::enable_if_t<type_number < number_of_supported_types>
+		apply(Function &&f){
+			apply<decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
+			apply<type_number + 1>(f);
+		}
+		template <std::size_t type_number, class Function>
+		std::enable_if_t<type_number < number_of_supported_types>
+		apply(Function &&f) const{
+			apply<decltype(std::get<type_number>(std::declval<Supported_types>()))>(f);
+			apply<type_number + 1>(f);
+		}
+
 		bool colliding(const Transformator &new_transformator){
 			auto new_aabb = get_aabb(new_transformator);
 			for (auto r = System::range<Body>(); r; r.advance()){
