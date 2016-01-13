@@ -83,7 +83,7 @@ void handle_events(sf::RenderWindow &window){
 			switch (event.key.code){
 			case sf::Keyboard::Escape:
 				window.close();
-				return;
+			return;
 			case sf::Keyboard::Space:
 			{
 				//Debug: print out all physical entities

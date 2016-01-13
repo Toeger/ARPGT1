@@ -2,6 +2,8 @@
 
 #include "Physics/collision.h"
 #include "Tests/tests_utility.h"
+#include "entity.h"
+#include "Physics/body.h"
 
 static void test_helper_collides_point_circle(){
 	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};
@@ -185,10 +187,36 @@ static void test_line_circle_collision(){
 
 }
 
+static void test_failcase(){ //bug reproduction test case
+	Entity p;
+	{
+		Physical::Body b;
+		b.attach(Physical::Circle(30), {100, 50}, {});
+		b.attach(Physical::Circle(30), {-100, 50}, {});
+		b.attach(Physical::Circle(100), {}, {});
+		b.attach(Physical::Line(350, 0), {}, {0, 1});
+		p.add(std::move(b));
+	}
+	Entity dots[4];
+	{
+		int counter = 0;
+		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};
+		for (auto &p : ps){
+			Physical::Body b;
+			b.attach(Physical::Circle(10), p, {});
+			 dots[counter++].add(std::move(b));
+		}
+	}
+	auto &b = *p.get<Physical::Body>();
+	b += Physical::Vector(-871.733, 956.152);
+	assert_equal(b.get_next_transformator().vector.x, b.get_current_transformator().vector.x);
+}
+
 void test_collisions(){
 	test_helper_collides_point_circle();
 	test_helper_collides_point_rect();
 	test_circle_circle_collisions();
 	test_line_line_collisions();
 	test_line_circle_collision();
+	test_failcase();
 }
