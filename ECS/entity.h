@@ -59,6 +59,11 @@ namespace ECS{
 			auto &components = System::get_components<Component>();
 			return &components.at(pos);
 		}
+		//TODO: Copy constructor (?) move constructor, assignment operator, destructor
+		~Entity(){
+			assert(!"TODO");
+		}
+
 	private:
 		static Impl::Id id_counter;
 		Impl::Id id;
