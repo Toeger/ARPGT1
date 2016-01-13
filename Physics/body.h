@@ -99,7 +99,7 @@ namespace Physical{
 
 		//end_frame is called after all physics has been resolved and we switch from one logical frame to the next
 		static void end_frame(){
-			for (auto r = System::range<Body>(); r; r.advance()){
+			for (auto r = ECS::System::range<Body>(); r; r.advance()){
 				auto &body = r.get<Body>();
 				body.current_transformator = body.next_transformator;
 				body.update_aabb();
@@ -192,7 +192,7 @@ namespace Physical{
 
 		bool colliding(const Transformator &new_transformator){
 			auto new_aabb = get_aabb(new_transformator);
-			for (auto r = System::range<Body>(); r; r.advance()){
+			for (auto r = ECS::System::range<Body>(); r; r.advance()){
 				auto &other = r.get<Body>();
 				if (&other == this)
 					continue;

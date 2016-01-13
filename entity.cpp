@@ -1,2 +1,2 @@
 #include "entity.h"
-Impl::Id Entity::id_counter;
+ECS::Impl::Id ECS::Entity::id_counter;

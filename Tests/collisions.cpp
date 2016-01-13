@@ -188,7 +188,7 @@ static void test_line_circle_collision(){
 }
 
 static void test_failcase(){ //bug reproduction test case
-	Entity p;
+	ECS::Entity p;
 	{
 		Physical::Body b;
 		b.attach(Physical::Circle(30), {100, 50}, {});
@@ -197,7 +197,7 @@ static void test_failcase(){ //bug reproduction test case
 		b.attach(Physical::Line(350, 0), {}, {0, 1});
 		p.add(std::move(b));
 	}
-	Entity dots[4];
+	ECS::Entity dots[4];
 	{
 		int counter = 0;
 		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};

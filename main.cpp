@@ -87,7 +87,7 @@ void handle_events(sf::RenderWindow &window){
 			case sf::Keyboard::Space:
 			{
 				//Debug: print out all physical entities
-				for (auto sit = System::range<Physical::Body>(); sit; sit.advance()){
+				for (auto sit = ECS::System::range<Physical::Body>(); sit; sit.advance()){
 					sit.get<Physical::Body>().apply(
 								[](auto &physical_object, const Physical::Transformator &t){
 						debug_print(physical_object, t);
@@ -154,7 +154,7 @@ int main(){
 	const auto lfps = 30; //logical frames per second, independent of graphical fps
 	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
 
-	Entity dots[4];
+	ECS::Entity dots[4];
 	{
 		int counter = 0;
 		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};

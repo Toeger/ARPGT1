@@ -26,7 +26,7 @@ static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, con
 
 void Graphics::draw_physicals(sf::RenderWindow &window)
 {
-	for (auto sit = System::range<Physical::Body>(); sit; sit.advance()){
+	for (auto sit = ECS::System::range<Physical::Body>(); sit; sit.advance()){
 		sit.get<Physical::Body>().apply(
 					[&window](auto &physical_object, const Physical::Transformator &t){
 			draw_physical(window, physical_object, t);

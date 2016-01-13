@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "entity.h"
 
-class PracticeDummy : public Entity
+class PracticeDummy : public ECS::Entity
 {
 public:
 	PracticeDummy();

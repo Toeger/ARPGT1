@@ -6,7 +6,7 @@
 #include "entity.h"
 #include "Physics/physics_utility.h"
 
-class Player : public Entity
+class Player : public ECS::Entity
 {
 public:
 	Player(sf::RenderWindow *window = nullptr);
