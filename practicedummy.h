@@ -2,7 +2,7 @@
 #define PRACTICEDUMMY_H
 
 #include <SFML/Graphics.hpp>
-#include "entity.h"
+#include "ECS/entity.h"
 
 class PracticeDummy : public ECS::Entity
 {

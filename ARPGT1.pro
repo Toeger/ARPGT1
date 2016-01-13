@@ -12,11 +12,11 @@ SOURCES += main.cpp \
     player.cpp \
     practicedummy.cpp \
     camera.cpp \
-    entity.cpp \
     Graphics/physicals.cpp \
     Tests/tester.cpp \
     Tests/collisions.cpp \
-    Tests/physics_utility.cpp
+    Tests/physics_utility.cpp \
+    ECS/entity.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -25,7 +25,6 @@ HEADERS += \
     practicedummy.h \
     camera.h \
     utility.h \
-    entity.h \
     make_function.h \
     Physics/body.h \
     Physics/circle.h \
@@ -39,6 +38,7 @@ HEADERS += \
     Tests/collisions.h \
     Tests/physics_utility.h \
     Tests/tests_utility.h \
+    ECS/entity.h \
     ECS/system.h \
     ECS/systemiterator.h \
     ECS/ecs_impl.h

@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "camera.h"
-#include "entity.h"
+#include "ECS/entity.h"
 #include "Physics/physics_utility.h"
 
 class Player : public ECS::Entity

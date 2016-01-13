@@ -2,7 +2,7 @@
 
 #include "Physics/collision.h"
 #include "Tests/tests_utility.h"
-#include "entity.h"
+#include "ECS/entity.h"
 #include "Physics/body.h"
 
 static void test_helper_collides_point_circle(){

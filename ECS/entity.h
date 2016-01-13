@@ -20,7 +20,6 @@ Overhead of the Entity Component System:
 	Putting components and Ids into the same vector would work, not sure if it would be better. Probably depends on component size.
 */
 
-
 namespace ECS{
 	//an Entity can have any type of component added to it
 	//note that you cannot add multiple components with the same type, use vector<component> or array<component> to get around that

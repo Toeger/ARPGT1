@@ -10,7 +10,7 @@
 
 #include "player.h"
 #include "practicedummy.h"
-#include "entity.h"
+#include "ECS/entity.h"
 #include "utility.h"
 #include "make_function.h"
 
