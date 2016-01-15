@@ -2,6 +2,10 @@
 #define SYSTEM_H
 
 #include "ecs_impl.h"
+#include "utility.h"
+
+#include <limits>
+#include <vector>
 
 namespace ECS{
 	template<class H, class... T>
@@ -39,11 +43,6 @@ namespace ECS {
 			si.advance(0);
 			return si;
 		}
-		template<class Component>
-		void clear(){
-			components<Utility::remove_cvr<Component>>.clear();
-			ids<Utility::remove_cvr<Component>>.clear();
-		}
 		template <class... Components>
 		void foreach (void (*f)(const System_iterator<Components...> &)){
 			for (auto it = range<Components...>(); it; it.advance())
@@ -67,11 +66,6 @@ namespace ECS {
 			System_iterator<Components...> si;
 			si.advance(0);
 			return si;
-		}
-		template<class Component>
-		static void clear(){
-			p_get_components<Utility::remove_cvr<Component>>().clear();
-			p_get_ids<Utility::remove_cvr<Component>>().clear();
 		}
 	private:
 		template<class Component>
