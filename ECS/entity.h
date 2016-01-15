@@ -14,7 +14,7 @@
 
 /*
 Overhead of the Entity Component System:
-	One Id per Entity and component
+	One Id per Entity and Component + 1 function pointer per Component
 	Components are stored in one vector per type
 	Ids are stored in one vector per component type
 	Putting components and Ids into the same vector would work, not sure if it would be better. Probably depends on component size.
@@ -28,6 +28,13 @@ namespace ECS{
 		Entity(){
 			id = id_counter++;
 		}
+		Entity(Entity &&) = default;
+		Entity &operator =(Entity &&) = default;
+		~Entity(){
+			for (auto &f : remove_functions){
+				f(id);
+			}
+		}
 		//add a component to an Entity
 		template<class Component>
 		void add(Component &&c){
@@ -37,6 +44,7 @@ namespace ECS{
 			assert(*insert_position != id);
 			components.insert(begin(components) + (insert_position - begin(ids)), std::forward<Component>(c));
 			ids.insert(insert_position, id);
+			remove_functions.push_back(remover<Component>);
 		}
 		//emplace a component into an Entity
 		template<class Component, class... Args>
@@ -47,6 +55,7 @@ namespace ECS{
 			assert(*insert_position != id); //disallow multiple components of the same type for the same entity
 			components.emplace(begin(components) + (insert_position - begin(ids)), std::forward<Args>(c)...);
 			ids.insert(insert_position, id);
+			remove_functions.push_back(remover<Component>);
 		}
 		//get the component of a given type or nullptr if the Entity has no such component
 		template<class Component>
@@ -59,16 +68,29 @@ namespace ECS{
 			auto &components = System::get_components<Component>();
 			return &components.at(pos);
 		}
-		//TODO: Copy constructor (?) move constructor, assignment operator, destructor
-		~Entity(){
-			assert(!"TODO");
+		//remove a component of a given type, throws a runtime_exception if the entity has no such component, test with get to check if the entity has that component
+		template<class Component>
+		void remove(){
+			auto f = remover<Component>;
+			f(id);
+			remove_functions.erase(find(remove_functions, f));
+		}
+	private:
+		template <class Component>
+		static void remover(Impl::Id id){
+			auto &ids = System::get_ids<Component>();
+			auto id_it = lower_bound(begin(ids), end(ids), id);
+			if (*id_it != id)
+				throw std::runtime_error("Trying to remove non-existant component");
+			auto &components = System::get_components<Component>();
+			components.erase(begin(components) + (id_it - begin(ids)));
+			ids.erase(id_it);
 		}
 
-	private:
 		static Impl::Id id_counter;
 		Impl::Id id;
+		std::vector<void(*)(Impl::Id)> remove_functions;
 	};
-
 }
 
 #endif // ENTITY_H
