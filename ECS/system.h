@@ -8,11 +8,53 @@
 #include <vector>
 
 namespace ECS{
+	//a struct to remove a component. This is unfortunately necessary, because otherwise entity and system don't know the types of its components
+	namespace Entity_helper{
+		struct Remover{
+			Remover(Impl::Id id, void (*f)(Impl::Id))
+				:id(id)
+				,f(f)
+			{}
+			Remover(Remover &&other)
+				:id(other.id)
+				,f(other.f){
+				other.f = remover_dummy;
+			}
+			Remover &operator = (Remover &&other){
+				using std::swap;
+				swap(id, other.id);
+				swap(f, other.f);
+				return *this;
+			}
+			~Remover(){
+				f(id);
+			}
+			bool operator <(const Remover &other) const{
+				return std::tie(id, f) < std::tie(other.id, f);
+			}
+			bool operator <(Impl::Id id) const{
+				return this->id < id;
+			}
+			bool operator >(Impl::Id id) const{
+				return this->id > id;
+			}
+		private:
+			//data
+			Impl::Id id;
+			void (*f)(Impl::Id);
+			//empty function to put into removers that have been moved from
+			static inline void remover_dummy(Impl::Id){
+			}
+		};
+		inline bool operator <(Impl::Id id, const Remover &r){
+			return r > id;
+		}
+
+		//it is important that removers is destroyed before the system component vectors are destroyed, therefore removers must be above those vectors
+		static std::vector<Remover> removers;
+	}
 	template<class H, class... T>
 	struct System_iterator;
-}
-
-namespace ECS {
 
 	constexpr Impl::Id max_id = std::numeric_limits<Impl::Id>::max();
 

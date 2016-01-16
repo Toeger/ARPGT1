@@ -31,9 +31,8 @@ namespace ECS{
 		Entity(Entity &&) = default;
 		Entity &operator =(Entity &&) = default;
 		~Entity(){
-//			for (auto &f : remove_functions){
-//				f(id);
-//			}
+			auto entity_range = std::equal_range(begin(Entity_helper::removers), end(Entity_helper::removers), id);
+			Entity_helper::removers.erase(entity_range.first, entity_range.second);
 		}
 		//add a component to an Entity
 		template<class Component>
@@ -44,7 +43,7 @@ namespace ECS{
 			assert(*insert_position != id);
 			components.insert(begin(components) + (insert_position - begin(ids)), std::forward<Component>(c));
 			ids.insert(insert_position, id);
-			remove_functions.push_back(remover<Component>);
+			add_remover<Component>();
 		}
 		//emplace a component into an Entity
 		template<class Component, class... Args>
@@ -54,7 +53,7 @@ namespace ECS{
 			auto insert_position = std::lower_bound(begin(ids), end(ids), id);
 			assert(*insert_position != id); //disallow multiple components of the same type for the same entity
 			components.emplace(begin(components) + (insert_position - begin(ids)), std::forward<Args>(c)...);
-			ids.insert(insert_position, id);
+			add_remover<Component>();
 		}
 		//get the component of a given type or nullptr if the Entity has no such component
 		template<class Component>
@@ -74,45 +73,23 @@ namespace ECS{
 			assert(!"TODO");
 		}
 	private:
-		//a struct to remove a component. this is unfortunately necessary, because otherwise entity doesn't know the types of its components
-		struct Remover{
-			Impl::Id id;
-			void (*f)(Impl::Id);
-			Remover(Impl::Id id, void (*f)(Impl::Id))
-				:id(id)
-				,f(f)
-			{}
-			bool operator <(const Remover &other) const{
-				return id < other.id;
-			}
-			Remover(Remover &&) = default;
-			Remover &operator = (Remover &&) = default;
-			~Remover(){
-				f(id);
-			}
-		};
-
-		//
-		template <class Component>
-		void add_remover(){
-			auto &remover_ids = System::get_ids<Remover>();
-			auto &removers = System::get_components<Remover>();
-			auto insert_position = std::lower_bound(begin(ids), end(ids), id);
-			//would upper bound work? if so replace lower_bound with upper_bound, because upper_bound costs less relocations
-			removers.emplace(begin(components) + (insert_position - begin(ids)), id, remover<Component>);
-			remover_ids.insert(insert_position, id);
-		}
-
-		//remove a component of the given type
+		//remove a component of the given type and id
 		template <class Component>
 		static void remover(Impl::Id id){
 			auto &ids = System::get_ids<Component>();
 			auto id_it = lower_bound(begin(ids), end(ids), id);
-			if (*id_it != id)
-				throw std::runtime_error("Trying to remove non-existant component");
+			assert(*id_it == id); //make sure the component to remove exists
 			auto &components = System::get_components<Component>();
 			components.erase(begin(components) + (id_it - begin(ids)));
 			ids.erase(id_it);
+		}
+
+		template <class Component>
+		void add_remover(){
+			auto &removers = Entity_helper::removers;
+			Entity_helper::Remover r(id, remover<Component>);
+			auto pos = std::lower_bound(begin(removers), end(removers), r);
+			removers.insert(pos, std::move(r));
 		}
 
 		static Impl::Id id_counter;
