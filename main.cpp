@@ -198,4 +198,5 @@ int main(){
 		handle_events(window);
 	}
 	p.set_window(nullptr); //prevent the camera from crashing due to not having a window
+	ECS::Entity_helper::removers.clear();
 }

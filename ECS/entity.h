@@ -32,7 +32,10 @@ namespace ECS{
 		Entity &operator =(Entity &&) = default;
 		~Entity(){
 			auto entity_range = std::equal_range(begin(Entity_helper::removers), end(Entity_helper::removers), id);
+			assert_all(std::equal_range(entity_range.first, entity_range.second, id) == std::make_pair(begin(Entity_helper::removers), end(Entity_helper::removers))); //make sure we only remove components of this entity
 			Entity_helper::removers.erase(entity_range.first, entity_range.second);
+			assert_all(std::is_sorted(begin(Entity_helper::removers), end(Entity_helper::removers))); //make sure removers are still sorted
+			assert_all(std::binary_search(begin(Entity_helper::removers), end(Entity_helper::removers), id) == false); //make sure we deleted all removers with our id
 		}
 		//add a component to an Entity
 		template<class Component>
@@ -71,7 +74,7 @@ namespace ECS{
 		//remove a component of a given type, throws a runtime_exception if the entity has no such component, test with get to check if the entity has that component
 		template<class Component>
 		void remove(){
-			//TODO: find the entry for Remover in System and erase it, which also erases the component from system
+			//TODO: find the entry for Remover and erase it, which also erases the component from system
 			assert(!"TODO");
 		}
 	private:
