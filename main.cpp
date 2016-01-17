@@ -135,10 +135,11 @@ void render_frame(sf::RenderWindow &window){
 	}
 	Graphics::draw_physicals(window);
 	window.display();
-	window.display();
+	//window.display(); //add this to remove double image issues and half the framerate
 }
 
 int main(){
+	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
 	assert(Tester::run());
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{
@@ -198,5 +199,4 @@ int main(){
 		handle_events(window);
 	}
 	p.set_window(nullptr); //prevent the camera from crashing due to not having a window
-	ECS::Entity_helper::removers.clear();
 }

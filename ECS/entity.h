@@ -23,6 +23,7 @@ Overhead of the Entity Component System:
 namespace ECS{
 	//an Entity can have any type of component added to it
 	//note that you cannot add multiple components with the same type, use vector<component> or array<component> to get around that
+
 	struct Entity
 	{
 		Entity(){
@@ -31,11 +32,11 @@ namespace ECS{
 		Entity(Entity &&) = default;
 		Entity &operator =(Entity &&) = default;
 		~Entity(){
-			auto entity_range = std::equal_range(begin(Entity_helper::removers), end(Entity_helper::removers), id);
-			assert_all(std::equal_range(entity_range.first, entity_range.second, id) == std::make_pair(begin(Entity_helper::removers), end(Entity_helper::removers))); //make sure we only remove components of this entity
-			Entity_helper::removers.erase(entity_range.first, entity_range.second);
-			assert_all(std::is_sorted(begin(Entity_helper::removers), end(Entity_helper::removers))); //make sure removers are still sorted
-			assert_all(std::binary_search(begin(Entity_helper::removers), end(Entity_helper::removers), id) == false); //make sure we deleted all removers with our id
+			assert_all(std::is_sorted(begin(removers), end(removers))); //make sure removers are still sorted
+			auto entity_range = std::equal_range(begin(removers), end(removers), id);
+			removers.erase(entity_range.first, entity_range.second);
+			assert_all(std::is_sorted(begin(removers), end(removers))); //make sure removers are still sorted
+			assert_all(std::binary_search(begin(removers), end(removers), id) == false); //make sure we deleted all removers with our id
 		}
 		//add a component to an Entity
 		template<class Component>
@@ -77,6 +78,12 @@ namespace ECS{
 			//TODO: find the entry for Remover and erase it, which also erases the component from system
 			assert(!"TODO");
 		}
+		//clears all components from all entities
+		//must call this at the end of main before destructors of static Entities run, otherwise it may crash due to static initialization order fiasco
+		static void clear_all(){
+			removers.clear();
+		}
+
 	private:
 		//remove a component of the given type and id
 		template <class Component>
@@ -92,8 +99,7 @@ namespace ECS{
 
 		template <class Component>
 		void add_remover(){
-			auto &removers = Entity_helper::removers;
-			Entity_helper::Remover r(id, remover<Component>);
+			Remover r(id, remover<Component>);
 			auto pos = std::lower_bound(begin(removers), end(removers), r);
 			removers.insert(pos, std::move(r));
 			assert_all(std::is_sorted(begin(removers), end(removers)));
@@ -101,7 +107,52 @@ namespace ECS{
 
 		static Impl::Id id_counter;
 		Impl::Id id;
+		//a struct to remove a component. This is unfortunately necessary, because entities don't know the types of their components
+		struct Remover{
+			Remover(Impl::Id id, void (*f)(Impl::Id))
+				:id(id)
+				,f(f)
+			{}
+			Remover(Remover &&other)
+				:id(other.id)
+				,f(other.f){
+				other.f = remover_dummy;
+			}
+			Remover &operator = (Remover &&other){
+				using std::swap;
+				swap(id, other.id);
+				swap(f, other.f);
+				return *this;
+			}
+			~Remover(){
+				f(id);
+			}
+			bool operator <(const Remover &other) const{
+				return std::tie(id, f) < std::tie(other.id, f);
+			}
+			bool operator <(Impl::Id id) const{
+				return this->id < id;
+			}
+			bool operator >(Impl::Id id) const{
+				return this->id > id;
+			}
+		private:
+			//data
+			Impl::Id id;
+			void (*f)(Impl::Id);
+			//empty function to put into removers that have been moved from
+			static inline void remover_dummy(Impl::Id){
+			}
+		};
+
+		//it is important that removers is cleared before the system component vectors are destroyed
+		//it is also necessary to have removers be destroyed after all entities, because entities access removers in the destructor, don't know how to do that without leaking removers
+		static std::vector<Remover> removers;
+		friend bool operator <(Impl::Id id, const Entity::Remover &r);
 	};
+	inline bool operator <(Impl::Id id, const Entity::Remover &r){
+		return r > id;
+	}
 }
 
 #endif // ENTITY_H
