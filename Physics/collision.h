@@ -2,6 +2,7 @@
 #define COLLISION_H
 
 #include "shapes.h"
+#include "Utility/asserts.h"
 
 namespace Physical {
 	namespace Helper{
@@ -23,7 +24,7 @@ namespace Physical {
 
 		//check if a point x/y collides with an axis aligned rectangle with coordinates defined by left, right, bottom, top
 		inline bool collides(Point p, Rect rect){
-			assert(rect.valid());
+			assert_fast(rect.valid());
 			return p.x > rect.left && p.x < rect.right && p.y > rect.bottom && p.y < rect.top;
 		}
 		//check if point p collides with circle with center at cx/cy and radius cr

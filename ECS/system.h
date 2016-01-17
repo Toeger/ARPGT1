@@ -51,7 +51,7 @@ namespace ECS{
 		}
 
 		//it is important that removers is destroyed before the system component vectors are destroyed, therefore removers must be above those vectors
-		static std::vector<Remover> removers;
+		static std::vector<Remover> &removers = * new std::vector<Remover>;
 	}
 	template<class H, class... T>
 	struct System_iterator;

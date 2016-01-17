@@ -7,7 +7,7 @@
 #include <iostream>
 #include <tuple>
 #include <algorithm>
-#include <cassert>
+#include "Utility/asserts.h"
 
 #include "utility.h"
 #include "ECS/system.h"
@@ -40,10 +40,11 @@ namespace ECS{
 			auto &ids = System::get_ids<Component>();
 			auto &components = System::get_components<Component>();
 			auto insert_position = std::lower_bound(begin(ids), end(ids), id);
-			assert(*insert_position != id);
+			assert_fast(*insert_position != id);
 			components.insert(begin(components) + (insert_position - begin(ids)), std::forward<Component>(c));
 			ids.insert(insert_position, id);
 			add_remover<Component>();
+			assert_all(std::is_sorted(begin(ids), end(ids)));
 		}
 		//emplace a component into an Entity
 		template<class Component, class... Args>
@@ -51,9 +52,10 @@ namespace ECS{
 			auto &ids = System::get_ids<Component>();
 			auto &components = System::get_components<Component>();
 			auto insert_position = std::lower_bound(begin(ids), end(ids), id);
-			assert(*insert_position != id); //disallow multiple components of the same type for the same entity
+			assert_fast(*insert_position != id); //disallow multiple components of the same type for the same entity
 			components.emplace(begin(components) + (insert_position - begin(ids)), std::forward<Args>(c)...);
 			add_remover<Component>();
+			assert_all(std::is_sorted(begin(ids), end(ids)));
 		}
 		//get the component of a given type or nullptr if the Entity has no such component
 		template<class Component>
@@ -78,10 +80,11 @@ namespace ECS{
 		static void remover(Impl::Id id){
 			auto &ids = System::get_ids<Component>();
 			auto id_it = lower_bound(begin(ids), end(ids), id);
-			assert(*id_it == id); //make sure the component to remove exists
+			assert_fast(*id_it == id); //make sure the component to remove exists
 			auto &components = System::get_components<Component>();
 			components.erase(begin(components) + (id_it - begin(ids)));
 			ids.erase(id_it);
+			assert_all(std::is_sorted(begin(ids), end(ids)));
 		}
 
 		template <class Component>
@@ -90,6 +93,7 @@ namespace ECS{
 			Entity_helper::Remover r(id, remover<Component>);
 			auto pos = std::lower_bound(begin(removers), end(removers), r);
 			removers.insert(pos, std::move(r));
+			assert_all(std::is_sorted(begin(removers), end(removers)));
 		}
 
 		static Impl::Id id_counter;

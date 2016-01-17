@@ -41,7 +41,8 @@ HEADERS += \
     Tests/tester.h \
     Tests/collisions.h \
     Tests/physics_utility.h \
-    Tests/tests_utility.h
+    Tests/tests_utility.h \
+    Utility/asserts.h
 
 debug:QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
 debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
