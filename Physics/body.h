@@ -87,9 +87,13 @@ namespace Physical{
 	{
 	public:
 		//special member functions
-		Body(const Vector &position, const Direction &direction) :
-			current_transformator(position, direction),
-			next_transformator(current_transformator)
+		Body(const Transformator &transformator)
+			:current_transformator(transformator)
+			,next_transformator(transformator)
+		{}
+		Body(const Vector &position, const Direction &direction)
+			:current_transformator(position, direction)
+			,next_transformator(current_transformator)
 		{}
 		Body() = default;
 		Body(const Vector &position) : Body(position, {}){}
@@ -114,6 +118,18 @@ namespace Physical{
 			Transformator transformator{offset, direction};
 			aabb.combine(AABB(t, transformator));
 			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), std::move(transformator)));
+		}
+		template <class T>
+		void attach(T &&t, Vector offset){
+			attach(std::forward<T>(t), offset, {});
+		}
+		template <class T>
+		void attach(T &&t, Direction direction){
+			attach(std::forward<T>(t), {}, direction);
+		}
+		template <class T>
+		void attach(T &&t){
+			attach(std::forward<T>(t), {}, {});
 		}
 
 		//apply a function f to all objects attached to this body, iterating over all types of attached objects

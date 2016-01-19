@@ -83,7 +83,11 @@ namespace ECS{
 		static void clear_all(){
 			removers.clear();
 		}
-
+		//transfer ownership of this entity to the ECS. It is passed a function that takes an Entity& and returns a bool iff the entity should be destroyed now
+		inline void make_automatic(bool (*function)(Entity &)) &&;
+		static void make_automatic(Entity &&entity, bool (*function)(Entity &)){
+			std::move(entity).make_automatic(function);
+		}
 	private:
 		//remove a component of the given type and id
 		template <class Component>
@@ -150,6 +154,19 @@ namespace ECS{
 		static std::vector<Remover> removers;
 		friend bool operator <(Impl::Id id, const Entity::Remover &r);
 	};
+	struct Remove_checker{
+		Remove_checker(bool (*function)(Entity &), Entity &&entity)
+			:function(function)
+			,entity(std::move(entity))
+		{}
+		Remove_checker(Remove_checker &&) = default;
+		Remove_checker &operator =(Remove_checker &&) = default;
+		bool (*function)(Entity &);
+		Entity entity;
+	};
+	inline void ECS::Entity::make_automatic(bool (*function)(Entity &)) &&{
+		System::get_components<Remove_checker>().push_back(Remove_checker{function, std::move(*this)});
+	}
 	inline bool operator <(Impl::Id id, const Entity::Remover &r){
 		return r > id;
 	}

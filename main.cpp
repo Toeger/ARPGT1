@@ -84,7 +84,7 @@ void handle_events(sf::RenderWindow &window){
 			case sf::Keyboard::Escape:
 				window.close();
 			return;
-			case sf::Keyboard::Space:
+			case sf::Keyboard::L:
 			{
 				//Debug: print out all physical entities
 				for (auto sit = ECS::System::range<Physical::Body>(); sit; sit.advance()){
@@ -97,6 +97,27 @@ void handle_events(sf::RenderWindow &window){
 				*p.get<Physical::Body>() += Physical::Vector{0, 0};
 			}
 			break;
+			case sf::Keyboard::Space:
+			{
+				//TODO: build real skill system and map keys to logical actions
+				//shoot a ball from the player in the facing direction
+				//for that we need temporary entities that delete themselves automatically when some condition is met
+				//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
+				//need to get the physics system to give me the entity that got hit
+				ECS::Entity ball;
+				auto transformator = Player::player.get<Physical::Body>()->get_current_transformator();
+				const auto ball_radius = 10;
+				transformator += 100 + ball_radius; //player radius + ball radius //TODO: ask the player for its radius
+				Physical::Body body(transformator);
+				body.attach(Physical::Circle(ball_radius));
+				ball.add(std::move(body));
+				std::move(ball).make_automatic([](ECS::Entity &ball)
+				{
+					(void)ball;
+					return true; //instant death
+				});
+			}
+			break;
 			default:
 			break;
 			}
@@ -104,6 +125,19 @@ void handle_events(sf::RenderWindow &window){
 		break;
 		default:
 		break;
+		}
+	}
+}
+
+//remove temporary entities
+void check_remove_automatic_entities(){
+	auto &removers = ECS::System::get_components<ECS::Remove_checker>();
+	for (auto it = begin(removers); it != end(removers);){
+		if (it->function(it->entity)){
+			it = removers.erase(it);
+		}
+		else{
+			++it;
 		}
 	}
 }
@@ -118,6 +152,7 @@ void update_logical_frame(){
 		playerbody += p.move_offset;
 	}
 	Physical::Body::end_frame();
+	check_remove_automatic_entities();
 }
 
 void render_frame(sf::RenderWindow &window){
@@ -185,7 +220,7 @@ int main(){
 		b.attach(Physical::Circle(30), {100, 50}, {});
 		b.attach(Physical::Circle(30), {-100, 50}, {});
 		b.attach(Physical::Circle(100), {}, {});
-		b.attach(Physical::Line(350, 0), {}, {0, 1});
+		//b.attach(Physical::Line(350, 0), {}, {0, 1});
 		p.add(std::move(b));
 	}
 

@@ -20,13 +20,15 @@ namespace ECS{
 		Cannot have multiple components of the same type in one Entity. You can get around that with an array or vector of components
 	*/
 	namespace System{
-		//vector to store the components
-		template<class Component>
-		static std::vector<Component> components{};
-		//vector to store the IDs. ids and components are locked, so components<CTYPE>[x] is the component that belongs to entity ids<CTYPE>[x]
-		template<class Component>
-		static std::vector<Impl::Id> ids{max_id};
-		//somewhat unnecessary convenience functions
+		namespace{
+			//vector to store the components
+			template<class Component>
+			static std::vector<Component> components{};
+			//vector to store the IDs. ids and components are locked, so components<CTYPE>[x] is the component that belongs to entity ids<CTYPE>[x]
+			template<class Component>
+			static std::vector<Impl::Id> ids{max_id};
+			//TODO: could make components and ids use the same memory since they reallocate at the same time, but this only saves a few memory allocations and is probably not worth it
+		}
 		template<class Component>
 		std::vector<Utility::remove_cvr<Component>> &get_components(){
 			return components<Utility::remove_cvr<Component>>;
