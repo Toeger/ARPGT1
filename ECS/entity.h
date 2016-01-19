@@ -140,7 +140,7 @@ namespace ECS{
 				f(id);
 			}
 			bool operator <(const Remover &other) const{
-				return std::tie(id, f) < std::tie(other.id, f);
+				return std::tie(id, f) < std::tie(other.id, other.f);
 			}
 			bool operator <(Impl::Id id) const{
 				return this->id < id;
