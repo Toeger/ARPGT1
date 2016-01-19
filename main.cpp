@@ -107,18 +107,23 @@ void handle_events(sf::RenderWindow &window){
 				ECS::Entity ball;
 				auto transformator = Player::player.get<Physical::Body>()->get_current_transformator();
 				const auto ball_radius = 10;
-				transformator += 100 + ball_radius; //player radius + ball radius //TODO: ask the player for its radius
+				transformator += Physical::Vector{0, 100 + ball_radius + 10}; //player radius + ball radius //TODO: ask the player for its radius
+				struct Life_time{
+					int logical_frames_left;
+				};
+				struct Speed{
+					float speed;
+				};
+
+				ball.add(Life_time{100});
+				ball.add(Speed{Player::player.movespeed * 1.1f});
 				Physical::Body body(transformator);
 				body.attach(Physical::Circle(10));
 				ball.add(std::move(body));
-				std::move(ball).make_automatic([](ECS::Entity &)
+				std::move(ball).make_automatic([](ECS::Entity &ball)
 				{
-					static int i = 0; //temporary hack
-					if (i++ > 100){
-						i = 0;
-						return true;
-					}
-					return false;
+					(*ball.get<Physical::Body>()) += Physical::Vector(0, ball.get<Speed>()->speed);
+					return !ball.get<Life_time>()->logical_frames_left--;
 				});
 			}
 			break;
