@@ -273,6 +273,11 @@ namespace Physical{
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator current_transformator, next_transformator;
 	};
+	//a sensor is essentially the same as a Body, except you cannot collide with it
+	//instead a sensor will "activate" when a Body is in its range
+	struct Sensor : private Body{
+		using Body::attach;
+	};
 }
 
 #endif // BODY_H

@@ -118,7 +118,7 @@ void handle_events(sf::RenderWindow &window){
 				ball.add(Life_time{100});
 				ball.add(Speed{Player::player.movespeed * 1.1f});
 				Physical::Body body(transformator);
-				body.attach(Physical::Circle(10));
+				body.attach(Physical::Circle(20));
 				ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &ball)
 				{
