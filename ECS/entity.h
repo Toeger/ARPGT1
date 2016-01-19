@@ -158,11 +158,16 @@ namespace ECS{
 		Remove_checker(bool (*function)(Entity &), Entity &&entity)
 			:function(function)
 			,entity(std::move(entity))
-		{}
+		{
+			std::cout << "created\n";
+		}
 		Remove_checker(Remove_checker &&) = default;
 		Remove_checker &operator =(Remove_checker &&) = default;
 		bool (*function)(Entity &);
 		Entity entity;
+		~Remove_checker(){
+			std::cout << "destroyed\n";
+		}
 	};
 	inline void ECS::Entity::make_automatic(bool (*function)(Entity &)) &&{
 		System::get_components<Remove_checker>().push_back(Remove_checker{function, std::move(*this)});

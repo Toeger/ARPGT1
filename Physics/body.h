@@ -68,7 +68,11 @@ namespace Physical{
 			get() const{
 				return rest.template get<U>();
 			}
-
+			VectorHolder() = default;
+			VectorHolder(VectorHolder &&) = default;
+			VectorHolder(const VectorHolder &) = delete;
+			VectorHolder &operator =(const VectorHolder &) = delete;
+			VectorHolder &operator =(VectorHolder &&) = default;
 			std::vector<std::pair<T, Transformator>> data;
 			struct VectorHolder<Rest...> rest;
 		};
@@ -98,7 +102,9 @@ namespace Physical{
 		Body() = default;
 		Body(const Vector &position) : Body(position, {}){}
 		Body(const Direction &direction) : Body({}, direction){}
-		Body(Body &&other) = default;
+		Body(Body &&) = default;
+		Body(const Body &) = delete;
+		Body &operator =(const Body &other) = delete;
 		Body &operator =(Body &&other) = default;
 
 		//end_frame is called after all physics has been resolved and we switch from one logical frame to the next
@@ -234,9 +240,6 @@ namespace Physical{
 			});
 		}
 
-		//storing attached objects
-		Helper::VectorHolderFromTuple<Supported_types>::type attached_objects;
-		AABB aabb;
 		static bool collides(const Body &b1, const Body &b2){
 			bool collided = false;
 			b1.apply([&collided, &b2](const auto &obj1, const Transformator &t1){
@@ -264,6 +267,9 @@ namespace Physical{
 			});
 			return collided;
 		}
+		//storing attached objects
+		Helper::VectorHolderFromTuple<Supported_types>::type attached_objects;
+		AABB aabb;
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator current_transformator, next_transformator;
 	};
