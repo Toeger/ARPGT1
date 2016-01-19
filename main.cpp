@@ -109,7 +109,7 @@ void handle_events(sf::RenderWindow &window){
 				const auto ball_radius = 10;
 				transformator += 100 + ball_radius; //player radius + ball radius //TODO: ask the player for its radius
 				Physical::Body body(transformator);
-				body.attach(Physical::Line(100,0));
+				body.attach(Physical::Circle(10));
 				ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &)
 				{
