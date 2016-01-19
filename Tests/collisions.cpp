@@ -184,7 +184,6 @@ static void test_line_circle_collision(){
 		t2.vector.y = -4;
 		assert(Physical::collides(l, t + t1, c, t + t2));
 	}
-
 }
 
 static void test_failcase(){ //bug reproduction test case
@@ -209,7 +208,9 @@ static void test_failcase(){ //bug reproduction test case
 	}
 	auto &b = *p.get<Physical::Body>();
 	b += Physical::Vector(-871.733, 956.152);
-	assert_equal(b.get_next_transformator().vector.x, b.get_current_transformator().vector.x);
+	assert_equal(b.get_next_transformator().vector.x, b.get_current_transformator().vector.x); //check if we collided by checking if the move went through
+	b += Physical::Vector(-883.884, 933.844);
+	assert_equal(b.get_next_transformator().vector.x, b.get_current_transformator().vector.x); //check if we collided by checking if the move went through
 }
 
 void test_collisions(){
