@@ -29,8 +29,16 @@ namespace ECS{
 		Entity(){
 			id = id_counter++;
 		}
-		Entity(Entity &&) = default;
-		Entity &operator =(Entity &&) = default;
+		Entity(Entity &&other)
+			:id(other.id)
+		{
+			other.id = max_id;
+		}
+		Entity &operator =(Entity &&other){
+			std::swap(id, other.id);
+			return *this;
+		}
+
 		~Entity(){
 			assert_all(std::is_sorted(begin(removers), end(removers))); //make sure removers are still sorted
 			auto entity_range = std::equal_range(begin(removers), end(removers), id);
@@ -158,16 +166,11 @@ namespace ECS{
 		Remove_checker(bool (*function)(Entity &), Entity &&entity)
 			:function(function)
 			,entity(std::move(entity))
-		{
-			std::cout << "created\n";
-		}
+		{}
 		Remove_checker(Remove_checker &&) = default;
 		Remove_checker &operator =(Remove_checker &&) = default;
 		bool (*function)(Entity &);
 		Entity entity;
-		~Remove_checker(){
-			std::cout << "destroyed\n";
-		}
 	};
 	inline void ECS::Entity::make_automatic(bool (*function)(Entity &)) &&{
 		System::get_components<Remove_checker>().push_back(Remove_checker{function, std::move(*this)});
