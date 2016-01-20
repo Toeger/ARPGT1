@@ -1,6 +1,7 @@
 #include "physicals.h"
 #include "ECS/entity.h"
 #include "Physics/body.h"
+#include "Physics/sensor.h"
 #include "Physics/aabb.h"
 #include "utility.h"
 
@@ -26,6 +27,7 @@ static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, con
 
 void Graphics::draw_physicals(sf::RenderWindow &window)
 {
+	//TODO: combine copy + pasted for loops
 	for (auto sit = ECS::System::range<Physical::Body>(); sit; sit.advance()){
 		sit.get<Physical::Body>().apply(
 					[&window](auto &physical_object, const Physical::Transformator &t){
@@ -39,6 +41,22 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 			sf::Vertex(sf::Vector2f(aabb.right, -aabb.bottom), sf::Color::Red),
 			sf::Vertex(sf::Vector2f(aabb.left, -aabb.bottom), sf::Color::Red),
 			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Red),
+		};
+		window.draw(line, Utility::element_count(line), sf::LinesStrip);
+	}
+	for (auto sit = ECS::System::range<Physical::Sensor>(); sit; sit.advance()){
+		sit.get<Physical::Sensor>().apply(
+					[&window](auto &physical_object, const Physical::Transformator &t){
+			draw_physical(window, physical_object, t);
+		});
+		const auto &aabb = sit.get<Physical::Sensor>().get_aabb();
+		sf::Vertex line[] =
+		{
+			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(aabb.right, -aabb.top), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(aabb.right, -aabb.bottom), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(aabb.left, -aabb.bottom), sf::Color::Yellow),
+			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
 		};
 		window.draw(line, Utility::element_count(line), sf::LinesStrip);
 	}

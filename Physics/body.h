@@ -122,7 +122,7 @@ namespace Physical{
 			static_assert(Helper::Index<T, Supported_types>::value < 1000000, "Requesting unsupported type"); //just need to instantiate the template, comparison doesn't matter
 			auto &attached_vector = attached_objects.get<Utility::remove_cvr<T>>();
 			Transformator transformator{offset, direction};
-			aabb.combine(AABB(t, transformator));
+			aabb.combine(AABB(t, current_transformator + transformator));
 			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), std::move(transformator)));
 		}
 		template <class T>
@@ -272,11 +272,6 @@ namespace Physical{
 		AABB aabb;
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator current_transformator, next_transformator;
-	};
-	//a sensor is essentially the same as a Body, except you cannot collide with it
-	//instead a sensor will "activate" when a Body is in its range
-	struct Sensor : private Body{
-		using Body::attach;
 	};
 }
 
