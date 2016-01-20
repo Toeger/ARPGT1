@@ -118,24 +118,12 @@ namespace Physical{
 
 		//attach an object to this Body with the given offset and Direction. The attached object will move when the body moves and take part in collision of the body.
 		template <class T>
-		void attach(T &&t, Vector offset, Direction direction){
+		void attach(T &&t, Vector offset = Vector{}, Direction direction = Direction{}){
 			static_assert(Helper::Index<T, Supported_types>::value < 1000000, "Requesting unsupported type"); //just need to instantiate the template, comparison doesn't matter
 			auto &attached_vector = attached_objects.get<Utility::remove_cvr<T>>();
 			Transformator transformator{offset, direction};
 			aabb.combine(AABB(t, current_transformator + transformator));
 			attached_vector.emplace_back(std::make_pair<Utility::remove_cvr<T>, Transformator>(std::forward<T>(t), std::move(transformator)));
-		}
-		template <class T>
-		void attach(T &&t, Vector offset){
-			attach(std::forward<T>(t), offset, {});
-		}
-		template <class T>
-		void attach(T &&t, Direction direction){
-			attach(std::forward<T>(t), {}, direction);
-		}
-		template <class T>
-		void attach(T &&t){
-			attach(std::forward<T>(t), {}, {});
 		}
 
 		//apply a function f to all objects attached to this body, iterating over all types of attached objects
