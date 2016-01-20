@@ -29,12 +29,12 @@ namespace ECS{
 		Entity(){
 			id = id_counter++;
 		}
-		Entity(Entity &&other)
+		Entity(Entity &&other) noexcept
 			:id(other.id)
 		{
 			other.id = max_id;
 		}
-		Entity &operator =(Entity &&other){
+		Entity &operator =(Entity &&other) noexcept{
 			std::swap(id, other.id);
 			return *this;
 		}
@@ -125,12 +125,12 @@ namespace ECS{
 				:id(id)
 				,f(f)
 			{}
-			Remover(Remover &&other)
+			Remover(Remover &&other) noexcept
 				:id(other.id)
 				,f(other.f){
 				other.f = remover_dummy;
 			}
-			Remover &operator = (Remover &&other){
+			Remover &operator = (Remover &&other) noexcept{
 				using std::swap;
 				swap(id, other.id);
 				swap(f, other.f);
