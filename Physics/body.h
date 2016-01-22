@@ -89,6 +89,11 @@ namespace Physical{
 		const Shape &get_shape() const{
 			return shape;
 		}
+		//only supposed to be called by Physical::end_frame()
+		void end_frame(){
+			current_transformator = next_transformator;
+		}
+
 	private:
 		template <size_t type_index>
 		std::enable_if_t<type_index == number_of_supported_types, bool>
@@ -150,12 +155,6 @@ namespace Physical{
 		void end_frame<number_of_supported_types>()
 		{}
 	}
-	inline void end_frame(){
-//		for (auto r = ECS::System::range<DynamicBody>(); r; r.advance()){
-//			auto &body = r.get<DynamicBody>();
-//			body.current_transformator = body.next_transformator;
-//		}
-	}
 	namespace {
 		template <size_t type_index, class Function>
 		std::enable_if_t<type_index == number_of_supported_types>
@@ -175,6 +174,11 @@ namespace Physical{
 	template <class Function>
 	void apply_to_physical_bodies(Function &&f){
 		apply_to_physical_bodies_impl<0>(std::forward<Function>(f));
+	}
+	inline void end_frame(){
+		apply_to_physical_bodies([](auto &body){
+			body.end_frame();
+		});
 	}
 }
 
