@@ -162,6 +162,7 @@ void update_logical_frame(){
 		playerbody += p.move_offset;
 	}
 	Physical::Body::end_frame();
+	Physical::Sensor::end_frame();
 	check_remove_automatic_entities();
 }
 
