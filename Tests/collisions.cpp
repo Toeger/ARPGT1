@@ -186,38 +186,10 @@ static void test_line_circle_collision(){
 	}
 }
 
-static void test_failcase(){ //bug reproduction test case
-	ECS::Entity p;
-	{
-		Physical::Body b;
-		b.attach(Physical::Circle(30), {100, 50}, {});
-		b.attach(Physical::Circle(30), {-100, 50}, {});
-		b.attach(Physical::Circle(100), {}, {});
-		b.attach(Physical::Line(350, 0), {}, {0, 1});
-		p.add(std::move(b));
-	}
-	ECS::Entity dots[4];
-	{
-		int counter = 0;
-		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};
-		for (auto &p : ps){
-			Physical::Body b;
-			b.attach(Physical::Circle(10), p, {});
-			 dots[counter++].add(std::move(b));
-		}
-	}
-	auto &b = *p.get<Physical::Body>();
-	b += Physical::Vector(-871.733, 956.152);
-	assert_equal(b.get_next_transformator().vector.x, b.get_current_transformator().vector.x); //check if we collided by checking if the move went through
-	b += Physical::Vector(-883.884, 933.844);
-	assert_equal(b.get_next_transformator().vector.x, b.get_current_transformator().vector.x); //check if we collided by checking if the move went through
-}
-
 void test_collisions(){
 	test_helper_collides_point_circle();
 	test_helper_collides_point_rect();
 	test_circle_circle_collisions();
 	test_line_line_collisions();
 	test_line_circle_collision();
-	test_failcase();
 }

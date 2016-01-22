@@ -88,25 +88,20 @@ void handle_events(sf::RenderWindow &window){
 			case sf::Keyboard::L:
 			{
 				//Debug: print out all physical entities
-				for (auto sit = ECS::System::range<Physical::Body>(); sit; sit.advance()){
-					sit.get<Physical::Body>().apply(
-								[](auto &physical_object, const Physical::Transformator &t){
-						debug_print(physical_object, t);
-					});
-				}
+				Physical::apply_to_physical_bodies([](auto &body){
+					debug_print(body.get_shape(), body.get_current_transformator());
+				});
 				std::cout << std::flush;
-				*p.get<Physical::Body>() += Physical::Vector{0, 0};
 			}
 			break;
 			case sf::Keyboard::Space:
 			{
 				//TODO: build real skill system and map keys to logical actions
 				//shoot a ball from the player in the facing direction
-				//for that we need temporary entities that delete themselves automatically when some condition is met
 				//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
 				//need to get the physics system to give me the entity that got hit
 				ECS::Entity ball;
-				auto transformator = Player::player.get<Physical::Body>()->get_current_transformator();
+				auto transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
 				const auto ball_radius = 10;
 				transformator += Physical::Vector{0, 100 + ball_radius + 10}; //player radius + ball radius //TODO: ask the player for its radius
 				struct Life_time{
@@ -118,12 +113,12 @@ void handle_events(sf::RenderWindow &window){
 
 				ball.add(Life_time{100});
 				ball.add(Speed{Player::player.movespeed * 1.1f});
-				Physical::Sensor body(transformator);
-				body.attach(Physical::Circle(20));
-				ball.add(std::move(body));
+				//Physical::Sensor body(transformator);
+				//body.attach(Physical::Circle(20));
+				//ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &ball)
 				{
-					(*ball.get<Physical::Sensor>()) += Physical::Vector(0, ball.get<Speed>()->speed);
+					//(*ball.get<Physical::Sensor>()) += Physical::Vector(0, ball.get<Speed>()->speed);
 					return !ball.get<Life_time>()->logical_frames_left--;
 				});
 			}
@@ -158,11 +153,10 @@ void update_logical_frame(){
 	auto length = p.move_offset.length();
 	if (length){
 		p.move_offset *= p.movespeed / length;
-		auto &playerbody = *p.get<Physical::Body>();
+		auto &playerbody = *p.get<Physical::DynamicBody<Physical::Circle>>();
 		playerbody += p.move_offset;
 	}
-	Physical::Body::end_frame();
-	Physical::Sensor::end_frame();
+	Physical::end_frame();
 	check_remove_automatic_entities();
 }
 
@@ -206,9 +200,8 @@ int main(){
 		int counter = 0;
 		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};
 		for (auto &p : ps){
-			Physical::Body b;
-			b.attach(Physical::Circle(10), p, {});
-			 dots[counter++].add(std::move(b));
+			Physical::DynamicBody<Physical::Circle> b(Physical::Circle(10), p);
+			dots[counter++].add(std::move(b));
 		}
 	}
 
@@ -227,11 +220,7 @@ int main(){
 	Player &p = Player::player;
 	p.set_window(&window);
 	{
-		Physical::Body b;
-		b.attach(Physical::Circle(30), {100, 50}, {});
-		b.attach(Physical::Circle(30), {-100, 50}, {});
-		b.attach(Physical::Circle(100), {}, {});
-		//b.attach(Physical::Line(350, 0), {}, {0, 1});
+		Physical::DynamicBody<Physical::Circle> b{Physical::Circle(100)};
 		p.add(std::move(b));
 	}
 

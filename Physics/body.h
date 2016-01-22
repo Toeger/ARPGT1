@@ -51,28 +51,25 @@ namespace Physical{
 			,next_transformator(transformator)
 			,shape(std::move(shape))
 		{}
-		DynamicBody(const Vector &position = {}, const Direction &direction = {})
-			:DynamicBody(Transformator{position, direction})
-		{}
-		DynamicBody(const Direction &direction)
-			:DynamicBody({}, direction)
+		DynamicBody(Shape &&shape, const Vector &position = {}, const Direction &direction = {})
+			:DynamicBody(std::move(shape), Transformator{position, direction})
 		{}
 		DynamicBody(DynamicBody &&) = default;
 		DynamicBody(const DynamicBody &) = delete;
-		DynamicBody &operator =(const DynamicBody &other) = delete;
-		DynamicBody &operator =(DynamicBody &&other) = default;
+		DynamicBody &operator =(const DynamicBody &) = delete;
+		DynamicBody &operator =(DynamicBody &&) = default;
 
 		//operators
 		DynamicBody &operator +=(const Vector &vector){
 			auto new_transformator = next_transformator + vector;
-			if (!colliding(new_transformator)){
+			if (!colliding<0>(new_transformator)){
 				next_transformator = new_transformator;
 			}
 			return *this;
 		}
 		DynamicBody &operator +=(const Direction &direction){
 			auto new_transformator = next_transformator + direction;
-			if (!colliding(new_transformator)){
+			if (!colliding<0>(new_transformator)){
 				next_transformator = new_transformator;
 			}
 			return *this;
@@ -93,19 +90,51 @@ namespace Physical{
 			return shape;
 		}
 	private:
-		template <size_t type_index = 0>
-		bool colliding(const Transformator &new_transformator){
+		template <size_t type_index>
+		std::enable_if_t<type_index == number_of_supported_types, bool>
+		colliding(const Transformator &){
+			return false;
+		}
+		//wish I had static_if
+		template <size_t type_index>
+		std::enable_if_t
+			<type_index < number_of_supported_types && std::is_same
+				<std::tuple_element
+					<type_index, Supported_types>,
+					Shape
+				>::value
+			, bool
+			>
+		colliding(const Transformator &new_transformator){
 			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
 			using Body_type = DynamicBody<Shape_type>;
 			for (auto r = ECS::System::range<Body_type>(); r; r.advance()){
-				//auto &other = r.get<Body_type>();
-				auto &other = r.get();
-				if (&other == this) //can we optimize the branch out somehow? //TODO: at least if the type of *this != Body_type we can skip the check
+				auto &other = r.template get<Body_type>();
+				if (&other == this) //can we optimize the branch out somehow?
 					continue;
-				if (collides(other, *this, new_transformator - current_transformator))
+				if (collides(other.shape, other.current_transformator, shape, new_transformator))
 					return true;
 			}
-			return colliding<type_index + 1>();
+			return colliding<type_index + 1>(new_transformator);
+		}
+		template <size_t type_index>
+		std::enable_if_t
+			<type_index < number_of_supported_types && !std::is_same
+				<std::tuple_element
+					<type_index, Supported_types>,
+					Shape
+				>::value
+			, bool
+			>
+		colliding(const Transformator &new_transformator){
+			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
+			using Body_type = DynamicBody<Shape_type>;
+			for (auto r = ECS::System::range<Body_type>(); r; r.advance()){
+				auto &other = r.template get<Body_type>();
+				if (collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator))
+					return true;
+			}
+			return colliding<type_index + 1>(new_transformator);
 		}
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator current_transformator, next_transformator;
@@ -126,6 +155,26 @@ namespace Physical{
 //			auto &body = r.get<DynamicBody>();
 //			body.current_transformator = body.next_transformator;
 //		}
+	}
+	namespace {
+		template <size_t type_index, class Function>
+		std::enable_if_t<type_index == number_of_supported_types>
+		apply_to_physical_bodies_impl(Function &&){/*end of recursion*/}
+
+		template <size_t type_index, class Function>
+		std::enable_if_t<type_index < number_of_supported_types>
+		apply_to_physical_bodies_impl(Function &&f){
+			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
+			using Body_type = DynamicBody<Shape_type>;
+			for (auto sit = ECS::System::range<Body_type>(); sit; sit.advance()){
+				f(sit.template get<Body_type>());
+			}
+			apply_to_physical_bodies_impl<type_index + 1>(std::forward<Function>(f));
+		}
+	}
+	template <class Function>
+	void apply_to_physical_bodies(Function &&f){
+		apply_to_physical_bodies_impl<0>(std::forward<Function>(f));
 	}
 }
 

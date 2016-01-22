@@ -28,36 +28,23 @@ static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, con
 void Graphics::draw_physicals(sf::RenderWindow &window)
 {
 	//TODO: combine copy + pasted for loops
-	for (auto sit = ECS::System::range<Physical::Body>(); sit; sit.advance()){
-		sit.get<Physical::Body>().apply(
-					[&window](auto &physical_object, const Physical::Transformator &t){
-			draw_physical(window, physical_object, t);
-		});
-		const auto &aabb = sit.get<Physical::Body>().get_aabb();
-		sf::Vertex line[] =
-		{
-			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Red),
-			sf::Vertex(sf::Vector2f(aabb.right, -aabb.top), sf::Color::Red),
-			sf::Vertex(sf::Vector2f(aabb.right, -aabb.bottom), sf::Color::Red),
-			sf::Vertex(sf::Vector2f(aabb.left, -aabb.bottom), sf::Color::Red),
-			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Red),
-		};
-		window.draw(line, Utility::element_count(line), sf::LinesStrip);
-	}
-	for (auto sit = ECS::System::range<Physical::Sensor>(); sit; sit.advance()){
-		sit.get<Physical::Sensor>().apply(
-					[&window](auto &physical_object, const Physical::Transformator &t){
-			draw_physical(window, physical_object, t);
-		});
-		const auto &aabb = sit.get<Physical::Sensor>().get_aabb();
-		sf::Vertex line[] =
-		{
-			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
-			sf::Vertex(sf::Vector2f(aabb.right, -aabb.top), sf::Color::Yellow),
-			sf::Vertex(sf::Vector2f(aabb.right, -aabb.bottom), sf::Color::Yellow),
-			sf::Vertex(sf::Vector2f(aabb.left, -aabb.bottom), sf::Color::Yellow),
-			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
-		};
-		window.draw(line, Utility::element_count(line), sf::LinesStrip);
-	}
+	Physical::apply_to_physical_bodies([&window](auto &body){
+		draw_physical(window, body.get_shape(), body.get_current_transformator());
+	});
+//	for (auto sit = ECS::System::range<Physical::Sensor>(); sit; sit.advance()){
+//		sit.get<Physical::Sensor>().apply(
+//					[&window](auto &physical_object, const Physical::Transformator &t){
+//			draw_physical(window, physical_object, t);
+//		});
+//		const auto &aabb = sit.get<Physical::Sensor>().get_aabb();
+//		sf::Vertex line[] =
+//		{
+//			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
+//			sf::Vertex(sf::Vector2f(aabb.right, -aabb.top), sf::Color::Yellow),
+//			sf::Vertex(sf::Vector2f(aabb.right, -aabb.bottom), sf::Color::Yellow),
+//			sf::Vertex(sf::Vector2f(aabb.left, -aabb.bottom), sf::Color::Yellow),
+//			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
+//		};
+//		window.draw(line, Utility::element_count(line), sf::LinesStrip);
+//	}
 }
