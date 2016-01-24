@@ -6,6 +6,7 @@
 #include <array>
 #include <cassert>
 #include <tuple>
+#include <typeinfo>
 
 #include "utility.h"
 #include "Physics/physics_utility.h"
@@ -13,6 +14,8 @@
 #include "ECS/entity.h"
 #include "aabb.h"
 #include "collision.h"
+
+#define static_if if //wish I had static_if
 
 namespace Physical{
 	//add shapes here that a Body can be
@@ -101,60 +104,43 @@ namespace Physical{
 			return false;
 		}
 		//wish I had static_if
-		template <size_t type_index>
-		std::enable_if_t
-			<type_index < number_of_supported_types && std::is_same
-				<std::tuple_element
-					<type_index, Supported_types>,
-					Shape
-				>::value
-			, bool
-			>
-		colliding(const Transformator &new_transformator){
-			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
-			using Body_type = DynamicBody<Shape_type>;
-			for (auto r = ECS::System::range<Body_type>(); r; r.advance()){
-				auto &other = r.template get<Body_type>();
-				if (&other == this) //can we optimize the branch out somehow?
+		template <bool compare_other_to_this, class OtherShape>
+		std::enable_if_t<compare_other_to_this, bool>
+		colliding_helper(const Transformator &new_transformator){
+			using Body = DynamicBody<OtherShape>;
+			for (auto r = ECS::System::range<Body>(); r; r.advance()){
+				auto &other = r.template get<Body>();
+				if (&other == this) //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
 					continue;
 				if (collides(other.shape, other.current_transformator, shape, new_transformator))
 					return true;
 			}
-			return colliding<type_index + 1>(new_transformator);
+			return false;
 		}
-		template <size_t type_index>
-		std::enable_if_t
-			<type_index < number_of_supported_types && !std::is_same
-				<std::tuple_element
-					<type_index, Supported_types>,
-					Shape
-				>::value
-			, bool
-			>
-		colliding(const Transformator &new_transformator){
-			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
-			using Body_type = DynamicBody<Shape_type>;
-			for (auto r = ECS::System::range<Body_type>(); r; r.advance()){
-				auto &other = r.template get<Body_type>();
+		template <bool compare_other_to_this, class OtherShape>
+		std::enable_if_t<!compare_other_to_this, bool>
+		colliding_helper(const Transformator &new_transformator){
+			using Body = DynamicBody<OtherShape>;
+			for (auto r = ECS::System::range<Body>(); r; r.advance()){
+				auto &other = r.template get<Body>();
 				if (collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator))
 					return true;
 			}
-			return colliding<type_index + 1>(new_transformator);
+			return false;
+		}
+
+		template <size_t type_index>
+		std::enable_if_t<type_index < number_of_supported_types, bool>
+		colliding(const Transformator &new_transformator){
+			return colliding_helper<
+					std::is_same<std::tuple_element_t<type_index, Supported_types>, Shape>::value,
+					std::tuple_element_t<type_index, Supported_types>
+			>(new_transformator) || colliding<type_index + 1>(new_transformator);
 		}
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator current_transformator, next_transformator;
 		Shape shape;
 	};
-	//end_frame is called after all physics has been resolved and we switch from one logical frame to the next
-	namespace {
-		template <size_t type_index = 0>
-		void end_frame(){
-
-		}
-		template <>
-		void end_frame<number_of_supported_types>()
-		{}
-	}
 	namespace {
 		template <size_t type_index, class Function>
 		std::enable_if_t<type_index == number_of_supported_types>

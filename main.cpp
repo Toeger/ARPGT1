@@ -188,7 +188,7 @@ int main(){
 		sf::Event event;
 		while (window.pollEvent(event));
 	}
-	window.setVerticalSyncEnabled(true);
+	window.setVerticalSyncEnabled(false);
 
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
