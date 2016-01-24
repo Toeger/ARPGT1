@@ -98,12 +98,8 @@ namespace Physical{
 		}
 
 	private:
-		template <size_t type_index>
-		std::enable_if_t<type_index == number_of_supported_types, bool>
-		colliding(const Transformator &){
-			return false;
-		}
-		//wish I had static_if
+		//colliding checks if this body is colliding with any other body instanciated with any of the supported types
+		//end of recursion
 		template <bool compare_other_to_this, class OtherShape>
 		std::enable_if_t<compare_other_to_this, bool>
 		colliding_helper(const Transformator &new_transformator){
@@ -129,9 +125,16 @@ namespace Physical{
 			return false;
 		}
 
+		//end of recursion
+		template <size_t type_index>
+		std::enable_if_t<type_index == number_of_supported_types, bool>
+		colliding(const Transformator &){
+			return false;
+		}
 		template <size_t type_index>
 		std::enable_if_t<type_index < number_of_supported_types, bool>
 		colliding(const Transformator &new_transformator){
+			//wish I had static_if which would allow me to remove colliding_helper
 			return colliding_helper<
 					std::is_same<std::tuple_element_t<type_index, Supported_types>, Shape>::value,
 					std::tuple_element_t<type_index, Supported_types>

@@ -34,12 +34,13 @@ void handle_events(sf::RenderWindow &window){
 	//check immediate action buttons
 	p.move_offset.x = 0;
 	p.move_offset.y = 0;
+	p.turn_offset = Physical::Direction();
 	if (window.hasFocus()){
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-			p.turn(p.turnspeed);
+			p.turn_offset += p.turn_speed;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
-			p.turn(-p.turnspeed);
+			p.turn_offset -= p.turn_speed;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
 			p.move_offset.y += 1;
@@ -112,7 +113,7 @@ void handle_events(sf::RenderWindow &window){
 				};
 
 				ball.add(Life_time{100});
-				ball.add(Speed{Player::player.movespeed * 1.1f});
+				ball.add(Speed{Player::player.move_speed * 1.1f});
 				//Physical::Sensor body(transformator);
 				//body.attach(Physical::Circle(20));
 				//ball.add(std::move(body));
@@ -151,11 +152,12 @@ void update_logical_frame(){
 	//movement, collision detection, ...
 	auto &p = Player::player;
 	auto length = p.move_offset.length();
+	auto &playerbody = *p.get<Physical::DynamicBody<Physical::Circle>>();
 	if (length){
-		p.move_offset *= p.movespeed / length;
-		auto &playerbody = *p.get<Physical::DynamicBody<Physical::Circle>>();
+		p.move_offset *= p.move_speed / length;
 		playerbody += p.move_offset;
 	}
+	playerbody += p.turn_offset;
 	Physical::end_frame();
 	check_remove_automatic_entities();
 }
