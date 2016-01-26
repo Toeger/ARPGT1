@@ -48,5 +48,21 @@ namespace ECS{
 }
 
 #include "systemiterator.h"
+#include "entity_handle.h"
+
+namespace ECS {
+	namespace System {
+		//get an Entity_handle for an Entity that owns the given component
+		//the given component must be owned by an Entity, otherwise it is UB!
+		template <class Component>
+		Entity_handle component_to_entity_handle(const Component &component){
+			auto &components = get_components<Component>();
+			assert_fast(&components.front() >= &component);
+			assert_fast(&components.back() <= &component);
+			auto index = &component - &components.front();
+			return get_ids<Component>()[index];
+		}
+	}
+}
 
 #endif // SYSTEM_H

@@ -66,13 +66,6 @@ namespace ECS{
 	void ECS::Entity::make_automatic(bool (*function)(Entity &)) &&{
 		System::get_components<Remove_checker>().push_back(Remove_checker{function, std::move(*this)});
 	}
-
-	struct Entity_handle : private Entity_base{
-		template <class Component>
-		Entity_handle(const Component &component){
-			(void)component;
-		}
-	};
 }
 
 #endif // ENTITY_H

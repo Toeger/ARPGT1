@@ -1,5 +1,6 @@
 #include "ecs_test.h"
 #include "ECS/entity.h"
+#include "ECS/entity_handle.h"
 #include "ECS/system.h"
 #include <cassert>
 
@@ -47,4 +48,10 @@ void test_ecs()
 	n.remove<Test_component>();
 	assert(n.get<Test_component>() == nullptr);
 	assert(ECS::System::get_components<Test_component>().size() == 0);
+	n.emplace<Test_component>(007);
+
+	auto eh = ECS::System::component_to_entity_handle(*n.get<Test_component>());
+	assert(eh.get<Test_component>() == n.get<Test_component>());
+	n.remove<Test_component>();
+	assert(eh.get<Test_component>() == n.get<Test_component>());
 }
