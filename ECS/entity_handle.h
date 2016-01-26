@@ -1,7 +1,6 @@
 #ifndef ENTITY_HANDLE_H
 #define ENTITY_HANDLE_H
 
-#include "system.h"
 #include "entity_base.h"
 
 namespace ECS{
@@ -13,10 +12,13 @@ namespace ECS{
 		Entity_handle(const Entity_handle &other)
 			:Entity_base(other.id)
 		{}
-		Entity_handle &operator =(const Entity_handle &) = default;
+		Entity_handle &operator =(const Entity_handle &other){
+			id = other.id;
+			return *this;
+		}
 		using Entity_base::get;
 		using Entity_base::remove;
-		//could possibly allow adding/emplacing components through a handle, but destroying an entity and using a handle to add components would leak the components
+		//could maybe allow adding/emplacing components through a handle, but destroying an entity and using a handle to add components would leak the components
 	};
 }
 

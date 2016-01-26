@@ -30,8 +30,7 @@ struct Test_component{
 
 size_t Test_component::object_count = 0;
 
-void test_ecs()
-{
+static void test_entity(){
 	ECS::Entity n;
 	Test_component tc(42);
 	assert(ECS::System::get_components<Test_component>().size() == 0);
@@ -48,10 +47,28 @@ void test_ecs()
 	n.remove<Test_component>();
 	assert(n.get<Test_component>() == nullptr);
 	assert(ECS::System::get_components<Test_component>().size() == 0);
-	n.emplace<Test_component>(007);
+}
 
+static void test_entity_handle(){
+	ECS::Entity n;
+	n.emplace<Test_component>(007);
 	auto eh = ECS::System::component_to_entity_handle(*n.get<Test_component>());
 	assert(eh.get<Test_component>() == n.get<Test_component>());
 	n.remove<Test_component>();
 	assert(eh.get<Test_component>() == n.get<Test_component>());
+
+	{
+		ECS::Entity n2;
+		n2.emplace<Test_component>(224466);
+		eh = ECS::System::component_to_entity_handle(*n2.get<Test_component>());
+		assert(eh.get<Test_component>());
+		assert(eh.get<Test_component>() == n2.get<Test_component>());
+	}
+	assert(eh.get<Test_component>() == nullptr);
+}
+
+void test_ecs()
+{
+	test_entity();
+	test_entity_handle();
 }
