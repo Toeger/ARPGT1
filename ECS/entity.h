@@ -191,6 +191,7 @@ namespace ECS{
 			std::move(entity).make_automatic(function);
 		}
 		using Entity_base::add;
+		using Entity_base::emplace;
 		using Entity_base::get;
 		using Entity_base::remove;
 	};

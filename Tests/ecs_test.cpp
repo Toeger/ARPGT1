@@ -41,4 +41,10 @@ void test_ecs()
 	n.remove<Test_component>();
 	assert(n.get<Test_component>() == nullptr);
 	assert(ECS::System::get_components<Test_component>().size() == 0);
+	n.emplace<Test_component>(1337);
+	assert(n.get<Test_component>() != nullptr);
+	assert(ECS::System::get_components<Test_component>().size() == 1);
+	n.remove<Test_component>();
+	assert(n.get<Test_component>() == nullptr);
+	assert(ECS::System::get_components<Test_component>().size() == 0);
 }
