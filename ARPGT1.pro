@@ -16,8 +16,8 @@ SOURCES += main.cpp \
     Tests/tester.cpp \
     Tests/collisions.cpp \
     Tests/physics_utility.cpp \
-    ECS/entity.cpp \
-    Tests/ecs_test.cpp
+    Tests/ecs_test.cpp \
+    Tests/include_tester.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -45,7 +45,9 @@ HEADERS += \
     Tests/tests_utility.h \
     Utility/asserts.h \
     Physics/sensor.h \
-    Tests/ecs_test.h
+    Tests/ecs_test.h \
+    ECS/entity_base.h \
+    ECS/entity_handle.h
 
 debug:QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
 debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
