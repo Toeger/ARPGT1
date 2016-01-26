@@ -41,18 +41,6 @@ namespace ECS{
 			}
 			~Entity_base() = default;
 
-			//add a component to an Entity
-			template<class Component>
-			void add(Component &&c){
-				auto &ids = System::get_ids<Component>();
-				auto &components = System::get_components<Component>();
-				auto insert_position = std::lower_bound(begin(ids), end(ids), id);
-				assert_fast(*insert_position != id);
-				components.insert(begin(components) + (insert_position - begin(ids)), std::forward<Component>(c));
-				ids.insert(insert_position, id);
-				add_remover<Component>();
-				assert_all(std::is_sorted(begin(ids), end(ids)));
-			}
 			//emplace a component into an Entity
 			template<class Component, class... Args>
 			void emplace(Args &&...c){
@@ -61,6 +49,24 @@ namespace ECS{
 				auto insert_position = std::lower_bound(begin(ids), end(ids), id);
 				assert_fast(*insert_position != id); //disallow multiple components of the same type for the same entity
 				components.emplace(begin(components) + (insert_position - begin(ids)), std::forward<Args>(c)...);
+				add_remover<Component>();
+				assert_all(std::is_sorted(begin(ids), end(ids)));
+			}
+			//add a component to an Entity
+			//TODO: replace add with this implementation once emplace works
+//			template<class Component>
+//			void add(Component &&c){
+//				emplace<Component>(std::forward<Component>(c));
+//			}
+			template<class Component>
+			void add(Component &&c){
+				emplace<Component>(std::forward<Component>(c));
+				auto &ids = System::get_ids<Component>();
+				auto &components = System::get_components<Component>();
+				auto insert_position = std::lower_bound(begin(ids), end(ids), id);
+				assert_fast(*insert_position != id);
+				components.insert(begin(components) + (insert_position - begin(ids)), std::forward<Component>(c));
+				ids.insert(insert_position, id);
 				add_remover<Component>();
 				assert_all(std::is_sorted(begin(ids), end(ids)));
 			}
