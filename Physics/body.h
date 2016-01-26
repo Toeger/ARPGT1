@@ -15,8 +15,6 @@
 #include "aabb.h"
 #include "collision.h"
 
-#define static_if if //wish I had static_if
-
 namespace Physical{
 	//add shapes here that a Body can be
 	using Supported_types = std::tuple<Physical::Circle, Physical::Line>; //TODO: add Physical::Polygon
@@ -77,6 +75,14 @@ namespace Physical{
 			}
 			return *this;
 		}
+//		template <class F>
+//		void move(const Vector &vector, F &&f){
+//			auto new_transformator = next_transformator + vector;
+//			bool is_colliding = colliding<0>(new_transformator);
+//			next_transformator = std::forward<f>(Utility::make_const(current_transformator), next_transformator, entity_handle);
+//			return *this;
+//		}
+
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		const Transformator &get_current_transformator() const{
 			return current_transformator;

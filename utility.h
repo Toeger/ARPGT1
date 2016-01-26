@@ -4,8 +4,15 @@
 #include <cmath>
 #include <limits>
 #include <SFML/Graphics.hpp>
+#include <type_traits>
 
 namespace Utility {
+	template <class T>
+	std::enable_if_t<std::is_same<T, T&&>::value, const T&>
+	make_const(T &&t){
+		return t;
+	}
+
 	template<class T, size_t size>
 	constexpr size_t element_count(const T (&)[size]){
 		return size;
