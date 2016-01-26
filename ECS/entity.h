@@ -39,6 +39,7 @@ namespace ECS{
 				std::swap(id, other.id);
 				return *this;
 			}
+			~Entity_base() = default;
 
 			//add a component to an Entity
 			template<class Component>
@@ -78,7 +79,10 @@ namespace ECS{
 			template<class Component>
 			void remove(){
 				//TODO: find the entry for Remover and erase it, which also erases the component from system
-				assert(!"TODO");
+				auto &ids = System::get_ids<Component>();
+				auto id_pos = lower_bound(begin(ids), end(ids), id);
+				assert_fast(id_pos != end(ids));
+				remove_remover<Component>(id_pos - begin(ids));
 			}
 		private:
 			//remove a component of the given type and id
@@ -99,6 +103,11 @@ namespace ECS{
 				auto pos = std::lower_bound(begin(removers), end(removers), r);
 				removers.insert(pos, std::move(r));
 				assert_all(std::is_sorted(begin(removers), end(removers)));
+			}
+
+			template <class Component>
+			void remove_remover(std::size_t index){
+				removers.erase(begin(removers) + index);
 			}
 
 			//a struct to remove a component. This is unfortunately necessary, because entities don't know the types of their components
@@ -200,6 +209,13 @@ namespace ECS{
 	void ECS::Entity::make_automatic(bool (*function)(Entity &)) &&{
 		System::get_components<Remove_checker>().push_back(Remove_checker{function, std::move(*this)});
 	}
+
+	struct Entity_handle : private Entity_base{
+		template <class Component>
+		Entity_handle(const Component &component){
+			(void)component;
+		}
+	};
 }
 
 #endif // ENTITY_H
