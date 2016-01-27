@@ -120,7 +120,7 @@ namespace Physical{
 				if (&other == this) //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
 					continue;
 				if (collides(other.shape, other.current_transformator, shape, new_transformator))
-					return ECS::System::component_to_entity_handle(r);
+					return ECS::System::component_to_entity_handle(other);
 			}
 			return {};
 		}
