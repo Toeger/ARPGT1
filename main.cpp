@@ -114,12 +114,11 @@ void handle_events(sf::RenderWindow &window){
 
 				ball.add(Life_time{100});
 				ball.add(Speed{Player::player.move_speed * 1.1f});
-				//Physical::Sensor body(transformator);
-				//body.attach(Physical::Circle(20));
-				//ball.add(std::move(body));
+				Physical::Sensor<Physical::Circle> body(Physical::Circle(20), transformator);
+				ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &ball)
 				{
-					//(*ball.get<Physical::Sensor>()) += Physical::Vector(0, ball.get<Speed>()->speed);
+					(*ball.get<Physical::Sensor<Physical::Circle>>()) += Physical::Vector(0, ball.get<Speed>()->speed);
 					return !ball.get<Life_time>()->logical_frames_left--;
 				});
 			}

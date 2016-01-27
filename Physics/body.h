@@ -79,14 +79,14 @@ namespace Physical{
 			}
 			return *this;
 		}
-//		template <class Transformator, class F> //Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction
-//		void move(const Transformator &offset, F &&f){
-//			auto new_transformator = next_transformator + offset;
-//			bool is_colliding = colliding<0>(new_transformator);
-//			if (is_colliding)
-//				next_transformator = std::forward<f>(Utility::make_const(current_transformator), next_transformator, entity_handle);
-//			return *this;
-//		}
+		template <class Transformator, class F> //Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction
+		void move(const Transformator &offset, F &&f){
+			auto new_transformator = next_transformator + offset;
+			auto colliding_entity = colliding<0>(new_transformator);
+			if (colliding_entity)
+				next_transformator = std::forward<f>(*this, next_transformator, colliding_entity);
+			return *this;
+		}
 
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		const Transformator &get_current_transformator() const{
@@ -144,18 +144,24 @@ namespace Physical{
 			return {};
 		}
 		template <size_t type_index>
-		std::enable_if_t<type_index < number_of_supported_types, bool>
+		std::enable_if_t<type_index < number_of_supported_types, ECS::Entity_handle>
 		colliding(const Transformator &new_transformator){
 			//wish I had static_if which would allow me to remove colliding_helper
-			return colliding_helper<
+			auto eh = colliding_helper<
 					std::is_same<std::tuple_element_t<type_index, Supported_types>, Shape>::value,
 					std::tuple_element_t<type_index, Supported_types>
-			>(new_transformator) || colliding<type_index + 1>(new_transformator);
+			>(new_transformator);
+			return eh ? eh : colliding<type_index + 1>(new_transformator);
 		}
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator current_transformator, next_transformator;
 		Shape shape;
 	};
+}
+
+#include "sensor.h"
+
+namespace Physical{
 	namespace {
 		template <size_t type_index, class Function>
 		std::enable_if_t<type_index == number_of_supported_types>
@@ -165,9 +171,13 @@ namespace Physical{
 		std::enable_if_t<type_index < number_of_supported_types>
 		apply_to_physical_bodies_impl(Function &&f){
 			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
-			using Body_type = DynamicBody<Shape_type>;
-			for (auto sit = ECS::System::range<Body_type>(); sit; sit.advance()){
-				f(sit.template get<Body_type>());
+			using Dynamic_Body_type = DynamicBody<Shape_type>;
+			for (auto sit = ECS::System::range<Dynamic_Body_type>(); sit; sit.advance()){
+				f(sit.template get<Dynamic_Body_type>());
+			}
+			using Sensor_Body_type = Sensor<Shape_type>;
+			for (auto sit = ECS::System::range<Sensor_Body_type>(); sit; sit.advance()){
+				f(sit.template get<Sensor_Body_type>());
 			}
 			apply_to_physical_bodies_impl<type_index + 1>(std::forward<Function>(f));
 		}

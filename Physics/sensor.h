@@ -4,22 +4,19 @@
 #include "body.h"
 
 namespace Physical{
-	//a sensor is essentially the same as a Body, except you cannot collide with it
-	//instead a sensor will "activate" when a Body is in its range
-//	struct Sensor : private Body{
-//		Sensor(const Transformator &transformator)
-//			:Body(transformator)
-//		{}
-//		using Body::attach;
-//		using Body::operator +=;
-//		template <class Function>
-//		void apply(Function &&f){
-//			Body::apply(f);
-//		}
-//		const Physical::AABB &get_aabb() const{
-//			return Body::get_aabb();
-//		}
-//	};
+	//a sensor is essentially the same as a Physical::DynamicBody, except you cannot collide with it
+	//instead a sensor will "activate" when something is in its range
+	template <class Shape>
+	struct Sensor : private Physical::DynamicBody<Shape>{
+		using Body = Physical::DynamicBody<Shape>;
+		Sensor(Shape &&shape, const Transformator &transformator)
+			:Body(std::move(shape), transformator)
+		{}
+		using Body::operator +=;
+		using Body::get_current_transformator;
+		using Body::end_frame;
+		using Body::get_shape;
+	};
 }
 
 #endif // SENSOR_H
