@@ -142,7 +142,6 @@ void check_remove_automatic_entities(){
 	auto &removers = ECS::System::get_components<ECS::Remove_checker>();
 	for (auto it = begin(removers); it != end(removers);){
 		if (it->function(it->entity)){
-			std::cout << "Removed automatic Entity " << it->entity.id << '\n' << std::flush;
 			it = removers.erase(it);
 		}
 		else{

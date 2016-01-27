@@ -33,7 +33,7 @@ namespace ECS{
 
 		~Entity(){
 			assert_all(std::is_sorted(begin(removers), end(removers))); //make sure removers are still sorted
-			auto entity_range = std::equal_range(begin(removers), end(removers), id);
+			auto entity_range = std::equal_range(begin(removers), end(removers), id); //FIXME: bug here: equal_range covers too much and too much is being erased
 			removers.erase(entity_range.first, entity_range.second);
 			assert_all(std::is_sorted(begin(removers), end(removers))); //make sure removers are still sorted
 			assert_all(std::binary_search(begin(removers), end(removers), id) == false); //make sure we deleted all removers with our id
@@ -52,16 +52,13 @@ namespace ECS{
 		using Entity_base::emplace;
 		using Entity_base::get;
 		using Entity_base::remove;
-		using Entity_base::id;
 	};
 
 	struct Remove_checker{
 		Remove_checker(bool (*function)(Entity &), Entity &&entity)
 			:function(function)
 			,entity(std::move(entity))
-		{
-			std::cout << "Made Entity " << this->entity.id << " automatic\n";
-		}
+		{}
 		Remove_checker(Remove_checker &&) = default;
 		Remove_checker &operator =(Remove_checker &&) = default;
 		bool (*function)(Entity &);

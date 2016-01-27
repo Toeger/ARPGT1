@@ -87,8 +87,8 @@ namespace ECS{
 				bool operator <(Impl::Id other_id) const{
 					return id < other_id;
 				}
-				bool operator >=(Impl::Id other_id) const{
-					return id >= other_id;
+				bool operator >(Impl::Id other_id) const{
+					return id > other_id;
 				}
 			private:
 				//data
@@ -106,7 +106,7 @@ namespace ECS{
 			friend bool operator <(Impl::Id id, const Entity_base::Remover &r);
 		};
 		inline bool operator <(Impl::Id id, const Entity_base::Remover &r){
-			return !(r >= id);
+			return r > id;
 		}
 	}
 }
