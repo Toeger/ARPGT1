@@ -112,13 +112,16 @@ void handle_events(sf::RenderWindow &window){
 					float speed;
 				};
 
-				ball.add(Life_time{100});
+				ball.add(Life_time{30});
 				ball.add(Speed{Player::player.move_speed * 1.1f});
 				Physical::Sensor<Physical::Circle> body(Physical::Circle(20), transformator);
 				ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &ball)
 				{
-					(*ball.get<Physical::Sensor<Physical::Circle>>()) += Physical::Vector(0, ball.get<Speed>()->speed);
+					auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
+					auto &speed = ball.get<Speed>()->speed;
+					const auto &speed_vector = Physical::Vector(0, speed);
+					sensor += speed_vector;
 					return !ball.get<Life_time>()->logical_frames_left--;
 				});
 			}
@@ -139,6 +142,7 @@ void check_remove_automatic_entities(){
 	auto &removers = ECS::System::get_components<ECS::Remove_checker>();
 	for (auto it = begin(removers); it != end(removers);){
 		if (it->function(it->entity)){
+			std::cout << "Removed automatic Entity " << it->entity.id << '\n' << std::flush;
 			it = removers.erase(it);
 		}
 		else{

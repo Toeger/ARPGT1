@@ -52,13 +52,16 @@ namespace ECS{
 		using Entity_base::emplace;
 		using Entity_base::get;
 		using Entity_base::remove;
+		using Entity_base::id;
 	};
 
 	struct Remove_checker{
 		Remove_checker(bool (*function)(Entity &), Entity &&entity)
 			:function(function)
 			,entity(std::move(entity))
-		{}
+		{
+			std::cout << "Made Entity " << this->entity.id << " automatic\n";
+		}
 		Remove_checker(Remove_checker &&) = default;
 		Remove_checker &operator =(Remove_checker &&) = default;
 		bool (*function)(Entity &);
