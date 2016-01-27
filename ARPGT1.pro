@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     Tests/collisions.cpp \
     Tests/physics_utility.cpp \
     Tests/ecs_test.cpp \
-    Tests/include_tester.cpp
+    Tests/include_tester.cpp \
+    ECS/entity_base.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 

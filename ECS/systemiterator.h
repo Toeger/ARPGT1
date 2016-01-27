@@ -17,8 +17,8 @@ namespace ECS{
 		//if no more components are left you are at the end which is testable by converting to bool: true = at the end, false = not at the end
 		//returns the Id of the next entity that has the specified component
 		Impl::Id advance(){
-			if (System::get_ids<T>().at(current_index) == max_id)
-				return max_id;
+			if (System::get_ids<T>().at(current_index) == Impl::max_id)
+				return Impl::max_id;
 			return advance(System::get_ids<T>().at(current_index) + 1);
 		}
 		//same as regular advance, just that you go to the next target with an Id not smaller than the given target's
@@ -30,7 +30,7 @@ namespace ECS{
 		}
 		//check if we are at the end, returns true for at the end and false if not
 		operator bool() const{
-			return System::get_ids<T>().at(current_index) != max_id;
+			return System::get_ids<T>().at(current_index) != Impl::max_id;
 		}
 		//gets a component from the iterator, the iterator must actually iterate over that component type
 		template<class U>

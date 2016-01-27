@@ -6,6 +6,8 @@
 #include "ECS/system.h"
 #include "entity_base.h"
 
+#include <iostream>
+
 /*
 Overhead of the Entity Component System:
 	One Id per Entity and Component + 1 function pointer per Component
@@ -17,7 +19,7 @@ Overhead of the Entity Component System:
 namespace ECS{
 	//an Entity can have any type of component added to it
 	//note that you cannot add multiple components with the same type, use vector<component> or array<component> to get around that
-	struct Entity : private Entity_base{
+	struct Entity : private Impl::Entity_base{
 		Entity()
 			:Entity_base(id_counter++)
 		{}

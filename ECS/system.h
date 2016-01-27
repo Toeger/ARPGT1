@@ -11,8 +11,6 @@ namespace ECS{
 	template<class H, class... T>
 	struct System_iterator;
 
-	constexpr Impl::Id max_id = std::numeric_limits<Impl::Id>::max();
-
 	/*
 	System keeps the components of all Entitys in a vector per component type and allows to iterate over Entitys with specified components.
 	You only use System to iterate, use Entitys to add components.
@@ -26,7 +24,7 @@ namespace ECS{
 			static std::vector<Component> components{};
 			//vector to store the IDs. ids and components are locked, so components<CTYPE>[x] is the component that belongs to entity ids<CTYPE>[x]
 			template<class Component>
-			static std::vector<Impl::Id> ids{max_id};
+			static std::vector<Impl::Id> ids{Impl::max_id};
 			//TODO: could make components and ids use the same memory since they reallocate at the same time, but this only saves a few memory allocations and is probably not worth it
 		}
 		template<class Component>

@@ -202,7 +202,7 @@ int main(){
 		int counter = 0;
 		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};
 		for (auto &p : ps){
-			Physical::DynamicBody<Physical::Circle> b(Physical::Circle(10), p);
+			Physical::DynamicBody<Physical::Circle> b(Physical::Circle(30), p);
 			dots[counter++].add(std::move(b));
 		}
 	}
