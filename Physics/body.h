@@ -15,6 +15,10 @@
 #include "aabb.h"
 #include "collision.h"
 
+namespace ECS{
+	struct Entity_handle;
+}
+
 namespace Physical{
 	//add shapes here that a Body can be
 	using Supported_types = std::tuple<Physical::Circle, Physical::Line>; //TODO: add Physical::Polygon
@@ -75,11 +79,12 @@ namespace Physical{
 			}
 			return *this;
 		}
-//		template <class F>
-//		void move(const Vector &vector, F &&f){
-//			auto new_transformator = next_transformator + vector;
+//		template <class Transformator, class F> //Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction
+//		void move(const Transformator &offset, F &&f){
+//			auto new_transformator = next_transformator + offset;
 //			bool is_colliding = colliding<0>(new_transformator);
-//			next_transformator = std::forward<f>(Utility::make_const(current_transformator), next_transformator, entity_handle);
+//			if (is_colliding)
+//				next_transformator = std::forward<f>(Utility::make_const(current_transformator), next_transformator, entity_handle);
 //			return *this;
 //		}
 
@@ -107,7 +112,7 @@ namespace Physical{
 		//colliding checks if this body is colliding with any other body instanciated with any of the supported types
 		//end of recursion
 		template <bool compare_other_to_this, class OtherShape>
-		std::enable_if_t<compare_other_to_this, bool>
+		std::enable_if_t<compare_other_to_this, ECS::Entity_handle>
 		colliding_helper(const Transformator &new_transformator){
 			using Body = DynamicBody<OtherShape>;
 			for (auto r = ECS::System::range<Body>(); r; r.advance()){
@@ -115,27 +120,28 @@ namespace Physical{
 				if (&other == this) //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
 					continue;
 				if (collides(other.shape, other.current_transformator, shape, new_transformator))
-					return true;
+					return ECS::System::component_to_entity_handle(r);
 			}
-			return false;
+			return {};
 		}
 		template <bool compare_other_to_this, class OtherShape>
-		std::enable_if_t<!compare_other_to_this, bool>
+		std::enable_if_t<!compare_other_to_this, ECS::Entity_handle>
 		colliding_helper(const Transformator &new_transformator){
 			using Body = DynamicBody<OtherShape>;
 			for (auto r = ECS::System::range<Body>(); r; r.advance()){
 				auto &other = r.template get<Body>();
-				if (collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator))
-					return true;
+				auto colliding_entity = collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator);
+				if (colliding_entity)
+					return colliding_entity;
 			}
-			return false;
+			return {};
 		}
 
 		//end of recursion
 		template <size_t type_index>
-		std::enable_if_t<type_index == number_of_supported_types, bool>
+		std::enable_if_t<type_index == number_of_supported_types, ECS::Entity_handle>
 		colliding(const Transformator &){
-			return false;
+			return {};
 		}
 		template <size_t type_index>
 		std::enable_if_t<type_index < number_of_supported_types, bool>
