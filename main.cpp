@@ -112,7 +112,7 @@ void handle_events(sf::RenderWindow &window){
 					float speed;
 				};
 
-				ball.add(Life_time{30});
+				ball.add(Life_time{30 * 3});
 				ball.add(Speed{Player::player.move_speed * 1.1f});
 				Physical::Sensor<Physical::Circle> body(Physical::Circle(20), transformator);
 				ball.add(std::move(body));
@@ -121,7 +121,13 @@ void handle_events(sf::RenderWindow &window){
 					auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
 					auto &speed = ball.get<Speed>()->speed;
 					const auto &speed_vector = Physical::Vector(0, speed);
-					sensor += speed_vector;
+					sensor.move(speed_vector, [](auto &this_shape, const Physical::Transformator &new_transformator, const ECS::Entity_handle &)
+					{
+						//die on collision
+						auto ball = ECS::System::component_to_entity_handle(this_shape);
+						ball.template get<Life_time>()->logical_frames_left = 1;
+						return new_transformator;
+					});
 					return !ball.get<Life_time>()->logical_frames_left--;
 				});
 			}

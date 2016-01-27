@@ -83,9 +83,10 @@ namespace Physical{
 		void move(const Transformator &offset, F &&f){
 			auto new_transformator = next_transformator + offset;
 			auto colliding_entity = colliding<0>(new_transformator);
-			if (colliding_entity)
-				next_transformator = std::forward<f>(*this, next_transformator, colliding_entity);
-			return *this;
+			next_transformator =
+					colliding_entity
+					? std::forward<F>(f)(*this, new_transformator, colliding_entity) //FIXME: should not pass *this because *this may only be the base class
+					: new_transformator;
 		}
 
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame

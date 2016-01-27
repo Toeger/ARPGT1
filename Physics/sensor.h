@@ -16,6 +16,7 @@ namespace Physical{
 		using Body::get_current_transformator;
 		using Body::end_frame;
 		using Body::get_shape;
+		using Body::move;
 	};
 }
 

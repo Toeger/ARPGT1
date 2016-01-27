@@ -33,7 +33,7 @@ namespace ECS{
 
 		~Entity(){
 			assert_all(std::is_sorted(begin(removers), end(removers))); //make sure removers are still sorted
-			auto entity_range = std::equal_range(begin(removers), end(removers), id); //FIXME: bug here: equal_range covers too much and too much is being erased
+			auto entity_range = std::equal_range(begin(removers), end(removers), id);
 			removers.erase(entity_range.first, entity_range.second);
 			assert_all(std::is_sorted(begin(removers), end(removers))); //make sure removers are still sorted
 			assert_all(std::binary_search(begin(removers), end(removers), id) == false); //make sure we deleted all removers with our id
