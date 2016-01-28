@@ -128,6 +128,9 @@ namespace Physical {
 		Transformator(const Direction &direction) :
 			direction(direction)
 		{}
+		Transformator(const Vector &vector) :
+			vector(vector)
+		{}
 		Transformator(const Vector &vector, const Direction &direction) :
 			vector(vector),
 			direction(direction)

@@ -2,6 +2,7 @@
 #define SENSOR_H
 
 #include "body.h"
+#include "ECS/system.h"
 
 namespace Physical{
 	//a sensor is essentially the same as a Physical::DynamicBody, except you cannot collide with it
@@ -17,6 +18,12 @@ namespace Physical{
 		using Body::end_frame;
 		using Body::get_shape;
 		using Body::move;
+		template <class Transformator, class F> //Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction
+		void move(const Transformator &offset, F &&f){
+			Body::move(offset, [&](auto &transformer, auto &other_entity){
+				return std::forward<F>(f)(ECS::System::component_to_entity_handle(*this), transformer, other_entity);
+			});
+		}
 	};
 }
 

@@ -121,10 +121,9 @@ void handle_events(sf::RenderWindow &window){
 					auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
 					auto &speed = ball.get<Speed>()->speed;
 					const auto &speed_vector = Physical::Vector(0, speed);
-					sensor.move(speed_vector, [](auto &this_shape, const Physical::Transformator &new_transformator, const ECS::Entity_handle &)
+					sensor.move(speed_vector, [](ECS::Entity_handle ball, const Physical::Transformator &new_transformator, const ECS::Entity_handle &)
 					{
 						//die on collision
-						auto ball = ECS::System::component_to_entity_handle(this_shape);
 						ball.template get<Life_time>()->logical_frames_left = 1;
 						return new_transformator;
 					});
