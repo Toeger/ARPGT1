@@ -7,6 +7,8 @@
 #include <array>
 #include <typeinfo>
 #include <cassert>
+#include <random>
+#include <type_traits>
 
 #include "player.h"
 #include "practicedummy.h"
@@ -19,6 +21,21 @@
 #include "Physics/shapes.h"
 #include "Graphics/physicals.h"
 #include "Tests/tester.h"
+
+namespace {
+	std::mt19937 rng(std::random_device{}());
+}
+
+template <class T>
+std::enable_if_t<std::is_floating_point<T>::value, T>
+get_random_number(T from, T to){
+	return std::uniform_real_distribution<T>(from, to)(rng);
+}
+template <class T>
+std::enable_if_t<!std::is_floating_point<T>::value, T>
+get_random_number(T from, T to){
+	return std::uniform_int_distribution<T>(from, to)(rng);
+}
 
 void debug_print(const Physical::Circle &c, const Physical::Transformator &t){
 	std::cout << "circle: x: " << t.vector.x << " y: " << t.vector.y << " r: " << c.radius << '\n';
@@ -95,6 +112,16 @@ void handle_events(sf::RenderWindow &window){
 				std::cout << std::flush;
 			}
 			break;
+			case sf::Keyboard::Z:
+			{
+				//create a zombie that can be shot by the player
+				auto player_transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+				Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)}; //not sure if the directions are uniformly distributed, doesn't really matter
+				offset += get_random_number(400.f, 800.f);
+				ECS::Entity zombie;
+				zombie.add(Physical::DynamicBody<Physical::Circle>({40}, player_transformator + offset));
+			}
+			break;
 			case sf::Keyboard::Space:
 			{
 				//TODO: build real skill system and map keys to logical actions
@@ -114,7 +141,7 @@ void handle_events(sf::RenderWindow &window){
 
 				ball.add(Life_time{30 * 3});
 				ball.add(Speed{Player::player.move_speed * 1.1f});
-				Physical::Sensor<Physical::Circle> body(Physical::Circle(20), transformator);
+				Physical::Sensor<Physical::Circle> body(20, transformator);
 				ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &ball)
 				{
@@ -209,27 +236,15 @@ int main(){
 		int counter = 0;
 		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};
 		for (auto &p : ps){
-			Physical::DynamicBody<Physical::Circle> b(Physical::Circle(30), p);
+			Physical::DynamicBody<Physical::Circle> b(30, p);
 			dots[counter++].add(std::move(b));
 		}
 	}
 
-	/*
-	Entity temp;
-	{
-		Physical::Body b;
-		b.attach(Physical::Circle(10), {1000, 1000}, {});
-		b.attach(Physical::Circle(10), {-1000, 1000}, {});
-		b.attach(Physical::Circle(10), {1000, -1000}, {});
-		b.attach(Physical::Circle(10), {-1000, -1000}, {});
-		temp.add(std::move(b));
-	}
-	*/
-
 	Player &p = Player::player;
 	p.set_window(&window);
 	{
-		Physical::DynamicBody<Physical::Circle> b{Physical::Circle(100)};
+		Physical::DynamicBody<Physical::Circle> b{100};
 		p.add(std::move(b));
 	}
 
