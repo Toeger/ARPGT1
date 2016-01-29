@@ -78,12 +78,14 @@ namespace Physical {
 			auto newx = x * other.x - y * other.y;
 			y = y * other.x + x * other.y;
 			x = newx;
+			normalize();
 			return *this;
 		}
 		Direction &operator -=(const Direction &other){
 			auto newx = x * other.x + y * other.y;
 			y = y * other.x - x * other.y;
 			x = newx;
+			normalize();
 			return *this;
 		}
 		Direction operator -() const{

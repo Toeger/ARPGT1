@@ -51,7 +51,7 @@ namespace ECS{
 			return {System::get_ids<T>().at(current_index)};
 		}
 		ECS::Entity_handle get_entity_handle(){
-			return System::component_to_entity_handle(*this);
+			return System::component_to_entity_handle(**this);
 		}
 
 	private:

@@ -133,7 +133,7 @@ void handle_events(sf::RenderWindow &window){
 				Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)}; //not sure if the directions are uniformly distributed, doesn't really matter
 				offset += get_random_number(400.f, 800.f);
 				ECS::Entity zombie;
-				zombie.add(Physical::DynamicBody<Physical::Circle>(40, player_transformator + offset));
+				zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
 				zombie.add(ZombieAI::Zombie_AI{});
 				zombie.add(Generic_components::Speed{30});
 				zombie.add(Generic_components::HP{30});
@@ -214,6 +214,7 @@ void update_logical_frame(){
 	playerbody += p.turn_offset;
 	Physical::end_frame();
 	check_remove_automatic_entities();
+	ECS::System::run_systems();
 }
 
 void render_frame(sf::RenderWindow &window){
@@ -268,7 +269,7 @@ int main(){
 			auto to_player_vector = player_pos.vector - zombie_transformator.vector;
 			auto zombie_speed = zombie.get<Generic_components::Speed>()->speed;
 			zombie_body += Physical::Direction{to_player_vector.x, to_player_vector.y} - zombie_transformator.direction;
-			zombie_body += Physical::Vector{0, zombie_speed};
+			zombie_body += zombie_speed;
 		};
 
 		auto precomputer = []{
