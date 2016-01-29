@@ -45,7 +45,6 @@ namespace ECS{
 	}
 }
 
-#include "systemiterator.h"
 #include "entity_handle.h"
 
 namespace ECS {
@@ -59,6 +58,35 @@ namespace ECS {
 			assert_fast(&components.back() >= &component);
 			auto index = &component - &components.front();
 			return get_ids<Component>()[index];
+		}
+	}
+}
+
+#include "systemiterator.h"
+
+namespace ECS {
+	namespace System {
+		using System_type = std::pair<void (*)(void (*)(ECS::Entity_handle)), void (*)(ECS::Entity_handle)>;
+		//list of systems that modify the world
+		inline std::vector<System_type> &get_systems(){
+			static std::vector<System_type> systems;
+			return systems;
+		}
+		//run all systems
+		inline void run_systems(){
+			for (auto &p : get_systems()){
+				p.first(p.second);
+			}
+		}
+		//add a system
+		template <class... Components>
+		void add_system(void (*f)(Entity_handle eh)){
+			auto &systems = get_systems();
+			systems.push_back({[](void (*f)(Entity_handle)){
+								   for (auto sit = range<Components...>(); sit; sit.advance()){
+									   f(sit.get_entity_handle());
+								   }
+							   }, f});
 		}
 	}
 }

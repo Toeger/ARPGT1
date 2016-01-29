@@ -2,6 +2,7 @@
 #define SYSTEMITERATOR_H
 
 #include "system.h"
+#include "entity_handle.h"
 
 namespace ECS{
 	/*
@@ -48,6 +49,9 @@ namespace ECS{
 		}
 		std::vector<Impl::Id> get_ids() const{
 			return {System::get_ids<T>().at(current_index)};
+		}
+		ECS::Entity_handle get_entity_handle(){
+			return System::component_to_entity_handle(*this);
 		}
 
 	private:

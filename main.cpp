@@ -119,7 +119,18 @@ void handle_events(sf::RenderWindow &window){
 				Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)}; //not sure if the directions are uniformly distributed, doesn't really matter
 				offset += get_random_number(400.f, 800.f);
 				ECS::Entity zombie;
-				zombie.add(Physical::DynamicBody<Physical::Circle>({40}, player_transformator + offset));
+				zombie.add(Physical::DynamicBody<Physical::Circle>(40, player_transformator + offset));
+				struct Zombie_AI{};
+				ECS::System::add_system<Zombie_AI>([](ECS::Entity_handle zombie){
+					(void)zombie;
+					//TODO: Get player position, get direction to player, move zombie towards player
+					//TODO later: Give zombie health, remove zombie when health reduced to 0, attack player
+					//Player::player
+					for (auto sit = ECS::System::range<Zombie_AI>(); sit; sit.advance()){
+						//sit.get<Physical::DynamicBody<Physical::Circle>>()->
+						(void)sit;
+					}
+				});
 			}
 			break;
 			case sf::Keyboard::Space:
