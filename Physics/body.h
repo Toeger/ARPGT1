@@ -79,6 +79,14 @@ namespace Physical{
 			}
 			return *this;
 		}
+		DynamicBody &operator +=(const Transformator &transformator){
+			auto new_transformator = next_transformator + transformator;
+			if (!colliding<0>(new_transformator)){
+				next_transformator = new_transformator;
+			}
+			return *this;
+		}
+
 		template <class Transformator, class F> //Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction
 		void move(const Transformator &offset, F &&f){
 			auto new_transformator = next_transformator + offset;

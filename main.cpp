@@ -46,6 +46,17 @@ void debug_print(const Physical::Line &l, const Physical::Transformator &t){
 	std::cout << "line: x1: " << t.vector.x << " y1: " << t.vector.y << " x2: " << pos.vector.x << " y2: " << pos.vector.y << '\n';
 }
 
+namespace ZombieAI {
+	struct Zombie_AI{};
+	struct Speed{
+		float speed;
+	};
+	struct HP{
+		int hp;
+	};
+}
+
+
 void handle_events(sf::RenderWindow &window){
 	auto &p = Player::player;
 	//check immediate action buttons
@@ -120,21 +131,11 @@ void handle_events(sf::RenderWindow &window){
 				offset += get_random_number(400.f, 800.f);
 				ECS::Entity zombie;
 				zombie.add(Physical::DynamicBody<Physical::Circle>(40, player_transformator + offset));
-				struct Zombie_AI{};
-
-				auto fun = [](ECS::Entity_handle zombie, Physical::Transformator &player_pos){
-					(void)zombie;
-					(void)player_pos;
-					//TODO: Get player position, get direction to player, move zombie towards player
-					//TODO later: Give zombie health, remove zombie when health reduced to 0, attack player
-					//Player::player
-				};
-
-				auto precomputer = []{
-					return Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
-				};
-
-				ECS::System::add_system<Zombie_AI>(fun, precomputer);
+				zombie.add(ZombieAI::Zombie_AI{});
+				zombie.add(ZombieAI::Speed{30});
+				std::move(zombie).make_automatic([](ECS::Entity &zombie){
+					return zombie.get<ZombieAI::HP>()->hp > 0;
+				});
 			}
 			break;
 			case sf::Keyboard::Space:
@@ -254,6 +255,22 @@ int main(){
 			Physical::DynamicBody<Physical::Circle> b(30, p);
 			dots[counter++].add(std::move(b));
 		}
+	}
+
+	{ //add zombie AI system
+		auto fun = [](ECS::Entity_handle zombie, Physical::Transformator &player_pos){
+			auto &zombie_body = *zombie.get<Physical::DynamicBody<Physical::Circle>>();
+			auto to_player = player_pos - zombie_body.get_current_transformator();
+			auto zombie_speed = zombie.get<ZombieAI::Speed>()->speed;
+			to_player.vector *= zombie_speed / to_player.vector.length();
+			zombie_body += to_player;
+		};
+
+		auto precomputer = []{
+			return Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+		};
+
+		ECS::System::add_system<ZombieAI::Zombie_AI>(fun, precomputer);
 	}
 
 	Player &p = Player::player;
