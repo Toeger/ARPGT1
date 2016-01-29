@@ -121,16 +121,20 @@ void handle_events(sf::RenderWindow &window){
 				ECS::Entity zombie;
 				zombie.add(Physical::DynamicBody<Physical::Circle>(40, player_transformator + offset));
 				struct Zombie_AI{};
-				ECS::System::add_system<Zombie_AI>([](ECS::Entity_handle zombie){
+
+				auto fun = [](ECS::Entity_handle zombie, Physical::Transformator &player_pos){
 					(void)zombie;
+					(void)player_pos;
 					//TODO: Get player position, get direction to player, move zombie towards player
 					//TODO later: Give zombie health, remove zombie when health reduced to 0, attack player
 					//Player::player
-					for (auto sit = ECS::System::range<Zombie_AI>(); sit; sit.advance()){
-						//sit.get<Physical::DynamicBody<Physical::Circle>>()->
-						(void)sit;
-					}
-				});
+				};
+
+				auto precomputer = []{
+					return Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+				};
+
+				ECS::System::add_system<Zombie_AI>(fun, precomputer);
 			}
 			break;
 			case sf::Keyboard::Space:

@@ -6,6 +6,7 @@
 
 #include <limits>
 #include <vector>
+#include <functional>
 
 namespace ECS{
 	template<class H, class... T>
@@ -66,27 +67,37 @@ namespace ECS {
 
 namespace ECS {
 	namespace System {
-		using System_type = std::pair<void (*)(void (*)(ECS::Entity_handle)), void (*)(ECS::Entity_handle)>;
 		//list of systems that modify the world
-		inline std::vector<System_type> &get_systems(){
-			static std::vector<System_type> systems;
+		inline std::vector<std::function<void()>> &get_systems(){
+			static std::vector<std::function<void()>> systems; //could possibly get around using std::function, but it is hard and not worth it
 			return systems;
 		}
 		//run all systems
 		inline void run_systems(){
-			for (auto &p : get_systems()){
-				p.first(p.second);
+			for (auto &f : get_systems()){
+				f();
 			}
 		}
 		//add a system
-		template <class... Components>
-		void add_system(void (*f)(Entity_handle eh)){
+		template <class... Components, class Function>
+		void add_system(Function &&f){
 			auto &systems = get_systems();
-			systems.push_back({[](void (*f)(Entity_handle)){
-								   for (auto sit = range<Components...>(); sit; sit.advance()){
-									   f(sit.get_entity_handle());
-								   }
-							   }, f});
+			systems.push_back([f = std::move(f)]{
+				for (auto sit = range<Components...>(); sit; sit.advance()){
+					f(sit.get_entity_handle());
+				}
+			});
+		}
+		//add a system which computes something once for all entities
+		template <class... Components, class Function, class PrecomputeFunction>
+		void add_system(Function &&f, PrecomputeFunction &&pf){
+			auto &systems = get_systems();
+			systems.push_back([f = std::move(f), pf = std::move(pf)]{
+				auto pc = pf();
+				for (auto sit = range<Components...>(); sit; sit.advance()){
+					f(sit.get_entity_handle(), pc);
+				}
+			});
 		}
 	}
 }
