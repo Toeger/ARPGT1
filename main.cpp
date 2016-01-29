@@ -57,8 +57,30 @@ namespace Generic_components{
 
 namespace ZombieAI {
 	struct Zombie_AI{};
+	//create a zombie that can be shot by the player
+	void spawn_zombie(){
+		auto player_transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+		Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)}; //not sure if the directions are uniformly distributed, doesn't really matter
+		offset += get_random_number(3000.f, 5000.f);
+		ECS::Entity zombie;
+		zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
+		zombie.add(ZombieAI::Zombie_AI{});
+		zombie.add(Generic_components::Speed{30});
+		zombie.add(Generic_components::HP{30});
+		std::move(zombie).make_automatic([](ECS::Entity &zombie){
+			bool dead = zombie.get<Generic_components::HP>()->hp <= 0;
+			if (dead){
+				static int zombiemultiplier;
+				if (zombiemultiplier++ > 5){
+					spawn_zombie();
+					zombiemultiplier = 0;
+				}
+				spawn_zombie();
+			}
+			return dead;
+		});
+	}
 }
-
 
 void handle_events(sf::RenderWindow &window){
 	auto &p = Player::player;
@@ -128,18 +150,7 @@ void handle_events(sf::RenderWindow &window){
 			break;
 			case sf::Keyboard::Z:
 			{
-				//create a zombie that can be shot by the player
-				auto player_transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
-				Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)}; //not sure if the directions are uniformly distributed, doesn't really matter
-				offset += get_random_number(400.f, 800.f);
-				ECS::Entity zombie;
-				zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
-				zombie.add(ZombieAI::Zombie_AI{});
-				zombie.add(Generic_components::Speed{30});
-				zombie.add(Generic_components::HP{30});
-				std::move(zombie).make_automatic([](ECS::Entity &zombie){
-					return zombie.get<Generic_components::HP>()->hp <= 0;
-				});
+				ZombieAI::spawn_zombie();
 			}
 			break;
 			case sf::Keyboard::Space:
@@ -156,7 +167,7 @@ void handle_events(sf::RenderWindow &window){
 					int logical_frames_left;
 				};
 				ball.add(Life_time{30 * 3});
-				ball.add(Generic_components::Speed{Player::player.move_speed * 1.1f});
+				ball.add(Generic_components::Speed{60});
 				Physical::Sensor<Physical::Circle> body(20, transformator);
 				ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &ball)
@@ -171,7 +182,7 @@ void handle_events(sf::RenderWindow &window){
 							hp->hp -= 10;
 						}
 						//die on collision
-						ball.template get<Life_time>()->logical_frames_left = 1;
+						ball.template get<Life_time>()->logical_frames_left = 0;
 						return new_transformator;
 					});
 					return !ball.get<Life_time>()->logical_frames_left--;
