@@ -45,23 +45,20 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 		auto entity = ECS::System::component_to_entity_handle(body);
 		auto hp = entity.template get<Common_components::HP>();
 		if (hp){
-			//TODO: Draw HP bar
+			//TODO: Draw proper HP bar
+			const auto &pos = entity.template get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+			sf::RectangleShape r({100, 20});
+			r.setPosition(pos.vector.x - 50, -pos.vector.y - 80);
+			window.draw(r);
+			auto hp_size = hp->hp * 100.f / hp->max_hp;
+			r.setSize({hp_size, 18.f});
+			r.setPosition(r.getPosition().x, r.getPosition().y + 1);
+			r.setFillColor(sf::Color::Green);
+			window.draw(r);
+			r.setPosition(r.getPosition().x + (hp->max_hp - hp_size) * 100.f / hp->max_hp, r.getPosition().y);
+			r.setSize({hp->max_hp - hp_size, 18.f});
+			r.setFillColor(sf::Color::Red);
+			window.draw(r);
 		}
 	});
-//	for (auto sit = ECS::System::range<Physical::Sensor>(); sit; sit.advance()){
-//		sit.get<Physical::Sensor>().apply(
-//					[&window](auto &physical_object, const Physical::Transformator &t){
-//			draw_physical(window, physical_object, t);
-//		});
-//		const auto &aabb = sit.get<Physical::Sensor>().get_aabb();
-//		sf::Vertex line[] =
-//		{
-//			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
-//			sf::Vertex(sf::Vector2f(aabb.right, -aabb.top), sf::Color::Yellow),
-//			sf::Vertex(sf::Vector2f(aabb.right, -aabb.bottom), sf::Color::Yellow),
-//			sf::Vertex(sf::Vector2f(aabb.left, -aabb.bottom), sf::Color::Yellow),
-//			sf::Vertex(sf::Vector2f(aabb.left, -aabb.top), sf::Color::Yellow),
-//		};
-//		window.draw(line, Utility::element_count(line), sf::LinesStrip);
-//	}
 }

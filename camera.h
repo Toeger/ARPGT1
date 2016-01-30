@@ -17,6 +17,7 @@ public:
 	void set_size(int x, int y);
 	float get_rotation() const;
 	void set_zoom(float z);
+	sf::Vector2f get_screen_size() const;
 	~Camera();
 private:
 	sf::RenderWindow *window;

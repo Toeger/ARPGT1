@@ -59,6 +59,11 @@ void Camera::set_zoom(float z)
 	view.zoom(z);
 }
 
+sf::Vector2f Camera::get_screen_size() const
+{
+	return view.getSize();
+}
+
 Camera::~Camera()
 {
 	if (window)

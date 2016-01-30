@@ -6,7 +6,12 @@ namespace Common_components{
 		float speed;
 	};
 	struct HP{
+		HP(int hp)
+			:hp(hp)
+			,max_hp(hp)
+		{}
 		int hp;
+		int max_hp;
 	};
 	struct Life_time{
 		int life_time; //in logical frames left
