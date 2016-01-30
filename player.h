@@ -14,7 +14,6 @@ public:
 	Camera camera;
 	static Player player;
 	Physical::Vector move_offset;
-	float move_speed = 50;
 	Physical::Direction turn_speed = Physical::Direction::from_degrees(4);
 	Physical::Direction turn_offset;
 	void center_camera();

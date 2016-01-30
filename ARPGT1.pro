@@ -18,7 +18,9 @@ SOURCES += main.cpp \
     Tests/physics_utility.cpp \
     Tests/ecs_test.cpp \
     Tests/include_tester.cpp \
-    ECS/entity_base.cpp
+    ECS/entity_base.cpp \
+    Graphics/textures.cpp \
+    Graphics/animation.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -49,9 +51,11 @@ HEADERS += \
     Tests/ecs_test.h \
     ECS/entity_base.h \
     ECS/entity_handle.h \
-    ECS/common_components.h
+    ECS/common_components.h \
+    Graphics/textures.h \
+    Graphics/animation.h
 
-debug:QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
+debug:QMAKE_CXXFLAGS += -Wall -Werror -std=c++1z -g
 debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 #QMAKE_CFLAGS += -flto
 

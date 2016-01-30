@@ -21,6 +21,7 @@
 #include "Graphics/physicals.h"
 #include "Tests/tester.h"
 #include "ECS/common_components.h"
+#include "Graphics/textures.h"
 
 namespace {
 	std::mt19937 rng(std::random_device{}());
@@ -66,6 +67,7 @@ namespace ZombieAI {
 		zombie.add(ZombieAI::Zombie_AI{});
 		zombie.add(Common_components::Speed{30});
 		zombie.add(Common_components::HP{30});
+		zombie.add(Textures::zombie);
 		std::move(zombie).make_automatic([](ECS::Entity &zombie){
 			bool dead = zombie.get<Common_components::HP>()->hp <= 0;
 			if (dead){
@@ -89,14 +91,17 @@ void shoot_fireball(){
 	ECS::Entity ball;
 	auto transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
 	const auto ball_radius = 10;
-	transformator += Physical::Vector{0, 100 + ball_radius + 10}; //player radius + ball radius //TODO: ask the player for its radius
+	const auto player_radius = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_shape().radius;
+	const auto player_speed = Player::player.get<Common_components::Speed>()->speed;
+	transformator += Physical::Vector{0, player_radius + ball_radius + player_speed}; //player radius + ball radius //TODO: ask the player for its radius
 	struct Life_time{
 		int logical_frames_left;
 	};
 	ball.add(Life_time{30 * 3});
 	ball.add(Common_components::Speed{60});
-	Physical::Sensor<Physical::Circle> body(20, transformator);
+	Physical::Sensor<Physical::Circle> body(60, transformator);
 	ball.add(std::move(body));
+	ball.add(Textures::fireball);
 	std::move(ball).make_automatic([](ECS::Entity &ball)
 	{
 		auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
@@ -221,8 +226,9 @@ void update_logical_frame(){
 	auto &p = Player::player;
 	auto length = p.move_offset.length();
 	auto &playerbody = *p.get<Physical::DynamicBody<Physical::Circle>>();
+	auto &player_speed = p.get<Common_components::Speed>()->speed;
 	if (length){
-		p.move_offset *= p.move_speed / length;
+		p.move_offset *= player_speed / length;
 		playerbody += p.move_offset;
 	}
 	playerbody += p.turn_offset;
@@ -250,6 +256,7 @@ void render_frame(sf::RenderWindow &window){
 }
 
 int main(){
+	Textures::fill_textures();
 	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
 	//assert(Tester::run());
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
@@ -300,6 +307,8 @@ int main(){
 	{
 		Physical::DynamicBody<Physical::Circle> b{100};
 		p.add(std::move(b));
+		p.add(Textures::player);
+		p.add(Common_components::Speed{50});
 	}
 
 	while (window.isOpen()){

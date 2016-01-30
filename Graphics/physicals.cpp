@@ -6,17 +6,22 @@
 #include "utility.h"
 #include "ECS/common_components.h"
 #include "player.h"
+#include "textures.h"
 
-static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t){
-	sf::CircleShape s(c.radius);
+static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t, sf::Texture *texture){
+	auto radius = c.radius * 2;
+	sf::CircleShape s(radius);
 	auto pos = t.vector;
-	s.setPosition(pos.x - c.radius, -pos.y - c.radius);
-	auto r = (const unsigned char *)&c.radius;
-	s.setFillColor(sf::Color(r[0], r[1] + 127, r[2]));
+	s.setPosition(pos.x, -pos.y);
+	s.setOrigin({radius, radius});
+	s.setRotation(-t.direction.to_degrees());
+	//auto r = (const unsigned char *)&c.radius;
+	//s.setFillColor(sf::Color(r[0], r[1] + 127, r[2]));
+	s.setTexture(texture);
 	window.draw(s);
 }
 
-static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, const Physical::Transformator &t){
+static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, const Physical::Transformator &t, sf::Texture *){
 	const auto &p1 = t + l.vector;
 	const auto &p2 = t.vector;
 	sf::Vertex line[] =
@@ -41,24 +46,29 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 
 	//TODO: combine copy + pasted for loops
 	Physical::apply_to_physical_bodies([&window](auto &body){
-		draw_physical(window, body.get_shape(), body.get_current_transformator());
 		auto entity = ECS::System::component_to_entity_handle(body);
-		auto hp = entity.template get<Common_components::HP>();
-		if (hp){
-			//TODO: Draw proper HP bar
-			const auto &pos = entity.template get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
-			sf::RectangleShape r({100, 20});
-			r.setPosition(pos.vector.x - 50, -pos.vector.y - 80);
-			window.draw(r);
-			auto hp_size = hp->hp * 100.f / hp->max_hp;
-			r.setSize({hp_size, 18.f});
-			r.setPosition(r.getPosition().x, r.getPosition().y + 1);
-			r.setFillColor(sf::Color::Green);
-			window.draw(r);
-			r.setPosition(r.getPosition().x + (hp->max_hp - hp_size) * 100.f / hp->max_hp, r.getPosition().y);
-			r.setSize({hp->max_hp - hp_size, 18.f});
-			r.setFillColor(sf::Color::Red);
-			window.draw(r);
+		sf::Texture *texture = nullptr;
+		auto texture_index_ptr = entity.template get<Textures::Texture_ids>();
+		if (texture_index_ptr){
+			texture = &Textures::textures[*texture_index_ptr];
 		}
+		draw_physical(window, body.get_shape(), body.get_current_transformator(), texture);
+//		auto hp = entity.template get<Common_components::HP>();
+//		if (hp){
+//			//TODO: Draw proper HP bar
+//			const auto &pos = entity.template get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+//			sf::RectangleShape r({100, 20});
+//			r.setPosition(pos.vector.x - 50, -pos.vector.y - 80);
+//			window.draw(r);
+//			auto hp_size = hp->hp * 100.f / hp->max_hp;
+//			r.setSize({hp_size, 18.f});
+//			r.setPosition(r.getPosition().x, r.getPosition().y + 1);
+//			r.setFillColor(sf::Color::Green);
+//			window.draw(r);
+//			r.setPosition(r.getPosition().x + (hp->max_hp - hp_size) * 100.f / hp->max_hp, r.getPosition().y);
+//			r.setSize({hp->max_hp - hp_size, 18.f});
+//			r.setFillColor(sf::Color::Red);
+//			window.draw(r);
+//		}
 	});
 }
