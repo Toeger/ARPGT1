@@ -5,6 +5,7 @@
 #include "Physics/aabb.h"
 #include "utility.h"
 #include "ECS/common_components.h"
+#include "player.h"
 
 static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t){
 	sf::CircleShape s(c.radius);
@@ -28,6 +29,16 @@ static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, con
 
 void Graphics::draw_physicals(sf::RenderWindow &window)
 {
+	auto &p = Player::player;
+	const auto &player_pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+	const auto &top = player_pos + Physical::Vector{0, 10000};
+	sf::Vertex line[] =
+	{
+		sf::Vertex(sf::Vector2f(player_pos.vector.x, -player_pos.vector.y), sf::Color{255, 0, 0, 127}),
+		sf::Vertex(sf::Vector2f(top.vector.x, -top.vector.y), sf::Color{255, 0, 0, 0}),
+	};
+	window.draw(line, Utility::element_count(line), sf::Lines);
+
 	//TODO: combine copy + pasted for loops
 	Physical::apply_to_physical_bodies([&window](auto &body){
 		draw_physical(window, body.get_shape(), body.get_current_transformator());
