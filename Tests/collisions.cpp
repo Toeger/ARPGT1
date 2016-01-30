@@ -186,10 +186,24 @@ static void test_line_circle_collision(){
 	}
 }
 
+static void run_towards_each_other_and_get_stuck_bug_test(){
+	ECS::Entity e1;
+	ECS::Entity e2;
+	e1.add(Physical::DynamicBody<Physical::Circle>(100));
+	e2.add(Physical::DynamicBody<Physical::Circle>(100, 1000));
+	auto &b1 = *e1.get<Physical::DynamicBody<Physical::Circle>>();
+	auto &b2 = *e2.get<Physical::DynamicBody<Physical::Circle>>();
+	b1 += 500;
+	b2 += -500;
+	assert(b1.get_next_transformator().vector.x == 500);
+	assert(b2.get_next_transformator().vector.x == 1000);
+}
+
 void test_collisions(){
 	test_helper_collides_point_circle();
 	test_helper_collides_point_rect();
 	test_circle_circle_collisions();
 	test_line_line_collisions();
 	test_line_circle_collision();
+	run_towards_each_other_and_get_stuck_bug_test();
 }

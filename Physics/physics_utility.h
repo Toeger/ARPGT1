@@ -78,14 +78,14 @@ namespace Physical {
 			auto newx = x * other.x - y * other.y;
 			y = y * other.x + x * other.y;
 			x = newx;
-			normalize();
+			fast_normalize();
 			return *this;
 		}
 		Direction &operator -=(const Direction &other){
 			auto newx = x * other.x + y * other.y;
 			y = y * other.x - x * other.y;
 			x = newx;
-			normalize();
+			fast_normalize();
 			return *this;
 		}
 		Direction operator -() const{
@@ -111,6 +111,14 @@ namespace Physical {
 			x /= q;
 			y /= q;
 		}
+		void fast_normalize(){
+			//assumes we don't have length 0
+			auto sq = x * x + y * y;
+			float q = std::sqrt(sq);
+			x /= q;
+			y /= q;
+		}
+
 		float x, y;
 	};
 	inline Direction operator +(Direction lhs, const Direction &rhs){
