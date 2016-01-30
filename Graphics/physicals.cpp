@@ -4,6 +4,7 @@
 #include "Physics/sensor.h"
 #include "Physics/aabb.h"
 #include "utility.h"
+#include "ECS/common_components.h"
 
 static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t){
 	sf::CircleShape s(c.radius);
@@ -30,6 +31,11 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 	//TODO: combine copy + pasted for loops
 	Physical::apply_to_physical_bodies([&window](auto &body){
 		draw_physical(window, body.get_shape(), body.get_current_transformator());
+		auto entity = ECS::System::component_to_entity_handle(body);
+		auto hp = entity.template get<Common_components::HP>();
+		if (hp){
+			//TODO: Draw HP bar
+		}
 	});
 //	for (auto sit = ECS::System::range<Physical::Sensor>(); sit; sit.advance()){
 //		sit.get<Physical::Sensor>().apply(

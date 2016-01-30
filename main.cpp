@@ -15,12 +15,12 @@
 #include "ECS/entity.h"
 #include "utility.h"
 #include "make_function.h"
-
 #include "Physics/body.h"
 #include "Physics/sensor.h"
 #include "Physics/shapes.h"
 #include "Graphics/physicals.h"
 #include "Tests/tester.h"
+#include "ECS/common_components.h"
 
 namespace {
 	std::mt19937 rng(std::random_device{}());
@@ -46,15 +46,6 @@ void debug_print(const Physical::Line &l, const Physical::Transformator &t){
 	std::cout << "line: x1: " << t.vector.x << " y1: " << t.vector.y << " x2: " << pos.vector.x << " y2: " << pos.vector.y << '\n';
 }
 
-namespace Generic_components{
-	struct Speed{
-		float speed;
-	};
-	struct HP{
-		int hp;
-	};
-}
-
 namespace ZombieAI {
 	struct Zombie_AI{};
 	//create a zombie that can be shot by the player
@@ -65,10 +56,10 @@ namespace ZombieAI {
 		ECS::Entity zombie;
 		zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
 		zombie.add(ZombieAI::Zombie_AI{});
-		zombie.add(Generic_components::Speed{30});
-		zombie.add(Generic_components::HP{30});
+		zombie.add(Common_components::Speed{30});
+		zombie.add(Common_components::HP{30});
 		std::move(zombie).make_automatic([](ECS::Entity &zombie){
-			bool dead = zombie.get<Generic_components::HP>()->hp <= 0;
+			bool dead = zombie.get<Common_components::HP>()->hp <= 0;
 			if (dead){
 				static int zombiemultiplier;
 				if (zombiemultiplier++ > 5){
@@ -167,17 +158,17 @@ void handle_events(sf::RenderWindow &window){
 					int logical_frames_left;
 				};
 				ball.add(Life_time{30 * 3});
-				ball.add(Generic_components::Speed{60});
+				ball.add(Common_components::Speed{60});
 				Physical::Sensor<Physical::Circle> body(20, transformator);
 				ball.add(std::move(body));
 				std::move(ball).make_automatic([](ECS::Entity &ball)
 				{
 					auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
-					auto &speed = ball.get<Generic_components::Speed>()->speed;
+					auto &speed = ball.get<Common_components::Speed>()->speed;
 					const auto &speed_vector = Physical::Vector(0, speed);
 					sensor.move(speed_vector, [](ECS::Entity_handle ball, const Physical::Transformator &new_transformator, ECS::Entity_handle &other)
 					{
-						auto hp = other.get<Generic_components::HP>();
+						auto hp = other.get<Common_components::HP>();
 						if (hp){
 							hp->hp -= 10;
 						}
@@ -278,7 +269,7 @@ int main(){
 			auto &zombie_body = *zombie.get<Physical::DynamicBody<Physical::Circle>>();
 			auto zombie_transformator = zombie_body.get_current_transformator();
 			auto to_player_vector = player_pos.vector - zombie_transformator.vector;
-			auto zombie_speed = zombie.get<Generic_components::Speed>()->speed;
+			auto zombie_speed = zombie.get<Common_components::Speed>()->speed;
 			zombie_body += Physical::Direction{to_player_vector.x, to_player_vector.y} - zombie_transformator.direction;
 			zombie_body += zombie_speed;
 		};

@@ -48,7 +48,8 @@ HEADERS += \
     Physics/sensor.h \
     Tests/ecs_test.h \
     ECS/entity_base.h \
-    ECS/entity_handle.h
+    ECS/entity_handle.h \
+    ECS/common_components.h
 
 debug:QMAKE_CXXFLAGS += -Wall -Werror -std=c++14 -g
 debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
