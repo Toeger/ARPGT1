@@ -81,6 +81,41 @@ namespace ZombieAI {
 	}
 }
 
+void shoot_fireball(){
+	//TODO: build real skill system and map keys to logical actions
+	//shoot a ball from the player in the facing direction
+	//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
+	//need to get the physics system to give me the entity that got hit
+	ECS::Entity ball;
+	auto transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+	const auto ball_radius = 10;
+	transformator += Physical::Vector{0, 100 + ball_radius + 10}; //player radius + ball radius //TODO: ask the player for its radius
+	struct Life_time{
+		int logical_frames_left;
+	};
+	ball.add(Life_time{30 * 3});
+	ball.add(Common_components::Speed{60});
+	Physical::Sensor<Physical::Circle> body(20, transformator);
+	ball.add(std::move(body));
+	std::move(ball).make_automatic([](ECS::Entity &ball)
+	{
+		auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
+		auto &speed = ball.get<Common_components::Speed>()->speed;
+		const auto &speed_vector = Physical::Vector(0, speed);
+		sensor.move(speed_vector, [](ECS::Entity_handle ball, const Physical::Transformator &new_transformator, ECS::Entity_handle &other)
+		{
+			auto hp = other.get<Common_components::HP>();
+			if (hp){
+				hp->hp -= 10;
+			}
+			//die on collision
+			ball.template get<Life_time>()->logical_frames_left = 0;
+			return new_transformator;
+		});
+		return !ball.get<Life_time>()->logical_frames_left--;
+	});
+}
+
 void handle_events(sf::RenderWindow &window){
 	auto &p = Player::player;
 	//check immediate action buttons
@@ -154,38 +189,7 @@ void handle_events(sf::RenderWindow &window){
 			break;
 			case sf::Keyboard::Space:
 			{
-				//TODO: build real skill system and map keys to logical actions
-				//shoot a ball from the player in the facing direction
-				//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
-				//need to get the physics system to give me the entity that got hit
-				ECS::Entity ball;
-				auto transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
-				const auto ball_radius = 10;
-				transformator += Physical::Vector{0, 100 + ball_radius + 10}; //player radius + ball radius //TODO: ask the player for its radius
-				struct Life_time{
-					int logical_frames_left;
-				};
-				ball.add(Life_time{30 * 3});
-				ball.add(Common_components::Speed{60});
-				Physical::Sensor<Physical::Circle> body(20, transformator);
-				ball.add(std::move(body));
-				std::move(ball).make_automatic([](ECS::Entity &ball)
-				{
-					auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
-					auto &speed = ball.get<Common_components::Speed>()->speed;
-					const auto &speed_vector = Physical::Vector(0, speed);
-					sensor.move(speed_vector, [](ECS::Entity_handle ball, const Physical::Transformator &new_transformator, ECS::Entity_handle &other)
-					{
-						auto hp = other.get<Common_components::HP>();
-						if (hp){
-							hp->hp -= 10;
-						}
-						//die on collision
-						ball.template get<Life_time>()->logical_frames_left = 0;
-						return new_transformator;
-					});
-					return !ball.get<Life_time>()->logical_frames_left--;
-				});
+				shoot_fireball();
 			}
 			break;
 			default:
@@ -247,7 +251,7 @@ void render_frame(sf::RenderWindow &window){
 
 int main(){
 	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
-	assert(Tester::run());
+	//assert(Tester::run());
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{
 		//this should not do anything, but somehow sometimes prevents the window from not responding
@@ -262,6 +266,7 @@ int main(){
 	const auto lfps = 30; //logical frames per second, independent of graphical fps
 	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
 
+	/*
 	ECS::Entity dots[4];
 	{
 		int counter = 0;
@@ -271,6 +276,7 @@ int main(){
 			dots[counter++].add(std::move(b));
 		}
 	}
+	*/
 
 	{ //add zombie AI system
 		auto fun = [](ECS::Entity_handle zombie, Physical::Transformator &player_pos){

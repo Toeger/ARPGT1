@@ -121,11 +121,11 @@ namespace Physical{
 				auto &other = r.template get<Body>();
 				if (&other == this) //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
 					continue;
-				auto colliding_entity =
+				auto had_collision =
 						collides(other.shape, other.current_transformator, shape, new_transformator) ||
 						collides(other.shape, other.next_transformator, shape, new_transformator);
-				if (colliding_entity)
-					return colliding_entity;
+				if (had_collision)
+					return ECS::System::component_to_entity_handle(other);
 			}
 			return {};
 		}
@@ -135,11 +135,11 @@ namespace Physical{
 			using Body = DynamicBody<OtherShape>;
 			for (auto r = ECS::System::range<Body>(); r; r.advance()){
 				auto &other = r.template get<Body>();
-				auto colliding_entity =
+				auto had_collision =
 						collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator) ||
 						collides(other.get_shape(), other.get_next_transformator(), shape, new_transformator);
-				if (colliding_entity)
-					return colliding_entity;
+				if (had_collision)
+					return ECS::System::component_to_entity_handle(other);
 			}
 			return {};
 		}

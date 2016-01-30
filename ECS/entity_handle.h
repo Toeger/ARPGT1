@@ -10,7 +10,7 @@ namespace ECS{
 			:Entity_base(Impl::max_id)
 		{}
 		//users are not supposed to create valid Entity_handles directly, instead use System::component_to_entity_handle
-		Entity_handle(Impl::Id id)
+		explicit Entity_handle(Impl::Id id)
 			:Entity_base(id)
 		{}
 		Entity_handle(const Entity_handle &other)

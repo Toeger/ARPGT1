@@ -58,7 +58,7 @@ namespace ECS {
 			assert_fast(&components.front() <= &component);
 			assert_fast(&components.back() >= &component);
 			auto index = &component - &components.front();
-			return get_ids<Component>()[index];
+			return Entity_handle{get_ids<Component>()[index]};
 		}
 	}
 }
