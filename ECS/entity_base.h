@@ -31,11 +31,11 @@ namespace ECS{
 
 			//emplace a component into an Entity
 			template<class Component, class... Args>
-			void emplace(Args &&... args);
+			Component &emplace(Args &&... args);
 			//add a component to an Entity
 			template<class Component>
-			void add(Component &&c){
-				emplace<Component>(std::forward<Component>(c));
+			Component &add(Component &&c){
+				return emplace<Component>(std::forward<Component>(c));
 			}
 			//get the component of a given type or nullptr if the Entity has no such component
 			template<class Component>
@@ -117,15 +117,16 @@ namespace ECS{
 	namespace Impl{
 		//emplace a component into an Entity
 		template<class Component, class... Args>
-		void Entity_base::emplace(Args &&... args){
+		Component &Entity_base::emplace(Args &&... args){
 			auto &ids = System::get_ids<Component>();
 			auto &components = System::get_components<Component>();
 			auto insert_position = std::lower_bound(begin(ids), end(ids), id);
 			assert_fast(*insert_position != id); //disallow multiple components of the same type for the same entity
-			components.emplace(begin(components) + (insert_position - begin(ids)), std::forward<Args>(args)...);
+			auto inserted_component = components.emplace(begin(components) + (insert_position - begin(ids)), std::forward<Args>(args)...);
 			ids.insert(insert_position, id);
 			add_remover<Component>();
 			assert_all(std::is_sorted(begin(ids), end(ids)));
+			return *inserted_component;
 		}
 		//get the component of a given type or nullptr if the Entity has no such component
 		template<class Component>

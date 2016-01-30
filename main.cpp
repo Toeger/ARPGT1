@@ -54,7 +54,15 @@ namespace ZombieAI {
 		Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)}; //not sure if the directions are uniformly distributed, doesn't really matter
 		offset += get_random_number(3000.f, 5000.f);
 		ECS::Entity zombie;
-		zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
+		auto &body = zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
+		bool collided = false;
+		body.move(Physical::Vector{0.1}, [&collided](auto &, auto &){
+			collided = true;
+			return Physical::Vector{};
+		});
+		if (collided){
+			return spawn_zombie();
+		}
 		zombie.add(ZombieAI::Zombie_AI{});
 		zombie.add(Common_components::Speed{30});
 		zombie.add(Common_components::HP{30});
