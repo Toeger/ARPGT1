@@ -9,7 +9,13 @@
 #include "textures.h"
 #include "animations.h"
 
-static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t, sf::Sprite &sprite, const sf::Vector2u &sprite_size){
+static void draw_physical(
+		sf::RenderWindow &window,
+		const Physical::Circle &c,
+		const Physical::Transformator &t,
+		sf::Sprite &sprite,
+		const sf::Vector2u &sprite_size)
+{
 	auto radius = c.radius * 2;
 	auto scale_factor = std::min(sprite_size.x, sprite_size.y);
 	sprite.setScale(2 * radius / scale_factor, 2 * radius / scale_factor);
@@ -59,9 +65,10 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 		}
 		else{
 			//check for animations
-			auto animation_index_ptr = entity.template get<Animations::Animation>();
-			if (animation_index_ptr){
-				Animations::set_texture(sprite, sprite_size, *animation_index_ptr, 1);
+			auto animation_ptr = entity.template get<Common_components::Animation>();
+			if (animation_ptr){
+				static sf::Clock clock;
+				Animations::set_texture(sprite, sprite_size, animation_ptr->animation, animation_ptr->start_frame + clock.getElapsedTime().asSeconds());
 			}
 		}
 		draw_physical(window, body.get_shape(), body.get_current_transformator(), sprite, sprite_size);

@@ -1,6 +1,8 @@
 #ifndef COMMON_COMPONENTS_H
 #define COMMON_COMPONENTS_H
 
+#include "Graphics/animations.h"
+
 namespace Common_components{
 	struct Speed{
 		float speed;
@@ -15,6 +17,10 @@ namespace Common_components{
 	};
 	struct Life_time{
 		int life_time; //in logical frames left
+	};
+	struct Animation{
+		Animations::Animation animation;
+		float start_frame;
 	};
 }
 
