@@ -34,8 +34,11 @@ static std::array<AnimationData, Animations::Animation::size> animations = {
 	AnimationData{"Art/feuerballanimation2.png", 17, 17}, //Animations::Animation::fireball
 };
 
-void Animations::set_texture(sf::Shape &shape, Animations::Animation animation, float frame)
+void Animations::set_texture(sf::Sprite &sprite, sf::Vector2u &sprite_size, Animations::Animation animation, float frame)
 {
-	shape.setTexture(&animations[animation].texture);
-	shape.setTextureRect(animations[animation].get_rect(frame));
+	sprite.setTexture(animations[animation].texture);
+	const auto &tex_rect = animations[animation].get_rect(frame);
+	sprite_size.x = tex_rect.width;
+	sprite_size.y = tex_rect.height;
+	sprite.setTextureRect(tex_rect);
 }

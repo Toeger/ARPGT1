@@ -7,21 +7,22 @@
 #include "ECS/common_components.h"
 #include "player.h"
 #include "textures.h"
+#include "animations.h"
 
-static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t, sf::Texture *texture){
+static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t, sf::Sprite &sprite, const sf::Vector2u &sprite_size){
 	auto radius = c.radius * 2;
-	sf::RectangleShape s(radius, radius);
+	auto scale_factor = std::min(sprite_size.x, sprite_size.y);
+	sprite.setScale(2 * radius / scale_factor, 2 * radius / scale_factor);
 	auto pos = t.vector;
-	s.setPosition(pos.x, -pos.y);
-	s.setOrigin({radius, radius});
-	s.setRotation(-t.direction.to_degrees());
+	sprite.setOrigin({sprite_size.x / 2.f, sprite_size.y / 2.f});
+	sprite.setPosition(pos.x, -pos.y);
+	sprite.setRotation(-t.direction.to_degrees());
 	//auto r = (const unsigned char *)&c.radius;
-	//s.setFillColor(sf::Color(r[0], r[1] + 127, r[2]));
-	s.setTexture(texture);
-	window.draw(s);
+	//sprite.setFillColor(sf::Color(r[0], r[1] + 127, r[2]));
+	window.draw(sprite);
 }
 
-static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, const Physical::Transformator &t, sf::Texture *){
+static void draw_physical(sf::RenderWindow &window, const Physical::Line &l, const Physical::Transformator &t, sf::Sprite &, const sf::Vector2u &){
 	const auto &p1 = t + l.vector;
 	const auto &p2 = t.vector;
 	sf::Vertex line[] =
@@ -47,15 +48,23 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 	//TODO: combine copy + pasted for loops
 	Physical::apply_to_physical_bodies([&window](auto &body){
 		auto entity = ECS::System::component_to_entity_handle(body);
-		sf::Texture *texture = nullptr;
+		sf::Sprite sprite;
+		sf::Vector2u sprite_size;
+		//check for texture
 		auto texture_index_ptr = entity.template get<Textures::Texture_ids>();
 		if (texture_index_ptr){
-			texture = &Textures::textures[*texture_index_ptr];
+			auto &texture = Textures::textures[*texture_index_ptr];
+			sprite.setTexture(texture);
+			sprite_size = texture.getSize();
 		}
 		else{
 			//check for animations
+			auto animation_index_ptr = entity.template get<Animations::Animation>();
+			if (animation_index_ptr){
+				Animations::set_texture(sprite, sprite_size, *animation_index_ptr, 1);
+			}
 		}
-		draw_physical(window, body.get_shape(), body.get_current_transformator(), texture);
+		draw_physical(window, body.get_shape(), body.get_current_transformator(), sprite, sprite_size);
 //		auto hp = entity.template get<Common_components::HP>();
 //		if (hp){
 //			//TODO: Draw proper HP bar

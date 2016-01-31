@@ -22,6 +22,7 @@
 #include "Tests/tester.h"
 #include "ECS/common_components.h"
 #include "Graphics/textures.h"
+#include "Graphics/animations.h"
 
 namespace {
 	std::mt19937 rng(std::random_device{}());
@@ -102,7 +103,7 @@ void shoot_fireball(){
 	ball.add(Common_components::Speed{60});
 	Physical::Sensor<Physical::Circle> body(60, transformator);
 	ball.add(std::move(body));
-	ball.add(Textures::fireball);
+	ball.add(Animations::fireball);
 	std::move(ball).make_automatic([](ECS::Entity_handle ball)
 	{
 		auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();

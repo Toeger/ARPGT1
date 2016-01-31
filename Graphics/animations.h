@@ -9,7 +9,7 @@ namespace Animations
 		fireball,
 		size
 	};
-	void set_texture(sf::Shape &shape, Animation animation, float frame);
+	void set_texture(sf::Sprite &sprite, sf::Vector2u &sprite_size, Animation animation, float frame);
 }
 
 #endif // ANIMATIONS_H
