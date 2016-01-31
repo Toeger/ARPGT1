@@ -10,7 +10,7 @@
 
 static void draw_physical(sf::RenderWindow &window, const Physical::Circle &c, const Physical::Transformator &t, sf::Texture *texture){
 	auto radius = c.radius * 2;
-	sf::CircleShape s(radius);
+	sf::RectangleShape s(radius, radius);
 	auto pos = t.vector;
 	s.setPosition(pos.x, -pos.y);
 	s.setOrigin({radius, radius});
@@ -51,6 +51,9 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 		auto texture_index_ptr = entity.template get<Textures::Texture_ids>();
 		if (texture_index_ptr){
 			texture = &Textures::textures[*texture_index_ptr];
+		}
+		else{
+			//check for animations
 		}
 		draw_physical(window, body.get_shape(), body.get_current_transformator(), texture);
 //		auto hp = entity.template get<Common_components::HP>();

@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     Tests/ecs_test.cpp \
     Tests/include_tester.cpp \
     ECS/entity_base.cpp \
-    Graphics/textures.cpp
+    Graphics/textures.cpp \
+    Graphics/animations.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -51,7 +52,8 @@ HEADERS += \
     ECS/entity_base.h \
     ECS/entity_handle.h \
     ECS/common_components.h \
-    Graphics/textures.h
+    Graphics/textures.h \
+    Graphics/animations.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 debug:QMAKE_CXXFLAGS += -O1 -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
