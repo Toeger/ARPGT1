@@ -43,6 +43,10 @@ namespace ECS{
 			//remove a component of a given type, UB if the entity has no such component, test with get to check if the entity has that component
 			template<class Component>
 			void remove();
+			//check if the entity is valid. An entity becomes invalid when it is moved from
+			bool is_valid() const{
+				return id != max_id;
+			}
 		private:
 			//remove a component of the given type and id
 			template <class Component>

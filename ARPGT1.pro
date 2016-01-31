@@ -53,7 +53,8 @@ HEADERS += \
     ECS/common_components.h \
     Graphics/textures.h
 
-debug:QMAKE_CXXFLAGS += -Wall -Werror -std=c++1z -g
+QMAKE_CXXFLAGS += -std=c++1z
+debug:QMAKE_CXXFLAGS += -Wall -Werror -g
 debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 #QMAKE_CFLAGS += -flto
 

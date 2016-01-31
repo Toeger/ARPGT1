@@ -17,6 +17,7 @@ Overhead of the Entity Component System:
 */
 
 namespace ECS{
+	struct Entity_handle;
 	//an Entity can have any type of component added to it
 	//note that you cannot add multiple components with the same type, use vector<component> or array<component> to get around that
 	struct Entity : private Impl::Entity_base{
@@ -44,28 +45,49 @@ namespace ECS{
 			removers.clear();
 		}
 		//transfer ownership of this entity to the ECS. It is passed a function that takes an Entity& and returns a bool iff the entity should be destroyed now
-		inline void make_automatic(bool (*function)(Entity &)) &&;
-		static void make_automatic(Entity &&entity, bool (*function)(Entity &)){
+		inline void make_automatic(bool (*function)(Entity_handle)) &&;
+		static void make_automatic(Entity &&entity, bool (*function)(Entity_handle)){
 			std::move(entity).make_automatic(function);
 		}
+		//turn to handle
+		Entity_handle to_handle(){
+			return Entity_handle{id};
+		}
+		//inherit from Entity_base
 		using Entity_base::add;
 		using Entity_base::emplace;
 		using Entity_base::get;
 		using Entity_base::remove;
+		using Entity_base::is_valid;
 	};
 
 	struct Remove_checker{
-		Remove_checker(bool (*function)(Entity &), Entity &&entity)
+		Remove_checker(bool (*function)(Entity_handle), Entity &&entity)
 			:function(function)
 			,entity(std::move(entity))
-		{}
-		Remove_checker(Remove_checker &&) = default;
-		Remove_checker &operator =(Remove_checker &&) = default;
-		bool (*function)(Entity &);
+		{
+			assert_fast(this->entity.is_valid());
+		}
+		//Remove_checker(Remove_checker &&) = default;
+		Remove_checker(Remove_checker &&other)
+			:function(other.function)
+			,entity(std::move(other.entity))
+		{
+			assert_fast(this->entity.is_valid());
+		}
+		//Remove_checker &operator =(Remove_checker &&) = default;
+		Remove_checker &operator =(Remove_checker &&other){
+			//assert_fast(other.entity.is_valid());
+			std::swap(entity, other.entity);
+			std::swap(function, other.function);
+			//assert_fast(this->entity.is_valid());
+			return *this;
+		}
+		bool (*function)(Entity_handle);
 		Entity entity;
 	};
 
-	void ECS::Entity::make_automatic(bool (*function)(Entity &)) &&{
+	void ECS::Entity::make_automatic(bool (*function)(Entity_handle)) &&{
 		System::get_components<Remove_checker>().push_back(Remove_checker{function, std::move(*this)});
 	}
 }

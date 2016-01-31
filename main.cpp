@@ -68,7 +68,7 @@ namespace ZombieAI {
 		zombie.add(Common_components::Speed{30});
 		zombie.add(Common_components::HP{30});
 		zombie.add(Textures::zombie);
-		std::move(zombie).make_automatic([](ECS::Entity &zombie){
+		std::move(zombie).make_automatic([](ECS::Entity_handle zombie){
 			bool dead = zombie.get<Common_components::HP>()->hp <= 0;
 			if (dead){
 				static int zombiemultiplier;
@@ -102,7 +102,7 @@ void shoot_fireball(){
 	Physical::Sensor<Physical::Circle> body(60, transformator);
 	ball.add(std::move(body));
 	ball.add(Textures::fireball);
-	std::move(ball).make_automatic([](ECS::Entity &ball)
+	std::move(ball).make_automatic([](ECS::Entity_handle ball)
 	{
 		auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();
 		auto &speed = ball.get<Common_components::Speed>()->speed;
@@ -114,7 +114,8 @@ void shoot_fireball(){
 				hp->hp -= 10;
 			}
 			//die on collision
-			ball.template get<Life_time>()->logical_frames_left = 0;
+			//ball.template get<Life_time>()->logical_frames_left = 0;
+			(void)ball;
 			return new_transformator;
 		});
 		return !ball.get<Life_time>()->logical_frames_left--;
@@ -211,12 +212,20 @@ void handle_events(sf::RenderWindow &window){
 //remove temporary entities
 void check_remove_automatic_entities(){
 	auto &removers = ECS::System::get_components<ECS::Remove_checker>();
+#if ASSERT_LEVEL >= ASSERT_LEVEL_ALL
+	for (auto &r : removers){
+		assert(r.entity.is_valid());
+	}
+#endif
 	for (auto it = begin(removers); it != end(removers);){
-		if (it->function(it->entity)){
+		assert_fast(it->entity.is_valid());
+		if (it->function(it->entity.to_handle())){
 			it = removers.erase(it);
+			assert_fast(it == end(removers) || it->entity.is_valid());
 		}
 		else{
 			++it;
+			assert_fast(it == end(removers) || it->entity.is_valid());
 		}
 	}
 }
