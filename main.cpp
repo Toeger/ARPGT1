@@ -213,37 +213,14 @@ void handle_events(sf::RenderWindow &window){
 //remove temporary entities
 void check_remove_automatic_entities(){
 	auto &removers = ECS::System::get_components<ECS::Remove_checker>();
-#if ASSERT_LEVEL >= ASSERT_LEVEL_ALL
-	for (auto &r : removers){
-		assert(r.entity.is_valid());
-	}
-#endif
-//	removers.erase(std::remove_if(begin(removers), end(removers), [](ECS::Remove_checker &r){
-//					   return r.function(r.entity.to_handle());
-//				   }), end(removers));
-//	return;
-	std::vector<ECS::Entity> to_delete;
-	for (auto it = begin(removers); it != end(removers);){
-		assert_fast(it->entity.is_valid());
-		if (it->function(it->entity.to_handle())){
-			to_delete.push_back(std::move(it->entity));
-			assert_fast(it->entity.is_valid() == false);
-			it = removers.erase(it);
-			assert_fast(it == end(removers) || it->entity.is_valid());
+	for (std::size_t i = 0; i < removers.size();){ //using indexes because iterators become invalid
+		if (removers[i].function(removers[i].entity.to_handle())){
+			removers.erase(begin(removers) + i);
 		}
 		else{
-			++it;
-			assert_fast(it == end(removers) || it->entity.is_valid());
+			i++;
 		}
 	}
-#if ASSERT_LEVEL >= ASSERT_LEVEL_ALL
-	for (auto &r : removers){
-		assert(r.entity.is_valid());
-	}
-	for (auto &e : to_delete){
-		assert(e.is_valid());
-	}
-#endif
 }
 
 void update_logical_frame(){
