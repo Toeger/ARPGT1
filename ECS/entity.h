@@ -66,6 +66,7 @@ namespace ECS{
 			:function(function)
 			,entity(std::move(entity))
 		{
+			assert_fast(this->function);
 			assert_fast(this->entity.is_valid());
 		}
 		//Remove_checker(Remove_checker &&) = default;
@@ -73,13 +74,15 @@ namespace ECS{
 			:function(other.function)
 			,entity(std::move(other.entity))
 		{
-			assert_fast(this->entity.is_valid());
+			assert_fast(this->function);
+			//assert_fast(this->entity.is_valid());
 		}
 		//Remove_checker &operator =(Remove_checker &&) = default;
 		Remove_checker &operator =(Remove_checker &&other){
 			//assert_fast(other.entity.is_valid());
 			std::swap(entity, other.entity);
 			std::swap(function, other.function);
+			assert_fast(this->function);
 			//assert_fast(this->entity.is_valid());
 			return *this;
 		}
@@ -88,6 +91,7 @@ namespace ECS{
 	};
 
 	void ECS::Entity::make_automatic(bool (*function)(Entity_handle)) &&{
+		assert_fast(is_valid());
 		System::get_components<Remove_checker>().push_back(Remove_checker{function, std::move(*this)});
 	}
 }

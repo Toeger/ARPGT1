@@ -52,7 +52,8 @@ namespace ZombieAI {
 	//create a zombie that can be shot by the player
 	void spawn_zombie(){
 		auto player_transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
-		Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)}; //not sure if the directions are uniformly distributed, doesn't really matter
+		//not sure if the directions are uniformly distributed, doesn't really matter
+		Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)};
 		offset += get_random_number(3000.f, 5000.f);
 		ECS::Entity zombie;
 		auto &body = zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
@@ -217,9 +218,16 @@ void check_remove_automatic_entities(){
 		assert(r.entity.is_valid());
 	}
 #endif
+//	removers.erase(std::remove_if(begin(removers), end(removers), [](ECS::Remove_checker &r){
+//					   return r.function(r.entity.to_handle());
+//				   }), end(removers));
+//	return;
+	std::vector<ECS::Entity> to_delete;
 	for (auto it = begin(removers); it != end(removers);){
 		assert_fast(it->entity.is_valid());
 		if (it->function(it->entity.to_handle())){
+			to_delete.push_back(std::move(it->entity));
+			assert_fast(it->entity.is_valid() == false);
 			it = removers.erase(it);
 			assert_fast(it == end(removers) || it->entity.is_valid());
 		}
@@ -228,6 +236,14 @@ void check_remove_automatic_entities(){
 			assert_fast(it == end(removers) || it->entity.is_valid());
 		}
 	}
+#if ASSERT_LEVEL >= ASSERT_LEVEL_ALL
+	for (auto &r : removers){
+		assert(r.entity.is_valid());
+	}
+	for (auto &e : to_delete){
+		assert(e.is_valid());
+	}
+#endif
 }
 
 void update_logical_frame(){

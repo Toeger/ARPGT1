@@ -9,7 +9,7 @@
 #define ASSERT_LEVEL_ALL 3 //enable all asserts, even if they take a long time
 
 #ifndef ASSERT_LEVEL
-#define ASSERT_LEVEL ASSERT_LEVEL_ALL //default assert level, #define ASSERT_LEVEL to whichever level you want before #including asserts.h
+#define ASSERT_LEVEL ASSERT_LEVEL_DEBUG //default assert level, #define ASSERT_LEVEL to whichever level you want before #including asserts.h
 #endif
 
 #if ASSERT_LEVEL > 0
