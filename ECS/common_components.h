@@ -21,6 +21,7 @@ namespace Common_components{
 	};
 	struct Animation{
 		Animations::Animation animation;
+		sf::Color color = sf::Color::White;
 		float start_frame = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() % 1000 / 1000.f;
 	};
 }

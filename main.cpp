@@ -69,7 +69,7 @@ namespace ZombieAI {
 		zombie.add(ZombieAI::Zombie_AI{});
 		zombie.add(Common_components::Speed{30});
 		zombie.add(Common_components::HP{30});
-		zombie.add(Common_components::Animation{Animations::zombie});
+		zombie.add(Common_components::Animation{Animations::zombie, sf::Color{255, 127, 127}});
 		std::move(zombie).make_automatic([](ECS::Entity_handle zombie){
 			bool dead = zombie.get<Common_components::HP>()->hp <= 0;
 			if (dead){
@@ -113,10 +113,11 @@ void shoot_fireball(){
 		{
 			auto hp = other.get<Common_components::HP>();
 			if (hp){
-				hp->hp -= 10;
+				hp->hp -= 30;
 			}
 			//die on collision
-			ball.template get<Life_time>()->logical_frames_left = 0;
+			//ball.template get<Life_time>()->logical_frames_left = 0;
+			(void)ball;
 			return new_transformator;
 		});
 		return !ball.get<Life_time>()->logical_frames_left--;

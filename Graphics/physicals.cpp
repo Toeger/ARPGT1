@@ -68,6 +68,7 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 			auto animation_ptr = entity.template get<Common_components::Animation>();
 			if (animation_ptr){
 				static sf::Clock clock;
+				sprite.setColor(animation_ptr->color);
 				Animations::set_texture(sprite, sprite_size, animation_ptr->animation, animation_ptr->start_frame + clock.getElapsedTime().asSeconds());
 			}
 		}
