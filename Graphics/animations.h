@@ -7,6 +7,7 @@ namespace Animations
 {
 	enum Animation{
 		fireball,
+		zombie,
 		size
 	};
 	void set_texture(sf::Sprite &sprite, sf::Vector2u &sprite_size, Animation animation, float frame);

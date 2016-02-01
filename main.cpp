@@ -69,7 +69,7 @@ namespace ZombieAI {
 		zombie.add(ZombieAI::Zombie_AI{});
 		zombie.add(Common_components::Speed{30});
 		zombie.add(Common_components::HP{30});
-		zombie.add(Textures::zombie);
+		zombie.add(Common_components::Animation{Animations::zombie});
 		std::move(zombie).make_automatic([](ECS::Entity_handle zombie){
 			bool dead = zombie.get<Common_components::HP>()->hp <= 0;
 			if (dead){
@@ -103,7 +103,7 @@ void shoot_fireball(){
 	ball.add(Common_components::Speed{60});
 	Physical::Sensor<Physical::Circle> body(60, transformator);
 	ball.add(std::move(body));
-	ball.add(Common_components::Animation{Animations::fireball, std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() % 1000 / 1000.f});
+	ball.add(Common_components::Animation{Animations::fireball});
 	std::move(ball).make_automatic([](ECS::Entity_handle ball)
 	{
 		auto &sensor = *ball.get<Physical::Sensor<Physical::Circle>>();

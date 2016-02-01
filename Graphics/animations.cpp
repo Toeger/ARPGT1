@@ -31,7 +31,8 @@ struct AnimationData{
 };
 
 static std::array<AnimationData, Animations::Animation::size> animations = {
-	AnimationData{"Art/feuerballanimation2.png", 17, 1}, //Animations::Animation::fireball
+	AnimationData{"Art/feuerballanimation3.png", 9, 1}, //Animations::Animation::fireball
+	AnimationData{"Art/zombie.png", 16, 1}, //Animations::Animation::zombie
 };
 
 void Animations::set_texture(sf::Sprite &sprite, sf::Vector2u &sprite_size, Animations::Animation animation, float frame)

@@ -6,5 +6,4 @@ void Textures::fill_textures()
 {
 	Textures::textures[fireball].loadFromFile("Art/fireball.png");
 	Textures::textures[player].loadFromFile("Art/Dragon.png");
-	Textures::textures[zombie].loadFromFile("Art/zombie.png");
 }

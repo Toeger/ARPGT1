@@ -8,7 +8,6 @@ namespace Textures
 	enum Texture_ids{
 		fireball,
 		player,
-		zombie,
 		size
 	};
 	extern sf::Texture textures[size];
