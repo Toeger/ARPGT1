@@ -21,7 +21,7 @@ struct AnimationData{
 	sf::IntRect get_rect(float frame)
 	{
 		sf::IntRect rect;
-		int frame_index = static_cast<int>(std::fmod(frame, animation_length_seconds) * columns);
+		int frame_index = static_cast<int>(std::fmod(frame / animation_length_seconds, 1) * columns);
 		rect.left = frame_index * width;
 		rect.top = 0;
 		rect.width = width;
@@ -31,7 +31,7 @@ struct AnimationData{
 };
 
 static std::array<AnimationData, Animations::Animation::size> animations = {
-	AnimationData{"Art/feuerballanimation3.png", 9, 1}, //Animations::Animation::fireball
+	AnimationData{"Art/feuerblau.png", 17, 2}, //Animations::Animation::fireball
 	AnimationData{"Art/zombie.png", 16, 1}, //Animations::Animation::zombie
 };
 
