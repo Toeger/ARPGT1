@@ -3,21 +3,36 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <netdb.h>
 #include <iostream>
 #include <cstring>
+#include <array>
 
 #include "network.h"
 #include "Utility/asserts.h"
+#include "ECS/utility.h"
 
 namespace Config{
 	const auto host_name = "togersoft.com";
 	const auto host_port = 12345;
+	const std::size_t MAX_UDP_PAYLOAD = 512;
+}
+
+template <class Tout, class Tin>
+Tout *any_cast(Tin *p){
+	void *vp = p;
+	return static_cast<Tout *>(vp);
 }
 
 static std::thread network_thread;
 
+void handle(char *buffer, size_t size){
+	std::cout << std::string(buffer, buffer + size) << '\n' << std::flush;
+}
+
 static void run_network(){
+	ON_SCOPE_EXIT( /*TODO: push "network down" event */);
 	//connect
 	hostent *host;
 	host = gethostbyname(Config::host_name);
@@ -28,11 +43,29 @@ static void run_network(){
 	server.sin_family = AF_INET;
 	server.sin_port = Config::host_port;
 	memcpy(&server.sin_addr, host->h_addr_list, sizeof server.sin_addr);
+	int fd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (fd < 0){
+		perror("Failed creating socket");
+		return;
+	}
+	//ON_SCOPE_EXIT(close(fd);); //why can it not find close?
 	//login
-
+	auto logintext = "LOGIN";
+	if (sendto(fd, logintext, sizeof logintext, 0, any_cast<sockaddr>(&server), sizeof server) != sizeof logintext){
+		perror("Failed sending data");
+		return;
+	}
 	//wait for messages by the server, parse them and put them in the event queue
-	for (;;){
+	std::array<char, Config::MAX_UDP_PAYLOAD> buffer;
 
+	socklen_t socket_length = sizeof server;
+	for (;;){
+		auto size = recvfrom(fd, buffer.data(), buffer.size(), 0, any_cast<sockaddr>(&server), &socket_length);
+		if (size == -1){
+			perror("Failed recieving data");
+			return;
+		}
+		handle(buffer.data(), size);
 	}
 }
 

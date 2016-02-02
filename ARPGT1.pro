@@ -33,7 +33,6 @@ HEADERS += \
     player.h \
     practicedummy.h \
     camera.h \
-    utility.h \
     make_function.h \
     Physics/body.h \
     Physics/circle.h \
@@ -55,7 +54,8 @@ HEADERS += \
     ECS/common_components.h \
     Graphics/textures.h \
     Graphics/animations.h \
-    network.h
+    network.h \
+    ECS/utility.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 debug:QMAKE_CXXFLAGS += -O1 -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g

@@ -13,7 +13,7 @@
 #include "player.h"
 #include "practicedummy.h"
 #include "ECS/entity.h"
-#include "utility.h"
+#include "ECS/utility.h"
 #include "make_function.h"
 #include "Physics/body.h"
 #include "Physics/sensor.h"

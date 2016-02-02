@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "player.h"
-#include "utility.h"
+#include "ECS/utility.h"
 #include "Physics/body.h"
 
 Player Player::player;
