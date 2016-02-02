@@ -1,10 +1,14 @@
 Issues
+    Find a way to not rely on UB on exit when component vectors are destroyed and static entities access those destructed component vectors in their destructor
 TODO
     Make resizing of window not change zoom
-    Find a way to not rely on UB on exit when component vectors are destroyed and static entities access those destructed component vectors in their destructor
-
-Collision resolution:
-    Think about removing Physical::Body and only allow circles (and maybe polygons), attaching physical shapes is overkill
-
+    Make a safe login and network system
+        RSA to exchange an AES key
+        Think about replay attacks
+    Make the ECS snapshottable
+        Requires components to be copyable
+    Keep a synchronized and a predicted state
+        Update synchronized state whenever possible
+        Recalculate predicted state whenever new relevant data arrives
 To Read:
     k-d-Trees, other trees
