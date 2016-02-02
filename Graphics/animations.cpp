@@ -2,13 +2,15 @@
 #include <cmath>
 
 #include "animations.h"
+#include "Utility/asserts.h"
 
 struct AnimationData{
 	AnimationData(const char *path, int columns, float animation_length_seconds)
 		:columns(columns)
 		,animation_length_seconds(animation_length_seconds)
 	{
-		texture.loadFromFile(path);
+		auto success = texture.loadFromFile(path);
+		assert_fast(success);
 		auto texture_size = texture.getSize();
 		width = texture_size.x / columns;
 		height = texture_size.y;
@@ -31,7 +33,7 @@ struct AnimationData{
 };
 
 static std::array<AnimationData, Animations::Animation::size> animations = {
-	AnimationData{"Art/feuerblau.png", 17, 2}, //Animations::Animation::fireball
+	AnimationData{"Art/feuerballanimation3.png", 9, 2}, //Animations::Animation::fireball
 	AnimationData{"Art/zombie.png", 16, 1}, //Animations::Animation::zombie
 };
 
