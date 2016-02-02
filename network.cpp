@@ -26,12 +26,14 @@ Tout *any_cast(Tin *p){
 }
 
 static std::thread network_thread;
+static std::atomic<bool> network_should_quit;
 
 void handle(char *buffer, size_t size){
 	std::cout << std::string(buffer, buffer + size) << '\n' << std::flush;
 }
 
 static void run_network(){
+	network_should_quit = false;
 	ON_SCOPE_EXIT( /*TODO: push "network down" event */);
 	//connect
 	hostent *host;
@@ -59,7 +61,8 @@ static void run_network(){
 	std::array<char, Config::MAX_UDP_PAYLOAD> buffer;
 
 	socklen_t socket_length = sizeof server;
-	for (;;){
+	for (;!network_should_quit;){
+		//TODO: Add a timeout and check network_should_quit again so we don't get stuck indefinitely if we never get a packet
 		auto size = recvfrom(fd, buffer.data(), buffer.size(), 0, any_cast<sockaddr>(&server), &socket_length);
 		if (size == -1){
 			perror("Failed recieving data");
@@ -73,4 +76,16 @@ void Network::run()
 {
 	assert_fast(!network_thread.joinable());
 	network_thread = std::thread(run_network);
+}
+
+void Network::update()
+{
+	//TODO: send actions of this client to server
+}
+
+void Network::stop()
+{
+	//stop the network thread (logout)
+	network_should_quit = true;
+	network_thread.join();
 }

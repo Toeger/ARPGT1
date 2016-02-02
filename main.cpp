@@ -23,6 +23,7 @@
 #include "ECS/common_components.h"
 #include "Graphics/textures.h"
 #include "Graphics/animations.h"
+#include "network.h"
 
 namespace {
 	std::mt19937 rng(std::random_device{}());
@@ -314,9 +315,11 @@ int main(){
 		p.add(Common_components::Speed{50});
 	}
 
+	Network::run();
 	while (window.isOpen()){
 		while (now() - last_update_timepoint > logical_frame_duration){
 			last_update_timepoint += logical_frame_duration;
+			Network::update();
 			update_logical_frame();
 		}
 		p.center_camera();
@@ -324,5 +327,6 @@ int main(){
 		render_frame(window);
 		handle_events(window);
 	}
+	Network::stop();
 	p.set_window(nullptr); //prevent the camera from crashing due to not having a window
 }
