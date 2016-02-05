@@ -1,4 +1,4 @@
 [submodule "ECS"]
 	path = ECS
-	url = git@github.com:Toeger/ECS.git
+	url = git://github.com/Toeger/ECS.git
 	branch = master
