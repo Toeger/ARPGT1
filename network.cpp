@@ -50,6 +50,13 @@ static void run_network(){
 		perror("Failed creating socket");
 		return;
 	}
+	timeval timeout = {};
+	timeout.tv_usec = 100000; //should be 100ms
+	//timeout.tv_sec = 3;
+	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout) < 0){
+		perror("Error setting timeout");
+		return;
+	}
 	//ON_SCOPE_EXIT(close(fd);); //why can it not find close?
 	//login
 	auto logintext = "LOGIN";
@@ -66,10 +73,12 @@ static void run_network(){
 		auto size = recvfrom(fd, buffer.data(), buffer.size(), 0, any_cast<sockaddr>(&server), &socket_length);
 		if (size == -1){
 			perror("Failed recieving data");
-			return;
+			continue;
 		}
 		handle(buffer.data(), size);
 	}
+	//todo: logout
+	//close(fd);
 }
 
 void Network::run()
