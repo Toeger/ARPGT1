@@ -79,6 +79,7 @@ namespace Spawner {
 			std::cout << "Failed placing monster\n";
 			return;
 		}
+		body.end_frame(); //hack to make the monster not appear on top of player the first frame
 		monster.add(Run_straight_AI{});
 		monster.add(Common_components::Speed{speed});
 		monster.add(Common_components::HP{hp});
@@ -150,7 +151,6 @@ void shoot_fireball(){
 			}
 			//die on collision
 			ball.template get<Life_time>()->logical_frames_left = 0;
-			//(void)ball;
 			return new_transformator;
 		});
 		return !ball.get<Life_time>()->logical_frames_left--;
