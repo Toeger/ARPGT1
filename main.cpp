@@ -49,41 +49,75 @@ void debug_print(const Physical::Line &l, const Physical::Transformator &t){
 	std::cout << "line: x1: " << t.vector.x << " y1: " << t.vector.y << " x2: " << pos.vector.x << " y2: " << pos.vector.y << '\n';
 }
 
-namespace ZombieAI {
-	struct Zombie_AI{};
-	//create a zombie that can be shot by the player
-	void spawn_zombie(){
+namespace Config{
+	const auto lfps = 30; //logical frames per second, independent of graphical fps
+	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
+}
+
+namespace Spawner {
+	struct Run_straight_AI{};
+	void spawn_generic(Animations::Animation animation, int hp, float speed, float radius, Animations::Animation death_animation = Animations::size){
 		auto player_transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
 		//not sure if the directions are uniformly distributed, doesn't really matter
-		Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)};
-		offset += get_random_number(3000.f, 5000.f);
-		ECS::Entity zombie;
-		auto &body = zombie.add(Physical::DynamicBody<Physical::Circle>(60, player_transformator + offset));
-		bool collided = false;
-		body.move(Physical::Vector{0.1}, [&collided](auto &, auto &){
-			collided = true;
-			return Physical::Vector{};
-		});
-		if (collided){
-			return spawn_zombie();
-		}
-		zombie.add(ZombieAI::Zombie_AI{});
-		zombie.add(Common_components::Speed{30});
-		zombie.add(Common_components::HP{30});
-		zombie.add(Common_components::Animation{Animations::zombie});
-		std::move(zombie).make_automatic([](ECS::Entity_handle zombie){
-			bool dead = zombie.get<Common_components::HP>()->hp <= 0;
-			if (dead){
-				static int zombiemultiplier;
-				if (zombiemultiplier++ > 5){
-					spawn_zombie();
-					zombiemultiplier = 0;
-				}
-				spawn_zombie();
+		const int retries = 10; //if we don't find an empty space after 10 retries just give up spawning the monster
+		ECS::Entity monster;
+		auto &body = monster.add(Physical::DynamicBody<Physical::Circle>(radius, player_transformator));
+		bool colliding;
+		for (int retry = 0; retry < retries; retry++){
+			Physical::Transformator offset = Physical::Direction{get_random_number(-1.f, 1.f), get_random_number(-1.f, 1.f)};
+			offset += get_random_number(3000.f, 5000.f);
+			colliding = false;
+			body.move(offset, [&colliding](auto &, auto &){
+				colliding = true;
+				return Physical::Vector{};
+			});
+			if (!colliding){
+				break;
 			}
-			return dead;
+		}
+		if (colliding){ //we tried placing the monster but the space was taken for every retry, giving up
+			std::cout << "Failed placing monster\n";
+			return;
+		}
+		monster.add(Run_straight_AI{});
+		monster.add(Common_components::Speed{speed});
+		monster.add(Common_components::HP{hp});
+		monster.add(Common_components::Animation{animation});
+		if (death_animation != Animations::size){
+			monster.add(death_animation);
+		}
+		std::move(monster).make_automatic([](ECS::Entity_handle monster){
+			if (monster.get<Common_components::HP>()->hp <= 0){
+				//we died, show death animation
+				auto death_animation_ptr = monster.get<Animations::Animation>();
+				if (!death_animation_ptr){
+					return true;
+				}
+				ECS::Entity dead_monster;
+				auto &body = *monster.get<Physical::DynamicBody<Physical::Circle>>();
+				dead_monster.add(Physical::Sensor<Physical::Circle>{Physical::Circle{body.get_shape()}, body.get_current_transformator()});
+				dead_monster.add(Common_components::Life_time{
+					static_cast<int>(Animations::get_animation_data(*death_animation_ptr).animation_length_seconds * Config::lfps)
+				});
+				dead_monster.add(Common_components::Animation{*death_animation_ptr});
+				std::move(dead_monster).make_automatic([](ECS::Entity_handle monster){
+					int life_time = monster.get<Common_components::Life_time>()->life_time;
+					std::cout << life_time << '\n' << std::flush;
+					return !monster.get<Common_components::Life_time>()->life_time--;
+				});
+				return true;
+			}
+			return false;
 		});
 	}
+	//create a zombie that can be shot by the player
+	void spawn_zombie(){
+		spawn_generic(Animations::zombie, 30, 30, 60);
+	}
+	void spawn_turtle(){
+		spawn_generic(Animations::turtle, 50, 20, 50, Animations::turtleexplode);
+	}
+
 }
 
 void shoot_fireball(){
@@ -193,7 +227,12 @@ void handle_events(sf::RenderWindow &window){
 			break;
 			case sf::Keyboard::Z:
 			{
-				ZombieAI::spawn_zombie();
+				Spawner::spawn_zombie();
+			}
+			break;
+			case sf::Keyboard::T:
+			{
+				Spawner::spawn_turtle();
 			}
 			break;
 			case sf::Keyboard::Space:
@@ -274,8 +313,6 @@ int main(){
 
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
-	const auto lfps = 30; //logical frames per second, independent of graphical fps
-	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
 
 	/*
 	ECS::Entity dots[4];
@@ -289,21 +326,21 @@ int main(){
 	}
 	*/
 
-	{ //add zombie AI system
-		auto fun = [](ECS::Entity_handle zombie, Physical::Transformator &player_pos){
-			auto &zombie_body = *zombie.get<Physical::DynamicBody<Physical::Circle>>();
-			auto zombie_transformator = zombie_body.get_current_transformator();
-			auto to_player_vector = player_pos.vector - zombie_transformator.vector;
-			auto zombie_speed = zombie.get<Common_components::Speed>()->speed;
-			zombie_body += Physical::Direction{to_player_vector.x, to_player_vector.y} - zombie_transformator.direction;
-			zombie_body += zombie_speed;
+	{ //add running straight AI system
+		auto fun = [](ECS::Entity_handle monster, Physical::Transformator &player_pos){
+			auto &monster_body = *monster.get<Physical::DynamicBody<Physical::Circle>>();
+			auto monster_transformator = monster_body.get_current_transformator();
+			auto to_player_vector = player_pos.vector - monster_transformator.vector;
+			auto monster_speed = monster.get<Common_components::Speed>()->speed;
+			monster_body += Physical::Direction{to_player_vector.x, to_player_vector.y} - monster_transformator.direction;
+			monster_body += monster_speed;
 		};
 
 		auto precomputer = []{
 			return Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
 		};
 
-		ECS::System::add_system<ZombieAI::Zombie_AI>(fun, precomputer);
+		ECS::System::add_system<Spawner::Run_straight_AI>(fun, precomputer);
 	}
 
 	Player &p = Player::player;
@@ -315,10 +352,10 @@ int main(){
 		p.add(Common_components::Speed{50});
 	}
 
-	Network::run();
+	//Network::run();
 	while (window.isOpen()){
-		while (now() - last_update_timepoint > logical_frame_duration){
-			last_update_timepoint += logical_frame_duration;
+		while (now() - last_update_timepoint > Config::logical_frame_duration){
+			last_update_timepoint += Config::logical_frame_duration;
 			Network::update();
 			update_logical_frame();
 		}
@@ -327,6 +364,6 @@ int main(){
 		render_frame(window);
 		handle_events(window);
 	}
-	Network::stop();
+	//Network::stop();
 	p.set_window(nullptr); //prevent the camera from crashing due to not having a window
 }

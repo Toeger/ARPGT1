@@ -9,6 +9,8 @@
 #include "textures.h"
 #include "animations.h"
 
+sf::Clock Graphics::clock;
+
 static void draw_physical(
 		sf::RenderWindow &window,
 		const Physical::Circle &c,
@@ -67,7 +69,6 @@ void Graphics::draw_physicals(sf::RenderWindow &window)
 			//check for animations
 			auto animation_ptr = entity.template get<Common_components::Animation>();
 			if (animation_ptr){
-				static sf::Clock clock;
 				sprite.setColor(animation_ptr->color);
 				Animations::set_texture(sprite, sprite_size, animation_ptr->animation, animation_ptr->start_frame + clock.getElapsedTime().asSeconds());
 			}

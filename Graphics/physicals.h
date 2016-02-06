@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 namespace Graphics{
+	extern sf::Clock clock;
 	void draw_physicals(sf::RenderWindow &window);
 }
 

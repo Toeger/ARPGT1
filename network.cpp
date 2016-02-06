@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstring>
 #include <array>
+#include <unistd.h>
 
 #include "network.h"
 #include "Utility/asserts.h"
@@ -50,26 +51,29 @@ static void run_network(){
 		perror("Failed creating socket");
 		return;
 	}
-	timeval timeout = {};
-	timeout.tv_usec = 100000; //should be 100ms
-	//timeout.tv_sec = 3;
-	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout) < 0){
-		perror("Error setting timeout");
-		return;
+	ON_SCOPE_EXIT(close(fd););
+	//set timeout
+	{
+		timeval timeout = {};
+		timeout.tv_usec = 100000; //should be 100ms
+		if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout) < 0){
+			perror("Error setting timeout");
+			return;
+		}
 	}
-	//ON_SCOPE_EXIT(close(fd);); //why can it not find close?
 	//login
-	auto logintext = "LOGIN";
-	if (sendto(fd, logintext, sizeof logintext, 0, any_cast<sockaddr>(&server), sizeof server) != sizeof logintext){
-		perror("Failed sending data");
-		return;
+	{
+		auto logintext = "LOGIN";
+		if (sendto(fd, logintext, sizeof logintext, 0, any_cast<sockaddr>(&server), sizeof server) != sizeof logintext){
+			perror("Failed sending data");
+			return;
+		}
 	}
 	//wait for messages by the server, parse them and put them in the event queue
 	std::array<char, Config::MAX_UDP_PAYLOAD> buffer;
 
 	socklen_t socket_length = sizeof server;
 	for (;!network_should_quit;){
-		//TODO: Add a timeout and check network_should_quit again so we don't get stuck indefinitely if we never get a packet
 		auto size = recvfrom(fd, buffer.data(), buffer.size(), 0, any_cast<sockaddr>(&server), &socket_length);
 		if (size == -1){
 			perror("Failed recieving data");
@@ -78,7 +82,6 @@ static void run_network(){
 		handle(buffer.data(), size);
 	}
 	//todo: logout
-	//close(fd);
 }
 
 void Network::run()

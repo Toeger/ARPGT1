@@ -58,7 +58,7 @@ HEADERS += \
     ECS/utility.h
 
 QMAKE_CXXFLAGS += -std=c++1z
-debug:QMAKE_CXXFLAGS += -O1 -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
+debug:QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
 debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 debug:QMAKE_LFLAGS += -fsanitize=address
 release:QMAKE_CXXFLAGS += -O3
@@ -66,3 +66,10 @@ release:QMAKE_CXXFLAGS += -O3
 
 DISTFILES += \
     TODO
+
+something.target = this
+something.commands = mkdir -p Art; cp $${PWD}/Art/*.png Art;
+QMAKE_EXTRA_TARGETS += something
+PRE_TARGETDEPS += this
+
+
