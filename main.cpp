@@ -99,10 +99,8 @@ namespace Spawner {
 				dead_monster.add(Common_components::Life_time{
 					static_cast<int>(Animations::get_animation_data(*death_animation_ptr).animation_length_seconds * Config::lfps)
 				});
-				dead_monster.add(Common_components::Animation{*death_animation_ptr});
+				dead_monster.add(Common_components::Animation{*death_animation_ptr, sf::Color::White, -Graphics::clock.getElapsedTime().asSeconds()});
 				std::move(dead_monster).make_automatic([](ECS::Entity_handle monster){
-					int life_time = monster.get<Common_components::Life_time>()->life_time;
-					std::cout << life_time << '\n' << std::flush;
 					return !monster.get<Common_components::Life_time>()->life_time--;
 				});
 				return true;
