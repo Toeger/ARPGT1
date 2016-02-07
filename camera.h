@@ -12,7 +12,6 @@ public:
 	void set_position(const Physical::Vector &pos);
 	void set_rotation(const Physical::Direction &rot);
 	void set_rotation(float angle);
-	void face(const Physical::Vector &pos);
 	void rotate(float turningangle);
 	void set_size(int x, int y);
 	float get_rotation() const;

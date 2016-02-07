@@ -4,7 +4,19 @@
 #include "animations.h"
 #include "Utility/asserts.h"
 
-Animations::Animation_data::Animation_data(const char *path, int columns, float animation_length_seconds)
+void swap_xy(sf::Image &image){
+	sf::Image simage;
+	const auto &is = image.getSize();
+	simage.create(is.y, is.x);
+	for (auto x = 0u; x < is.x; x++){
+		for (auto y = 0u; y < is.y; y++){
+			simage.setPixel(y, x, image.getPixel(x, y));
+		}
+	}
+	image = std::move(simage);
+}
+
+Animations::Animation_data::Animation_data(int columns, float animation_length_seconds, const char *path)
 	:columns(columns)
 	,animation_length_seconds(animation_length_seconds)
 {
@@ -27,11 +39,10 @@ sf::IntRect Animations::Animation_data::get_rect(float frame)
 }
 
 static std::array<Animations::Animation_data, Animations::Animation::size> animations = {Animations::Animation_data
-	{"Art/feuerballanimation3.png", 9, 2}, //Animations::Animation::fireball
-	{"Art/zombie.png", 16, 1}, //Animations::Animation::zombie
-	{"Art/schildkroete_16_100_100.png", 16, 2}, //Animations::Animation::turtle
-	{"Art/schildkroete_explosion_16_100_100.png", 16, 2} //Animations::Animation::turtleexplode
-
+	{ 9, 2, "Art/feuerballanimation3.png"}, //Animations::Animation::fireball
+	{16, 1, "Art/zombie.png"}, //Animations::Animation::zombie
+	{16, 2, "Art/schildkroete_16_100_100.png"}, //Animations::Animation::turtle
+	{16, 2, "Art/schildkroete_explosion_16_100_100.png"} //Animations::Animation::turtleexplode
 };
 
 void Animations::set_texture(sf::Sprite &sprite, sf::Vector2u &sprite_size, Animations::Animation animation, float frame)

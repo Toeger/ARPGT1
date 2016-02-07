@@ -129,7 +129,7 @@ void shoot_fireball(){
 	const auto ball_radius = 10;
 	const auto player_radius = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_shape().radius;
 	const auto player_speed = Player::player.get<Common_components::Speed>()->speed;
-	transformator += Physical::Vector{0, player_radius + ball_radius + player_speed}; //player radius + ball radius //TODO: ask the player for its radius
+	transformator += Physical::Vector{0, player_radius + ball_radius + player_speed};
 	struct Life_time{
 		int logical_frames_left;
 	};
@@ -293,7 +293,6 @@ void render_frame(sf::RenderWindow &window){
 	}
 	Graphics::draw_physicals(window);
 	window.display();
-	//window.display(); //add this to remove double image issues and half the framerate
 }
 
 int main(){

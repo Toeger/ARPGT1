@@ -34,11 +34,6 @@ void Camera::set_rotation(float angle)
 	view.setRotation(angle);
 }
 
-void Camera::face(const Physical::Vector &pos)
-{
-	view.setRotation(atan2(pos.y, pos.x) * 180 / M_PI + 90);
-}
-
 void Camera::rotate(float turningangle)
 {
 	view.rotate(turningangle);

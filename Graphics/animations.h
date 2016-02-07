@@ -5,14 +5,25 @@
 
 namespace Animations
 {
+	namespace Direction{
+		enum Direction{
+		up,
+		down,
+		left,
+		right,
+		};
+	}
+
 	struct Animation_data{
-		Animation_data(const char *path, int columns, float animation_length_seconds);
+		Animation_data(int columns, float animation_length_seconds, const char *path);
+		sf::IntRect get_rect(float frame);
+
 		sf::Texture texture;
 		int width;
 		int height;
 		int columns;
+		int rows;
 		float animation_length_seconds;
-		sf::IntRect get_rect(float frame);
 	};
 
 	enum Animation{
