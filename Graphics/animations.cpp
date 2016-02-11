@@ -38,12 +38,13 @@ sf::IntRect Animations::Animation_data::get_rect(float frame)
 	return rect;
 }
 
-static std::array<Animations::Animation_data, Animations::Animation::size> animations = {Animations::Animation_data
+static std::array<Animations::Animation_data, Animations::Animation::size> animations = {{
 	{ 9, 2, "Art/feuerballanimation3.png"}, //Animations::Animation::fireball
+	//{ 9, 2, "Art/feuerballanimation3.png"}, //Animations::Animation::zombie
 	{16, 1, "Art/zombie.png"}, //Animations::Animation::zombie
-	{16, 2, "Art/schildkroete_16_100_100.png"}, //Animations::Animation::turtle
+	{16, 2, "Art/testkroete_16_300_300.png"}, //Animations::Animation::turtle
 	{16, 2, "Art/schildkroete_explosion_16_100_100.png"} //Animations::Animation::turtleexplode
-};
+}};
 
 void Animations::set_texture(sf::Sprite &sprite, sf::Vector2u &sprite_size, Animations::Animation animation, float frame)
 {

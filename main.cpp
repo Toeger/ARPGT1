@@ -111,7 +111,7 @@ namespace Spawner {
 	}
 	//create a zombie that can be shot by the player
 	void spawn_zombie(){
-		spawn_generic(Animations::zombie, 30, 30, 60);
+		spawn_generic(Animations::zombie, 30, 50, 60);
 	}
 	void spawn_turtle(){
 		spawn_generic(Animations::turtle, 50, 20, 50, Animations::turtleexplode);
@@ -123,9 +123,9 @@ void shoot_fireball(){
 	//TODO: build real skill system and map keys to logical actions
 	//shoot a ball from the player in the facing direction
 	//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
-	//need to get the physics system to give me the entity that got hit
 	ECS::Entity ball;
 	auto transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
+	std::cout << transformator << '\n' << std::flush;
 	const auto ball_radius = 10;
 	const auto player_radius = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_shape().radius;
 	const auto player_speed = Player::player.get<Common_components::Speed>()->speed;
@@ -346,6 +346,7 @@ int main(){
 		Physical::DynamicBody<Physical::Circle> b{100};
 		p.add(std::move(b));
 		p.add(Textures::player);
+		//p.add(Common_components::Animation{Animations::fireball});
 		p.add(Common_components::Speed{50});
 	}
 

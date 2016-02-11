@@ -189,6 +189,9 @@ namespace Physical {
 	inline Transformator operator -(const Transformator &lhs, const Transformator &rhs){
 		return lhs + -rhs;
 	}
+	inline std::ostream &operator << (std::ostream &os, const Transformator &t){
+		return os << '(' << t.vector.x << ',' << t.vector.y << ')' << "->" << t.direction.to_degrees();
+	}
 }
 
 #endif // UTILITY_H
