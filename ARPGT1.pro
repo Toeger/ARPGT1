@@ -59,6 +59,7 @@ HEADERS += \
 
 QMAKE_CXXFLAGS += -std=c++1z
 debug:QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
+#debug:QMAKE_CXXFLAGS += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic
 #debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 debug:QMAKE_LFLAGS += -fsanitize=address
 release:QMAKE_CXXFLAGS += -O3
