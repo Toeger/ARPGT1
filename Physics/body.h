@@ -78,8 +78,9 @@ namespace Physical{
 		DynamicBody &operator +=(const Direction &direction){
 			return *this += Transformator(direction);
 		}
-		template <class Transformator, class F> //Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction
+		template <class Transformator, class F>
 		void move(const Transformator &offset, F &&f){
+			//Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction
 			auto new_transformator = next_transformator + offset;
 			auto colliding_entity = colliding<0>(new_transformator);
 			if (colliding_entity){
@@ -122,7 +123,7 @@ namespace Physical{
 				if (&other == this) //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
 					continue;
 				auto had_collision =
-						collides(other.shape, other.current_transformator, shape, new_transformator) ||
+						//collides(other.shape, other.current_transformator, shape, new_transformator) ||
 						collides(other.shape, other.next_transformator, shape, new_transformator);
 				if (had_collision)
 					return ECS::System::component_to_entity_handle(other);
@@ -136,7 +137,7 @@ namespace Physical{
 			for (auto r = ECS::System::range<Body>(); r; r.advance()){
 				auto &other = r.template get<Body>();
 				auto had_collision =
-						collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator) ||
+						//collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator) ||
 						collides(other.get_shape(), other.get_next_transformator(), shape, new_transformator);
 				if (had_collision)
 					return ECS::System::component_to_entity_handle(other);
