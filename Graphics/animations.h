@@ -22,7 +22,7 @@ namespace Animations
 		int width;
 		int height;
 		int columns;
-		int rows;
+		//int rows;
 		float animation_length_seconds;
 	};
 
