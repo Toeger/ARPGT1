@@ -84,6 +84,7 @@ namespace Spawner {
 		monster.add(Common_components::Speed{speed});
 		monster.add(Common_components::HP{hp});
 		monster.add(Common_components::Animation{animation});
+		monster.emplace<Common_components::Enemy>();
 		if (death_animation != Animations::size){
 			monster.add(death_animation);
 		}
@@ -111,7 +112,7 @@ namespace Spawner {
 	}
 	//create a zombie that can be shot by the player
 	void spawn_zombie(){
-		spawn_generic(Animations::zombie, 30, 50, 60);
+		spawn_generic(Animations::zombie, 30, 30, 60);
 	}
 	void spawn_turtle(){
 		spawn_generic(Animations::turtle, 50, 20, 50, Animations::turtleexplode);
@@ -236,6 +237,29 @@ void handle_events(sf::RenderWindow &window){
 			case sf::Keyboard::Space:
 			{
 				shoot_fireball();
+			}
+			break;
+			case sf::Keyboard::Tab:
+			{
+				int distance = std::numeric_limits<int>::max();
+				ECS::Entity_handle eh;
+				auto &player_body = *p.get<Physical::DynamicBody<Physical::Circle>>();
+				auto &playerpos = player_body.get_current_transformator().vector;
+				for (auto it = ECS::System::range<Common_components::Enemy, Physical::DynamicBody<Physical::Circle>>(); it; it.advance()){
+					auto &pos = it.get<Physical::DynamicBody<Physical::Circle>>().get_current_transformator().vector;
+					auto new_distance = (pos - playerpos).length();
+					if (new_distance < distance){
+						distance = new_distance;
+						eh = it.get_entity_handle();
+					}
+				}
+				if (distance == std::numeric_limits<int>::max()){
+					//no enemies around, skip
+					continue;
+				}
+				//TODO: formula is incorrect, need to fix this to make tab targeting work
+				auto &enemy_pos = eh.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
+				player_body += Physical::Direction(enemy_pos.x, enemy_pos.y) - player_body.get_current_transformator().direction;
 			}
 			break;
 			default:
