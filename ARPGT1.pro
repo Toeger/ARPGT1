@@ -55,7 +55,8 @@ HEADERS += \
     Graphics/textures.h \
     Graphics/animations.h \
     network.h \
-    ECS/utility.h
+    ECS/utility.h \
+    Utility/vmap.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 debug:QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
