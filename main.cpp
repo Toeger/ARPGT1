@@ -382,7 +382,7 @@ int main(){
 			update_logical_frame();
 		}
 		p.center_camera();
-		p.center_camera();
+		//p.center_camera();
 		render_frame(window);
 		handle_events(window);
 	}
