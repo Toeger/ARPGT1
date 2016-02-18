@@ -297,6 +297,7 @@ void update_logical_frame(){
 		playerbody += p.move_offset;
 	}
 	playerbody += p.turn_offset;
+	//playerbody += Physical::Direction(p.move_offset.x, p.move_offset.y);
 	Physical::end_frame();
 	check_remove_automatic_entities();
 	ECS::System::run_systems();
@@ -322,7 +323,7 @@ void render_frame(sf::RenderWindow &window){
 int main(){
 	Textures::fill_textures();
 	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
-	//assert(Tester::run());
+	assert(Tester::run());
 	sf::RenderWindow window(sf::VideoMode(800, 600), "ARPGT1");
 	{
 		//this should not do anything, but somehow sometimes prevents the window from not responding
@@ -382,7 +383,6 @@ int main(){
 			update_logical_frame();
 		}
 		p.center_camera();
-		//p.center_camera();
 		render_frame(window);
 		handle_events(window);
 	}

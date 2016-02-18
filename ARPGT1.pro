@@ -59,11 +59,11 @@ HEADERS += \
     Utility/vmap.h
 
 QMAKE_CXXFLAGS += -std=c++1z
-debug:QMAKE_CXXFLAGS += -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
-#debug:QMAKE_CXXFLAGS += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic
-#debug:QMAKE_CXXFLAGS_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
-debug:QMAKE_LFLAGS += -fsanitize=address
-release:QMAKE_CXXFLAGS += -O3
+QMAKE_CXXFLAGS_DEBUG += -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
+#QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic
+#QMAKE_CXXFLAGS_DEBUG_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
+QMAKE_LFLAGS_DEBUG += -fsanitize=address
+QMAKE_CXXFLAGS_RELEASE += -O3
 #QMAKE_CFLAGS += -flto
 
 DISTFILES += \
