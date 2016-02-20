@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     ECS/entity_base.cpp \
     Graphics/textures.cpp \
     Graphics/animations.cpp \
-    network.cpp
+    network.cpp \
+    Tests/perlin_test.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -56,7 +57,9 @@ HEADERS += \
     Graphics/animations.h \
     network.h \
     ECS/utility.h \
-    Utility/vmap.h
+    Utility/vmap.h \
+    Graphics/perlinnoise.h \
+    Tests/perlin_test.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g
