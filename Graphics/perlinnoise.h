@@ -29,22 +29,25 @@ T blend(T tl, T tr, T bl, T br, float bratio, float rratio){
 template <class T, std::size_t width, std::size_t height>
 void add_octave(int wave_length, std::array<std::array<T, height>, width> &array, std::uniform_real_distribution<T> &dis){
 	assert_fast(wave_length >= 2);
-	std::array<T, width / 2> line; //we actually want width / wave_length
-	std::generate_n(begin(line), width / wave_length, [&dis]{ return dis(mt); });
-	auto bl = dis(mt);
-	auto br = dis(mt);
+	std::array<T, width / 2 + 1> top_line; //we actually want width / wave_length
+	std::array<T, width / 2 + 1> bottom_line; //we actually want width / wave_length
+	std::generate_n(begin(top_line), width / wave_length + 1, [&dis]{ return dis(mt); });
+	std::generate_n(begin(bottom_line), width / wave_length + 1, [&dis]{ return dis(mt); });
 	for (unsigned y = 0; y < height; y++){
-		auto bottom_ratio = (y % wave_length) / (float)wave_length;
+		auto bottom_ratio = (y % wave_length) * 1.f / wave_length;
 		for (unsigned x = 0; x < width; x++){
-			auto tl = line[x % wave_length];
-			auto tr = line[x % wave_length + 1];
-			auto right_ratio = (x % wave_length) / (float)wave_length;
-			array[x][y] += blend(tl, tr, bl, br, bottom_ratio, right_ratio);
+			auto tl = top_line[x / wave_length];
+			auto tr = top_line[x / wave_length + 1];
+			auto bl = bottom_line[x / wave_length];
+			auto br = bottom_line[x / wave_length + 1];
+			auto right_ratio = (x % wave_length) * 1.f / wave_length;
+			auto value = blend(tl, tr, bl, br, bottom_ratio, right_ratio);
+			assert_fast(value > 0);
+			array[x][y] += value;
 		}
 		if ((y + 1) % wave_length == 0){
-			line[y % wave_length] = bl;
-			bl = br;
-			br = dis(mt);
+			top_line = bottom_line;
+			std::generate_n(begin(bottom_line), width / wave_length, [&dis]{ return dis(mt); });
 		}
 	}
 }
@@ -52,9 +55,9 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 template <class T, int width, int height, int octaves>
 std::enable_if_t<std::is_floating_point<T>::value, std::array<std::array<T, height>, width>>
 get_perlin_noise(T from, T to){
-	static_assert(octaves >= 0);
-	static_assert(width > 0);
-	static_assert(height > 0);
+	static_assert(octaves >= 0, "");
+	static_assert(width > 0, "");
+	static_assert(height > 0, "");
 	assert_fast(from < to);
 
 	std::array<std::array<T, height>, width> array;
