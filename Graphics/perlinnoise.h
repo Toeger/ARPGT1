@@ -47,7 +47,7 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 		}
 		if ((y + 1) % wave_length == 0){
 			top_line = bottom_line;
-			std::generate_n(begin(bottom_line), width / wave_length, [&dis]{ return dis(mt); });
+			std::generate_n(begin(bottom_line), width / wave_length + 1, [&dis]{ return dis(mt); });
 		}
 	}
 }

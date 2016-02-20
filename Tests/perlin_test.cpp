@@ -40,5 +40,32 @@ template<>
 void multi_test_perlin<max_i>(){}
 
 void test_perlin(){
-	multi_test_perlin();
+	//multi_test_perlin();
+	const int width = 1000;
+	const int height = 1000;
+	const int min = 0;
+	const int max = 255;
+
+	auto noise = get_perlin_noise<float, width, height, 40>(0, 255);
+	sf::Image image;
+	image.create(width, height);
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			auto &value = noise[x][y];
+			assert(value >= min);
+			assert(value <= max);
+			unsigned char c;
+			const int low = 100;
+			const int high = 130;
+			if (value < low)
+				c = 0;
+			else if (value > high)
+				c = 255;
+			else
+				c = (value - low) * 255 / (high - low);
+			sf::Color color(c, c, c);
+			image.setPixel(x, y, color);
+		}
+	}
+	image.saveToFile("/tmp/perlin.png");
 }
