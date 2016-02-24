@@ -11,8 +11,8 @@ template <int i = 0>
 void run_perlin()
 {
 	//not sure how to automatically test perlin noise, so just dump an image for now and manually check it
-	const int width = 1000;
-	const int height = 1000;
+	const int width = 1024;
+	const int height = 1024;
 	const int min = 0;
 	const int max = 255;
 
@@ -41,12 +41,13 @@ void multi_test_perlin<max_i>(){}
 
 void test_perlin(){
 	//multi_test_perlin();
-	const int width = 1000;
-	const int height = 1000;
-	const int min = 0;
-	const int max = 255;
+	const int width = 1024;
+	const int height = 1024;
+	const float min = 0;
+	const float max = 1;
+	const float separator = 0.47f;
 
-	auto noise = get_perlin_noise<float, width, height, 40>(0, 255);
+	auto noise = get_perlin_noise<float, width, height, 40>(min, max, 20);
 	sf::Image image;
 	image.create(width, height);
 	for (int y = 0; y < height; y++){
@@ -54,15 +55,7 @@ void test_perlin(){
 			auto &value = noise[x][y];
 			assert(value >= min);
 			assert(value <= max);
-			unsigned char c;
-			const int low = 100;
-			const int high = 130;
-			if (value < low)
-				c = 0;
-			else if (value > high)
-				c = 255;
-			else
-				c = (value - low) * 255 / (high - low);
+			unsigned char c = value < separator ? 0 : 255;
 			sf::Color color(c, c, c);
 			image.setPixel(x, y, color);
 		}

@@ -24,6 +24,7 @@
 #include "Graphics/textures.h"
 #include "Graphics/animations.h"
 #include "network.h"
+#include "Graphics/perlinnoise.h"
 
 namespace {
 	std::mt19937 rng(std::random_device{}());
@@ -120,7 +121,7 @@ namespace Spawner {
 
 }
 
-void shoot_fireball(){
+static void shoot_fireball(){
 	//TODO: build real skill system and map keys to logical actions
 	//shoot a ball from the player in the facing direction
 	//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
@@ -158,7 +159,7 @@ void shoot_fireball(){
 	});
 }
 
-void handle_events(sf::RenderWindow &window){
+static void handle_events(sf::RenderWindow &window){
 	auto &p = Player::player;
 	//check immediate action buttons
 	p.move_offset.x = 0;
@@ -274,7 +275,7 @@ void handle_events(sf::RenderWindow &window){
 }
 
 //remove temporary entities
-void check_remove_automatic_entities(){
+static void check_remove_automatic_entities(){
 	auto &removers = ECS::System::get_components<ECS::Remove_checker>();
 	for (std::size_t i = 0; i < removers.size();){ //using indexes because iterators become invalid
 		if (removers[i].function(removers[i].entity.to_handle())){
@@ -286,7 +287,7 @@ void check_remove_automatic_entities(){
 	}
 }
 
-void update_logical_frame(){
+static void update_logical_frame(){
 	//movement, collision detection, ...
 	auto &p = Player::player;
 	auto length = p.move_offset.length();
@@ -303,7 +304,7 @@ void update_logical_frame(){
 	ECS::System::run_systems();
 }
 
-void render_frame(sf::RenderWindow &window){
+static void render_frame(sf::RenderWindow &window){
 	window.clear(sf::Color::Black);
 	{
 		static int fps;
@@ -318,6 +319,32 @@ void render_frame(sf::RenderWindow &window){
 	}
 	Graphics::draw_physicals(window);
 	window.display();
+}
+
+static std::vector<ECS::Entity> generate_map(){
+	std::vector<ECS::Entity> retval;
+
+	constexpr auto width = 1024;
+	constexpr auto height = 1024;
+	const auto min = 0.f;
+	const auto max = 1.f;
+	const auto separator = 0.47f;
+	//const auto block_size = 100.0f;
+
+	auto noise = get_perlin_noise<float, width, height, 40>(min, max, 20);
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			auto &value = noise[x][y];
+			assert_fast(value >= min);
+			assert_fast(value <= max);
+			if (value < separator){
+				ECS::Entity block;
+				//block.emplace<Physical::Static_body>(Physical::Polygon(x * block_size, ...));
+				retval.emplace_back(std::move(block));
+			}
+		}
+	}
+	return retval;
 }
 
 int main(){
@@ -374,6 +401,8 @@ int main(){
 		//p.add(Common_components::Animation{Animations::fireball});
 		p.add(Common_components::Speed{50});
 	}
+
+	auto map = generate_map();
 
 	//Network::run();
 	while (window.isOpen()){

@@ -24,7 +24,7 @@ SOURCES += main.cpp \
     network.cpp \
     Tests/perlin_test.cpp
 
-LIBS += -lsfml-graphics -lsfml-window -lsfml-system
+LIBS += -lsfml-graphics -lsfml-window -lsfml-system -lpthread
 
 HEADERS += \
     ECS/entity.h \
