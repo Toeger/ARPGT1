@@ -11,24 +11,24 @@ namespace Physical {
 	//A Vector defines a position through its x and y coordinate
 	//has nothing to do with std::vector
 	struct Vector{
-		Vector(float x = 0, float y = 0) :
+		constexpr Vector(float x = 0, float y = 0) :
 			x(x),
 			y(y)
 		{}
-		Vector(const Vector &) = default;
+		constexpr Vector(const Vector &) = default;
 
 		//compatibility with sf::Vector2f
-		Vector(const sf::Vector2f &v) :
+		constexpr Vector(const sf::Vector2f &v) :
 			x(v.x),
 			y(v.y)
 		{}
 		operator sf::Vector2f(){
 			return {x, y};
 		}
-		float length() const{
+		constexpr float length() const{
 			return std::sqrt(x*x + y*y);
 		}
-		Vector &operator *= (float scale){
+		constexpr Vector &operator *= (float scale){
 			x *= scale;
 			y *= scale;
 			return *this;
@@ -52,55 +52,55 @@ namespace Physical {
 	//A direction of (x=sqrt(0.5), y=sqrt(0.5)) means the object is rotated by 45 degrees counter clockwise
 	//Direction automatically normalizes its values
 	struct Direction{
-		Direction() :
+		constexpr Direction() :
 			x(1),
 			y(0)
 		{}
-		Direction(float x, float y) :
+		constexpr Direction(float x, float y) :
 			x(x),
 			y(y)
 		{
 			normalize();
 		}
-		float to_radians() const{
+		constexpr float to_radians() const{
 			return std::atan2(y, x);
 		}
-		float to_degrees() const{
+		constexpr float to_degrees() const{
 			return std::atan2(y, x) * 180 / M_PI;
 		}
-		float get_x() const{
+		constexpr float get_x() const{
 			return x;
 		}
-		float get_y() const{
+		constexpr float get_y() const{
 			return y;
 		}
-		Direction &operator +=(const Direction &other){
+		constexpr Direction &operator +=(const Direction &other){
 			auto newx = x * other.x - y * other.y;
 			y = y * other.x + x * other.y;
 			x = newx;
 			fast_normalize();
 			return *this;
 		}
-		Direction &operator -=(const Direction &other){
+		constexpr Direction &operator -=(const Direction &other){
 			auto newx = x * other.x + y * other.y;
 			y = y * other.x - x * other.y;
 			x = newx;
 			fast_normalize();
 			return *this;
 		}
-		Direction operator -() const{
+		constexpr Direction operator -() const{
 			return {x, -y};
 		}
-		static Direction from_radians(float radians){
+		static constexpr Direction from_radians(float radians){
 			return {std::cos(radians), std::sin(radians)};
 		}
-		static Direction from_degrees(float degrees){
+		static constexpr Direction from_degrees(float degrees){
 			return from_radians(degrees * M_PI / 180);
 		}
-		Direction(const Direction &) = default;
-		Direction &operator =(const Direction &) = default;
+		constexpr Direction(const Direction &) = default;
+		constexpr Direction &operator =(const Direction &) = default;
 	private:
-		void normalize(){
+		constexpr void normalize(){
 			auto sq = x * x + y * y;
 			if (sq < std::numeric_limits<float>::epsilon()){
 				x = 1;
@@ -111,7 +111,7 @@ namespace Physical {
 			x /= q;
 			y /= q;
 		}
-		void fast_normalize(){
+		constexpr void fast_normalize(){
 			//assumes we don't have length 0
 			auto sq = x * x + y * y;
 			float q = std::sqrt(sq);
@@ -121,10 +121,10 @@ namespace Physical {
 
 		float x, y;
 	};
-	inline Direction operator +(Direction lhs, const Direction &rhs){
+	constexpr inline Direction operator +(Direction lhs, const Direction &rhs){
 		return lhs += rhs;
 	}
-	inline Direction operator -(Direction lhs, const Direction &rhs){
+	constexpr inline Direction operator -(Direction lhs, const Direction &rhs){
 		return lhs -= rhs;
 	}
 
@@ -133,43 +133,43 @@ namespace Physical {
 	struct Transformator{
 		Vector vector;
 		Direction direction;
-		Transformator()
+		constexpr Transformator()
 		{}
-		Transformator(const Direction &direction) :
+		constexpr Transformator(const Direction &direction) :
 			direction(direction)
 		{}
-		Transformator(const Vector &vector) :
+		constexpr Transformator(const Vector &vector) :
 			vector(vector)
 		{}
-		Transformator(const Vector &vector, const Direction &direction) :
+		constexpr Transformator(const Vector &vector, const Direction &direction) :
 			vector(vector),
 			direction(direction)
 		{}
 		//operators
-		Transformator &operator += (const Vector &offset){
+		constexpr Transformator &operator += (const Vector &offset){
 			vector.x += direction.get_x() * offset.x - direction.get_y() * offset.y;
 			vector.y += direction.get_y() * offset.x + direction.get_x() * offset.y;
 			return *this;
 		}
-		Transformator &operator -= (const Vector &offset){
+		constexpr Transformator &operator -= (const Vector &offset){
 			return *this += -offset;
 		}
-		Transformator &operator += (const Direction &dir){
+		constexpr Transformator &operator += (const Direction &dir){
 			direction += dir;
 			return *this;
 		}
-		Transformator &operator -= (const Direction &dir){
+		constexpr Transformator &operator -= (const Direction &dir){
 			direction -= dir;
 			return *this;
 		}
-		Transformator &operator += (const Transformator &other){
+		constexpr Transformator &operator += (const Transformator &other){
 			*this += other.vector; //order of evaluation matters
 			direction += other.direction;
 			return *this;
 		}
-		Transformator &operator = (const Transformator &other) = default;
+		constexpr Transformator &operator = (const Transformator &other) = default;
 		//inverting transformations
-		Transformator operator -() const{
+		constexpr Transformator operator -() const{
 			Transformator t;
 			t -= direction;
 			t -= vector;
@@ -177,16 +177,16 @@ namespace Physical {
 		}
 	};
 	//Transformator operators
-	inline Transformator operator +(Transformator lhs, const Transformator &rhs){
+	inline constexpr Transformator operator +(Transformator lhs, const Transformator &rhs){
 		return lhs += rhs;
 	}
-	inline Transformator operator +(Transformator lhs, const Vector &rhs){
+	inline constexpr Transformator operator +(Transformator lhs, const Vector &rhs){
 		return lhs += rhs;
 	}
-	inline Transformator operator +(Transformator lhs, const Direction &rhs){
+	inline constexpr Transformator operator +(Transformator lhs, const Direction &rhs){
 		return lhs += rhs;
 	}
-	inline Transformator operator -(const Transformator &lhs, const Transformator &rhs){
+	inline constexpr Transformator operator -(const Transformator &lhs, const Transformator &rhs){
 		return lhs + -rhs;
 	}
 	inline std::ostream &operator << (std::ostream &os, const Transformator &t){

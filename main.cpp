@@ -9,6 +9,7 @@
 #include <cassert>
 #include <random>
 #include <type_traits>
+#include <bitset>
 
 #include "player.h"
 #include "practicedummy.h"
@@ -321,27 +322,19 @@ static void render_frame(sf::RenderWindow &window){
 	window.display();
 }
 
-static std::vector<ECS::Entity> generate_map(){
-	std::vector<ECS::Entity> retval;
+template <std::size_t width, std::size_t height>
+static std::array<std::bitset<height>, width> generate_map(){
+	std::array<std::bitset<height>, width> retval;
 
-	constexpr auto width = 1024;
-	constexpr auto height = 1024;
 	const auto min = 0.f;
 	const auto max = 1.f;
 	const auto separator = 0.47f;
 	//const auto block_size = 100.0f;
 
 	auto noise = get_perlin_noise<float, width, height, 40>(min, max, 20);
-	for (int y = 0; y < height; y++){
-		for (int x = 0; x < width; x++){
-			auto &value = noise[x][y];
-			assert_fast(value >= min);
-			assert_fast(value <= max);
-			if (value < separator){
-				ECS::Entity block;
-				//block.emplace<Physical::Static_body>(Physical::Polygon(x * block_size, ...));
-				retval.emplace_back(std::move(block));
-			}
+	for (std::size_t y = 0; y < height; y++){
+		for (std::size_t x = 0; x < width; x++){
+			retval[x][y] = noise[x][y] < separator;
 		}
 	}
 	return retval;
@@ -402,7 +395,7 @@ int main(){
 		p.add(Common_components::Speed{50});
 	}
 
-	auto map = generate_map();
+	//auto map = generate_map<1024, 1024>();
 
 	//Network::run();
 	while (window.isOpen()){

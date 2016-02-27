@@ -10,29 +10,29 @@
 
 namespace Physical{
 	struct AABB{
-		AABB()
+		constexpr AABB()
 		{
 			clear();
 		}
-		AABB(const Vector &bottom_left, float width, float height) :
+		constexpr AABB(const Vector &bottom_left, float width, float height) :
 			left(bottom_left.x),
 			right(bottom_left.x + width),
 			bottom(bottom_left.y),
 			top(bottom_left.y + height)
 		{}
-		AABB(float left, float right, float bottom, float top) :
+		constexpr AABB(float left, float right, float bottom, float top) :
 			left(left),
 			right(right),
 			bottom(bottom),
 			top(top)
 		{}
-		AABB(const Physical::Circle &c, const Transformator &t) :
+		constexpr AABB(const Physical::Circle &c, const Transformator &t) :
 		left(t.vector.x - c.radius),
 		right(t.vector.x + c.radius),
 		bottom(t.vector.y - c.radius),
 		top(t.vector.y + c.radius)
 		{}
-		AABB(const Physical::Line &c, const Transformator &t)
+		constexpr AABB(const Physical::Line &c, const Transformator &t)
 		{
 			const auto &p1 = t.vector;
 			const auto &p2 = t + c.vector;
@@ -42,23 +42,26 @@ namespace Physical{
 			bottom = std::min(p1.y, p2.vector.y);
 			top = std::max(p1.y, p2.vector.y);
 		}
-		AABB(const AABB &other) = default;
+		constexpr AABB(const AABB &other) = default;
 		~AABB() = default;
-		AABB &operator = (const AABB &other) = default;
-		AABB &combine(const AABB &other){
+		constexpr AABB &operator = (const AABB &other) = default;
+		constexpr AABB &combine(const AABB &other){
 			left = std::min(left, other.left);
 			right = std::max(right, other.right);
 			bottom = std::min(bottom, other.bottom);
 			top = std::max(top, other.top);
 			return *this;
 		}
-		void clear(){
+		constexpr void clear(){
 			left = bottom = std::numeric_limits<float>::max();
 			right = top = -std::numeric_limits<float>::max(); //std::numeric_limits<float>::min() returns a positive number
 		}
 
 		//Data
-		float left, right, bottom, top;
+		float left = std::numeric_limits<float>::max();
+		float right = -std::numeric_limits<float>::max();
+		float bottom = std::numeric_limits<float>::max();
+		float top = -std::numeric_limits<float>::max();
 	};
 	inline std::ostream &operator <<(std::ostream &os, const AABB &aabb){
 		return os << '[' << aabb.left << ',' << aabb.top << ',' << aabb.right << ',' << aabb.bottom << ']';
