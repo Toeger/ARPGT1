@@ -62,19 +62,19 @@ HEADERS += \
     Tests/perlin_test.h
 
 QMAKE_CXXFLAGS += -std=c++1z
-QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer -Wall -Werror -g #-fsanitize=safe-stack
+QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb -fsanitize=undefined,address#,safe-stack
 #QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic
 #QMAKE_CXXFLAGS_DEBUG_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
-QMAKE_LFLAGS_DEBUG += -fsanitize=undefined -fsanitize=address #-fsanitize=safe-stack
+QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 QMAKE_CXXFLAGS_RELEASE += -O3
 #QMAKE_CFLAGS += -flto
 
 DISTFILES += \
     TODO
 
-something.target = this
-something.commands = mkdir -p Art; cp $${PWD}/Art/*.png Art;
-QMAKE_EXTRA_TARGETS += something
-PRE_TARGETDEPS += this
+copyart.target = always
+copyart.commands = mkdir -p Art; cp $${PWD}/Art/*.png Art;
+QMAKE_EXTRA_TARGETS += copyart
+PRE_TARGETDEPS += always
 
 
