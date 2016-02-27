@@ -1,9 +1,9 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include <cmath>
-
 #include "physics_utility.h"
+
+#include <cmath>
 
 namespace Physical{
 	//Defines a physical line with startpoint 0/0 and endpoint defined by vector

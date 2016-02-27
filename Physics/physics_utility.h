@@ -1,10 +1,11 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include <SFML/System/Vector2.hpp>
+
 #include <array>
 #include <cmath>
 #include <limits>
-#include <SFML/System/Vector2.hpp>
 #include <ostream>
 
 namespace Physical {

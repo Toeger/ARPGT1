@@ -3,11 +3,11 @@
 
 #include "Utility/asserts.h"
 
+#include <algorithm>
 #include <array>
 #include <numeric>
 #include <random>
 #include <type_traits>
-#include <algorithm>
 
 static std::random_device rd;
 static std::mt19937 mt(rd());

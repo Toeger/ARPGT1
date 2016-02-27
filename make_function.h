@@ -2,9 +2,8 @@
 #define MAKE_FUNCTION
 
 #include <functional>
-#include <utility>
 #include <iostream>
-#include <functional>
+#include <utility>
 
 // For generic types that are functors, delegate to its 'operator()'
 template <typename T>

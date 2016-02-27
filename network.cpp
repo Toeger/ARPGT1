@@ -1,18 +1,18 @@
-#include <thread>
-#include <atomic>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <iostream>
-#include <cstring>
-#include <array>
-#include <unistd.h>
-
+#include "ECS/utility.h"
 #include "network.h"
 #include "Utility/asserts.h"
-#include "ECS/utility.h"
+
+#include <arpa/inet.h>
+#include <array>
+#include <atomic>
+#include <cstring>
+#include <fcntl.h>
+#include <iostream>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <thread>
+#include <unistd.h>
 
 namespace Config{
 	const auto host_name = "togersoft.com";

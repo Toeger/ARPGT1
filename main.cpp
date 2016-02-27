@@ -1,31 +1,32 @@
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include <chrono>
-#include <memory>
-#include <tuple>
-#include <initializer_list>
-#include <array>
-#include <typeinfo>
-#include <cassert>
-#include <random>
-#include <type_traits>
-#include <bitset>
-
-#include "player.h"
-#include "practicedummy.h"
+#include "ECS/common_components.h"
 #include "ECS/entity.h"
 #include "ECS/utility.h"
+#include "Graphics/animations.h"
+#include "Graphics/perlinnoise.h"
+#include "Graphics/physicals.h"
+#include "Graphics/textures.h"
 #include "make_function.h"
+#include "network.h"
 #include "Physics/body.h"
 #include "Physics/sensor.h"
 #include "Physics/shapes.h"
-#include "Graphics/physicals.h"
+#include "player.h"
+#include "practicedummy.h"
 #include "Tests/tester.h"
-#include "ECS/common_components.h"
-#include "Graphics/textures.h"
-#include "Graphics/animations.h"
-#include "network.h"
-#include "Graphics/perlinnoise.h"
+
+#include <SFML/Graphics.hpp>
+
+#include <array>
+#include <bitset>
+#include <cassert>
+#include <chrono>
+#include <initializer_list>
+#include <iostream>
+#include <memory>
+#include <random>
+#include <tuple>
+#include <typeinfo>
+#include <type_traits>
 
 namespace {
 	std::mt19937 rng(std::random_device{}());

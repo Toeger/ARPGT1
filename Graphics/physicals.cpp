@@ -1,13 +1,14 @@
+#include "animations.h"
 #include "physicals.h"
-#include "ECS/entity.h"
+#include "Physics/aabb.h"
 #include "Physics/body.h"
 #include "Physics/sensor.h"
-#include "Physics/aabb.h"
-#include "ECS/utility.h"
-#include "ECS/common_components.h"
 #include "player.h"
 #include "textures.h"
-#include "animations.h"
+
+#include "ECS/common_components.h"
+#include "ECS/entity.h"
+#include "ECS/utility.h"
 
 sf::Clock Graphics::clock;
 

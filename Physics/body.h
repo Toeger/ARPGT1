@@ -1,19 +1,19 @@
 #ifndef BODY_H
 #define BODY_H
 
-#include <vector>
-#include <limits>
-#include <array>
-#include <cassert>
-#include <tuple>
-#include <typeinfo>
-
+#include "aabb.h"
+#include "collision.h"
+#include "ECS/entity.h"
 #include "ECS/utility.h"
 #include "Physics/physics_utility.h"
 #include "Physics/shapes.h"
-#include "ECS/entity.h"
-#include "aabb.h"
-#include "collision.h"
+
+#include <array>
+#include <cassert>
+#include <limits>
+#include <tuple>
+#include <typeinfo>
+#include <vector>
 
 namespace ECS{
 	struct Entity_handle;

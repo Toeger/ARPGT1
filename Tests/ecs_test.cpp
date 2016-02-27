@@ -1,7 +1,8 @@
-#include "ecs_test.h"
 #include "ECS/entity.h"
 #include "ECS/entity_handle.h"
 #include "ECS/system.h"
+#include "ecs_test.h"
+
 #include <cassert>
 
 //move only test component

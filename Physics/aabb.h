@@ -1,12 +1,12 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include <limits>
-#include <iostream>
-#include <algorithm>
-
 #include "physics_utility.h"
 #include "shapes.h"
+
+#include <algorithm>
+#include <iostream>
+#include <limits>
 
 namespace Physical{
 	struct AABB{

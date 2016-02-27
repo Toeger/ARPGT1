@@ -1,8 +1,9 @@
 #ifndef PRACTICEDUMMY_H
 #define PRACTICEDUMMY_H
 
-#include <SFML/Graphics.hpp>
 #include "ECS/entity.h"
+
+#include <SFML/Graphics.hpp>
 
 class PracticeDummy : public ECS::Entity
 {

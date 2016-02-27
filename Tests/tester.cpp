@@ -1,10 +1,10 @@
-#include <cassert>
-
-#include "tester.h"
 #include "collisions.h"
-#include "physics_utility.h"
 #include "ecs_test.h"
 #include "perlin_test.h"
+#include "physics_utility.h"
+#include "tester.h"
+
+#include <cassert>
 
 bool Tester::run()
 {

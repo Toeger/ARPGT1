@@ -1,4 +1,5 @@
 #include "practicedummy.h"
+
 #include <memory>
 
 PracticeDummy::PracticeDummy() :

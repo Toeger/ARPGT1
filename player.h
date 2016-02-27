@@ -1,10 +1,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <SFML/Graphics.hpp>
 #include "camera.h"
 #include "ECS/entity.h"
 #include "Physics/physics_utility.h"
+
+#include <SFML/Graphics.hpp>
 
 class Player : public ECS::Entity
 {

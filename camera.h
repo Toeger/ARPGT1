@@ -1,8 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <SFML/Graphics.hpp>
 #include "Physics/physics_utility.h"
+
+#include <SFML/Graphics.hpp>
 
 class Camera
 {

@@ -1,9 +1,9 @@
-#include <cassert>
-
-#include "Physics/collision.h"
-#include "Tests/tests_utility.h"
 #include "ECS/entity.h"
 #include "Physics/body.h"
+#include "Physics/collision.h"
+#include "Tests/tests_utility.h"
+
+#include <cassert>
 
 static void test_helper_collides_point_circle(){
 	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};

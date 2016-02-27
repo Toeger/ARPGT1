@@ -1,8 +1,8 @@
-#include <array>
-#include <cmath>
-
 #include "animations.h"
 #include "Utility/asserts.h"
+
+#include <array>
+#include <cmath>
 
 void swap_xy(sf::Image &image){
 	sf::Image simage;

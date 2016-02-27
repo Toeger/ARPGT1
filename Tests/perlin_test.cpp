@@ -1,5 +1,5 @@
-#include "perlin_test.h"
 #include "Graphics/perlinnoise.h"
+#include "perlin_test.h"
 
 #include <SFML/Graphics.hpp>
 
