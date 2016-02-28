@@ -31,7 +31,7 @@ bool Map::collides(const Physical::Circle &circle, const Physical::Transformator
 
 std::vector<bool> Map::create_map(std::size_t width, std::size_t height)
 {
-	std::vector<bool> retval;
+	std::vector<bool> retval(width * height);
 	const auto min = 0.f;
 	const auto max = 1.f;
 	const auto separator = 0.47f;

@@ -199,11 +199,32 @@ static void run_towards_each_other_and_get_stuck_bug_test(){
 	assert_equal(b2.get_next_transformator().vector.x, 1000.f);
 }
 
+static void test_circle_rect(){
+	Physical::Transformator t1;
+	Physical::Transformator t2;
+	const auto r = 100.f;
+	const auto w = 200.f;
+	const auto h = 300.f;
+	Physical::Circle cicle(r);
+	Physical::AARect rect(w, h);
+	//positive test
+	assert(Physical::collides(cicle, t1, rect, t2));
+	t1.vector.x = w + r * .9f;
+	assert(Physical::collides(cicle, t1, rect, t2));
+	t1.vector.y = h + r * .9f;
+	assert(Physical::collides(cicle, t1, rect, t2));
+	t1.vector.x = -0.9f * r;
+	assert(Physical::collides(cicle, t1, rect, t2));
+	t1.vector.y = -0.9f * r;
+	assert(Physical::collides(cicle, t1, rect, t2));
+}
+
 void test_collisions(){
 	test_helper_collides_point_circle();
 	test_helper_collides_point_rect();
 	test_circle_circle_collisions();
 	test_line_line_collisions();
 	test_line_circle_collision();
+	test_circle_rect();
 	run_towards_each_other_and_get_stuck_bug_test();
 }

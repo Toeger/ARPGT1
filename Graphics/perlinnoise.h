@@ -29,8 +29,8 @@ T blend(T tl, T tr, T bl, T br, float bratio, float rratio){
 template <class T, std::size_t width, std::size_t height>
 void add_octave(int wave_length, std::array<std::array<T, height>, width> &array, std::uniform_real_distribution<T> &dis){
 	assert_fast(wave_length >= 2);
-	std::array<T, width / 2 + 1> top_line; //we actually want width / wave_length
-	std::array<T, width / 2 + 1> bottom_line; //we actually want width / wave_length
+	std::array<T, width / 2 + 2> top_line; //we actually want width / wave_length
+	std::array<T, width / 2 + 2> bottom_line; //we actually want width / wave_length
 	std::generate_n(begin(top_line), width / wave_length + 1, [&dis]{ return dis(mt); });
 	std::generate_n(begin(bottom_line), width / wave_length + 1, [&dis]{ return dis(mt); });
 	for (unsigned y = 0; y < height; y++){
@@ -45,8 +45,8 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 			array[x][y] += value;
 		}
 		if ((y + 1) % wave_length == 0){
-			std::copy(begin(bottom_line), begin(bottom_line) + width / wave_length + 1, begin(top_line));
-			std::generate_n(begin(bottom_line), width / wave_length + 1, [&dis]{ return dis(mt); });
+			std::copy(begin(bottom_line), begin(bottom_line) + width / wave_length + 2, begin(top_line));
+			std::generate_n(begin(bottom_line), width / wave_length + 2, [&dis]{ return dis(mt); });
 		}
 	}
 }
@@ -54,10 +54,10 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 template <class T>
 void add_octave(std::size_t width, std::size_t height, int wave_length, std::vector<T> &array, std::uniform_real_distribution<T> &dis){
 	assert_fast(wave_length >= 2);
-	std::vector<T> top_line(width / wave_length + 1);
-	std::vector<T> bottom_line(width / wave_length + 1);
+	std::vector<T> top_line(width / wave_length + 2);
+	std::vector<T> bottom_line(width / wave_length + 2);
 	std::generate(begin(top_line), end(top_line), [&dis]{ return dis(mt); });
-	std::generate(begin(bottom_line), end(top_line), [&dis]{ return dis(mt); });
+	std::generate(begin(bottom_line), end(bottom_line), [&dis]{ return dis(mt); });
 	for (unsigned y = 0; y < height; y++){
 		const auto bottom_ratio = (y % wave_length) * 1.f / wave_length;
 		for (unsigned x = 0; x < width; x++){

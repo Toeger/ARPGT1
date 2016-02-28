@@ -48,11 +48,10 @@ namespace Physical {
 			return false;
 		if (t.vector.y + c.radius < 0)
 			return false;
-		if (t.vector.y - c.radius < a.height)
+		if (t.vector.y - c.radius > a.height)
 			return false;
 		return true;
 	}
-
 	inline bool collides(const Physical::AARect &a, const Transformator &t1, const Physical::Circle &c, const Transformator &t2){
 		return collides(c, t2, a, t1);
 	}
@@ -65,6 +64,7 @@ namespace Physical {
 		(void)t2;
 		return true;
 	}
+
 	inline bool collides(const Physical::Circle &c, const Transformator &t1, const Physical::Line &l, const Transformator &t2){
 		//Idea: create a transformator that transforms l to be at points (0/0)-(length/0), then apply that transformator to c and do very simple collision detection
 		//undo t2 transformation to have l's start point at (0/0)
