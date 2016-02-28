@@ -1,5 +1,7 @@
-#include "map.h"
 #include "Graphics/perlinnoise.h"
+#include "map.h"
+#include "Physics/aarect.h"
+#include "Physics/collision.h"
 
 Map::Map(std::size_t width, std::size_t height)
 	: width(width)
@@ -19,13 +21,12 @@ bool Map::collides(const Physical::Circle &circle, const Physical::Transformator
 		return true;
 	for (int x = startx; x < endx; x++){
 		for (int y = starty; y < endy; y++){
-			//if (collides(circle, transformator, ))
+			if (Physical::collides(circle, transformator, Physical::AARect{blocksize, blocksize},
+						 Physical::Transformator(Physical::Vector(x * blocksize, y * blocksize))))
+				return true;
 		}
 	}
-	//TODO
-	(void)circle;
-	(void)transformator;
-	return true;
+	return false;
 }
 
 std::vector<bool> Map::create_map(std::size_t width, std::size_t height)

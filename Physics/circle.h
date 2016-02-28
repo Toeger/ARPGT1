@@ -16,4 +16,5 @@ namespace Physical {
 	};
 
 }
+
 #endif // CIRCLE_H

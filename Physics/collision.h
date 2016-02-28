@@ -38,6 +38,15 @@ namespace Physical {
 		using Helper::square;
 		return square(distance.x) + square(distance.y) < square(c1.radius + c2.radius);
 	}
+	inline bool collides(const Physical::Circle &c, const Transformator &t1, const Physical::AARect &a, const Transformator &t2){
+		//TODO
+		(void)c;
+		(void)t1;
+		(void)a;
+		(void)t2;
+		return true;
+	}
+
 	inline bool collides(const Physical::Line &l1, const Transformator &t1, const Physical::Line &l2, const Transformator &t2){
 		//TODO
 		(void)l1;
