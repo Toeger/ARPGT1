@@ -207,16 +207,31 @@ static void test_circle_rect(){
 	const auto h = 300.f;
 	Physical::Circle cicle(r);
 	Physical::Rect rect(w, h);
-	//positive test
+	//positive tests
+	auto factor = 0.9f;
 	assert(Physical::collides(cicle, t1, rect, t2));
-	t1.vector.x = w + r * .9f;
+	t1.vector.x = w + r * factor;
 	assert(Physical::collides(cicle, t1, rect, t2));
-	t1.vector.y = h + r * .9f;
+	t1.vector.y = h + r * factor;
 	assert(Physical::collides(cicle, t1, rect, t2));
-	t1.vector.x = -0.9f * r;
+	t1.vector.x = -factor * r;
 	assert(Physical::collides(cicle, t1, rect, t2));
-	t1.vector.y = -0.9f * r;
+	t1.vector.y = -factor * r;
 	assert(Physical::collides(cicle, t1, rect, t2));
+	//negative tests
+	factor = 1.1f;
+	t1.vector.x = w + r * factor;
+	t1.vector.y = 0;
+	assert(!Physical::collides(cicle, t1, rect, t2));
+	t1.vector.y = h + r * factor;
+	t1.vector.x = 0;
+	assert(!Physical::collides(cicle, t1, rect, t2));
+	t1.vector.x = -factor * r;
+	t1.vector.y = 0;
+	assert(!Physical::collides(cicle, t1, rect, t2));
+	t1.vector.y = -factor * r;
+	t1.vector.x = 0;
+	assert(!Physical::collides(cicle, t1, rect, t2));
 }
 
 void test_collisions(){
