@@ -38,13 +38,23 @@ namespace Physical {
 		using Helper::square;
 		return square(distance.x) + square(distance.y) < square(c1.radius + c2.radius);
 	}
+
 	inline bool collides(const Physical::Circle &c, const Transformator &t1, const Physical::AARect &a, const Transformator &t2){
-		//TODO
-		(void)c;
-		(void)t1;
-		(void)a;
-		(void)t2;
+		//Idea: place the AARect to the center in an axis aligned way
+		auto t = t1 - t2; //t is the new circle position, a is now at 0/0
+		if (t.vector.x + c.radius < 0)
+			return false;
+		if (t.vector.x - c.radius > a.width)
+			return false;
+		if (t.vector.y + c.radius < 0)
+			return false;
+		if (t.vector.y - c.radius < a.height)
+			return false;
 		return true;
+	}
+
+	inline bool collides(const Physical::AARect &a, const Transformator &t1, const Physical::Circle &c, const Transformator &t2){
+		return collides(c, t2, a, t1);
 	}
 
 	inline bool collides(const Physical::Line &l1, const Transformator &t1, const Physical::Line &l2, const Transformator &t2){
