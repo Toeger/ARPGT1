@@ -59,6 +59,13 @@ sf::Vector2f Camera::get_screen_size() const
 	return view.getSize();
 }
 
+Physical::AABB Camera::get_visual_aabb() const
+{
+	Physical::AABB retval;
+	//TODO: do some view calculation to figure out what the camera can see
+	return retval;
+}
+
 Camera::~Camera()
 {
 	if (window)

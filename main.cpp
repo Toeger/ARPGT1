@@ -31,6 +31,7 @@
 
 namespace {
 	std::mt19937 rng(std::random_device{}());
+	ECS::Entity map;
 }
 
 template <class T>
@@ -130,7 +131,6 @@ static void shoot_fireball(){
 	//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
 	ECS::Entity ball;
 	auto transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
-	std::cout << transformator << '\n' << std::flush;
 	const auto ball_radius = 10;
 	const auto player_radius = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_shape().radius;
 	const auto player_speed = Player::player.get<Common_components::Speed>()->speed;
@@ -320,6 +320,23 @@ static void render_frame(sf::RenderWindow &window){
 			fps = 0;
 		}
 	}
+	//TODO: draw map
+	{
+		//idea: don't draw all tiles, instead get the tiles that the camera can currently see, put an AABB around it and draw these tiles
+		auto &m = *map.get<Map>();
+		auto &p = Player::player;
+		auto aabb = p.camera.get_visual_aabb();
+		for (int x = aabb.left / m.block_size; x < aabb.right / m.block_size + 1; x++){
+			for (int y = aabb.bottom / m.block_size; y < aabb.top / m.block_size + 1; y++){
+				if (m.get(x, y)){
+					//Draw blocking block
+				}
+				else{
+					//Draw non-blocking block
+				}
+			}
+		}
+	}
 	Graphics::draw_physicals(window);
 	window.display();
 }
@@ -367,7 +384,6 @@ int main(){
 		p.add(Common_components::Speed{50});
 	}
 
-	ECS::Entity map;
 	map.emplace<Map>(1024, 1024);
 	map.emplace<Common_components::Map>();
 	//auto map = generate_map<1024, 1024>();

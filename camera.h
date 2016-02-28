@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "Physics/aabb.h"
 #include "Physics/physics_utility.h"
 
 #include <SFML/Graphics.hpp>
@@ -18,6 +19,7 @@ public:
 	float get_rotation() const;
 	void set_zoom(float z);
 	sf::Vector2f get_screen_size() const;
+	Physical::AABB get_visual_aabb() const;
 	~Camera();
 private:
 	sf::RenderWindow *window;

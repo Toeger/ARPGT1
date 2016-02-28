@@ -10,23 +10,28 @@ Map::Map(std::size_t width, std::size_t height)
 
 bool Map::collides(const Physical::Circle &circle, const Physical::Transformator &transformator)
 {
-	const int blocksize = 100;
 	auto &pos = transformator.vector;
-	auto startx = (pos.x - circle.radius) / blocksize;
-	auto endx = (pos.x + circle.radius) / blocksize + 1;
-	auto starty = (pos.y - circle.radius) / blocksize;
-	auto endy = (pos.y + circle.radius) / blocksize + 1;
+	auto startx = (pos.x - circle.radius) / block_size;
+	auto endx = (pos.x + circle.radius) / block_size + 1;
+	auto starty = (pos.y - circle.radius) / block_size;
+	auto endy = (pos.y + circle.radius) / block_size + 1;
 	//XXX FIME: just because the outside of the map could potentially collide with the shape doesn't mean it will. need to do this better
 	if (startx < 0 || endx >= width || starty < 0 || endy >= map.size() / width) //out of range of the map
 		return true;
 	for (int x = startx; x < endx; x++){
 		for (int y = starty; y < endy; y++){
-			if (Physical::collides(circle, transformator, Physical::Rect{blocksize, blocksize},
-						 Physical::Transformator(Physical::Vector(x * blocksize, y * blocksize))))
+			if (Physical::collides(circle, transformator, Physical::Rect(block_size, block_size),
+						 Physical::Transformator(Physical::Vector(x * block_size, y * block_size))))
 				return true;
 		}
 	}
 	return false;
+}
+
+bool Map::get(int x, int y)
+{
+	assert_fast(x + width * y < map.size());
+	return map[x + width * y];
 }
 
 std::vector<bool> Map::create_map(std::size_t width, std::size_t height)
