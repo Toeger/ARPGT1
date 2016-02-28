@@ -34,7 +34,7 @@ struct function_traits<ReturnType (*)(Args...)>  {
 
 template <typename L>
 static typename function_traits<L>::f_type make_function(L l){
-  return (typename function_traits<L>::f_type)(l);
+  return (typename function_traits<L>::f_type){l};
 }
 
 //handles bind & multiple function call operator()'s

@@ -51,6 +51,31 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 	}
 }
 
+template <class T>
+void add_octave(std::size_t width, std::size_t height, int wave_length, std::vector<T> &array, std::uniform_real_distribution<T> &dis){
+	assert_fast(wave_length >= 2);
+	std::vector<T> top_line(width / wave_length + 1);
+	std::vector<T> bottom_line(width / wave_length + 1);
+	std::generate(begin(top_line), end(top_line), [&dis]{ return dis(mt); });
+	std::generate(begin(bottom_line), end(top_line), [&dis]{ return dis(mt); });
+	for (unsigned y = 0; y < height; y++){
+		const auto bottom_ratio = (y % wave_length) * 1.f / wave_length;
+		for (unsigned x = 0; x < width; x++){
+			const auto tl = top_line[x / wave_length];
+			const auto tr = top_line[x / wave_length + 1];
+			const auto bl = bottom_line[x / wave_length];
+			const auto br = bottom_line[x / wave_length + 1];
+			const auto right_ratio = (x % wave_length) * 1.f / wave_length;
+			const auto value = blend(tl, tr, bl, br, bottom_ratio, right_ratio);
+			array[x + width * y] += value;
+		}
+		if ((y + 1) % wave_length == 0){
+			std::swap(top_line, bottom_line);
+			std::generate(begin(bottom_line), end(bottom_line), [&dis]{ return dis(mt); });
+		}
+	}
+}
+
 template <class T, int width, int height, int octaves>
 std::enable_if_t<std::is_floating_point<T>::value, std::array<std::array<T, height>, width>>
 get_perlin_noise(T from, T to, int start = 0){
@@ -66,6 +91,23 @@ get_perlin_noise(T from, T to, int start = 0){
 	std::fill(&array[0][0], &array[0][0] + width * height, 0);
 	for (int i = start; i < octaves; i++){
 		add_octave(i + 2, array, dis);
+	}
+	return array;
+}
+
+template <class T>
+std::enable_if_t<std::is_floating_point<T>::value, std::vector<T>>
+get_perlin_noise(std::size_t width, std::size_t height, int octaves, T from, T to, int start = 0){
+	assert_fast(octaves >= 0);
+	assert_fast(width > 0);
+	assert_fast(height > 0);
+	assert_fast(from < to);
+	assert_fast(start <= octaves);
+
+	std::vector<T> array(width * height, 0);
+	std::uniform_real_distribution<T> dis(from, from + (to - from) / (octaves - start + 1));
+	for (int i = start; i < octaves; i++){
+		add_octave(width, height, i + 2, array, dis);
 	}
 	return array;
 }

@@ -1,6 +1,7 @@
 #include "ECS/common_components.h"
 #include "ECS/entity.h"
 #include "ECS/utility.h"
+#include "GamePlay/map.h"
 #include "Graphics/animations.h"
 #include "Graphics/perlinnoise.h"
 #include "Graphics/physicals.h"
@@ -244,7 +245,7 @@ static void handle_events(sf::RenderWindow &window){
 			break;
 			case sf::Keyboard::Tab:
 			{
-				int distance = std::numeric_limits<int>::max();
+				auto distance = std::numeric_limits<float>::max();
 				ECS::Entity_handle eh;
 				auto &player_body = *p.get<Physical::DynamicBody<Physical::Circle>>();
 				auto &playerpos = player_body.get_current_transformator().vector;
@@ -256,7 +257,7 @@ static void handle_events(sf::RenderWindow &window){
 						eh = it.get_entity_handle();
 					}
 				}
-				if (distance == std::numeric_limits<int>::max()){
+				if (distance > std::numeric_limits<float>::max() / 2){
 					//no enemies around, skip
 					continue;
 				}
@@ -323,24 +324,6 @@ static void render_frame(sf::RenderWindow &window){
 	window.display();
 }
 
-template <std::size_t width, std::size_t height>
-static std::array<std::bitset<height>, width> generate_map(){
-	std::array<std::bitset<height>, width> retval;
-
-	const auto min = 0.f;
-	const auto max = 1.f;
-	const auto separator = 0.47f;
-	//const auto block_size = 100.0f;
-
-	auto noise = get_perlin_noise<float, width, height, 40>(min, max, 20);
-	for (std::size_t y = 0; y < height; y++){
-		for (std::size_t x = 0; x < width; x++){
-			retval[x][y] = noise[x][y] < separator;
-		}
-	}
-	return retval;
-}
-
 int main(){
 	Textures::fill_textures();
 	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
@@ -356,18 +339,6 @@ int main(){
 
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
-
-	/*
-	ECS::Entity dots[4];
-	{
-		int counter = 0;
-		Physical::Vector ps[] = {{1000, 1000}, {-1000, 1000}, {1000, -1000}, {-1000, -1000}};
-		for (auto &p : ps){
-			Physical::DynamicBody<Physical::Circle> b(30, p);
-			dots[counter++].add(std::move(b));
-		}
-	}
-	*/
 
 	{ //add running straight AI system
 		auto fun = [](ECS::Entity_handle monster, Physical::Transformator &player_pos){
@@ -396,6 +367,9 @@ int main(){
 		p.add(Common_components::Speed{50});
 	}
 
+	ECS::Entity map;
+	map.emplace<Map>(1024, 1024);
+	map.emplace<Common_components::Map>();
 	//auto map = generate_map<1024, 1024>();
 
 	//Network::run();

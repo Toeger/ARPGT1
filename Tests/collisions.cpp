@@ -6,7 +6,7 @@
 #include <cassert>
 
 static void test_helper_collides_point_circle(){
-	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};
+	float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
 	for (float dx : testnumbers){
 		for (float dy : testnumbers){
 			for (float radius : {1.f, 0.1f, 100.f}){
@@ -29,7 +29,7 @@ static void test_helper_collides_point_circle(){
 }
 
 static void test_helper_collides_point_rect(){
-	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};
+	float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
 	for (float x : testnumbers){
 		for (float y : testnumbers){
 			for (float d : {0.1f, 1.f, 10.f, 33.f, 444.f}){
@@ -139,7 +139,7 @@ static void test_line_circle_collision(){
 	t1.vector.x = 0;
 	t1.vector.y = 0;
 
-	float testnumbers[] = {0, .1, 1, 10, 33, 444, -.1, -1, -10, -33, -444};
+	float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
 	for (auto  x : testnumbers){
 		for (auto y : testnumbers){
 			for (auto dx : testnumbers){
@@ -195,8 +195,8 @@ static void run_towards_each_other_and_get_stuck_bug_test(){
 	auto &b2 = *e2.get<Physical::DynamicBody<Physical::Circle>>();
 	b1 += 500;
 	b2 += -500;
-	assert(b1.get_next_transformator().vector.x == 500);
-	assert(b2.get_next_transformator().vector.x == 1000);
+	assert_equal(b1.get_next_transformator().vector.x, 500.f);
+	assert_equal(b2.get_next_transformator().vector.x, 1000.f);
 }
 
 void test_collisions(){

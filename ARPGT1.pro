@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     Graphics/textures.cpp \
     Graphics/animations.cpp \
     network.cpp \
-    Tests/perlin_test.cpp
+    Tests/perlin_test.cpp \
+    GamePlay/map.cpp
 
 LIBS += -lsfml-graphics -lsfml-window -lsfml-system -lpthread
 
@@ -59,11 +60,13 @@ HEADERS += \
     ECS/utility.h \
     Utility/vmap.h \
     Graphics/perlinnoise.h \
-    Tests/perlin_test.h
+    Tests/perlin_test.h \
+    GamePlay/map.h \
+    Physics/aarect.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb -fsanitize=undefined,address#,safe-stack
-#QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic
+#QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors -Wno-global-constructors
 #QMAKE_CXXFLAGS_DEBUG_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 QMAKE_CXXFLAGS_RELEASE += -O3

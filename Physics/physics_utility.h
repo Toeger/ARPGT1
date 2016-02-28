@@ -8,6 +8,8 @@
 #include <limits>
 #include <ostream>
 
+constexpr const auto pi = static_cast<float>(M_PI);
+
 namespace Physical {
 	//A Vector defines a position through its x and y coordinate
 	//has nothing to do with std::vector
@@ -67,7 +69,7 @@ namespace Physical {
 			return std::atan2(y, x);
 		}
 		constexpr float to_degrees() const{
-			return std::atan2(y, x) * 180 / M_PI;
+			return std::atan2(y, x) * 180 / pi;
 		}
 		constexpr float get_x() const{
 			return x;
@@ -96,7 +98,7 @@ namespace Physical {
 			return {std::cos(radians), std::sin(radians)};
 		}
 		static constexpr Direction from_degrees(float degrees){
-			return from_radians(degrees * M_PI / 180);
+			return from_radians(degrees * pi / 180);
 		}
 		constexpr Direction(const Direction &) = default;
 		constexpr Direction &operator =(const Direction &) = default;
