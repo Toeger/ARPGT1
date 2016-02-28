@@ -1,15 +1,15 @@
-#ifndef AARECT_H
-#define AARECT_H
+#ifndef Rect_H
+#define Rect_H
 
 #include "physics_utility.h"
 
 namespace Physical {
 	//define an axis aligned rectangle with width and height starting at 0/0
-	struct AARect
+	struct Rect
 	{
-		AARect(const AARect &other) = default;
-		AARect &operator =(const AARect &) = default;
-		AARect(float width, float height)
+		Rect(const Rect &other) = default;
+		Rect &operator =(const Rect &) = default;
+		Rect(float width, float height)
 			: width(width)
 			, height(height)
 		{}
@@ -19,4 +19,4 @@ namespace Physical {
 
 }
 
-#endif // AARECT_H
+#endif // Rect_H

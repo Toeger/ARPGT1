@@ -206,7 +206,7 @@ static void test_circle_rect(){
 	const auto w = 200.f;
 	const auto h = 300.f;
 	Physical::Circle cicle(r);
-	Physical::AARect rect(w, h);
+	Physical::Rect rect(w, h);
 	//positive test
 	assert(Physical::collides(cicle, t1, rect, t2));
 	t1.vector.x = w + r * .9f;
