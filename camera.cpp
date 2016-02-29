@@ -63,6 +63,12 @@ Physical::AABB Camera::get_visual_aabb() const
 {
 	Physical::AABB retval;
 	//TODO: do some view calculation to figure out what the camera can see
+	auto center = view.getCenter();
+	auto size = view.getSize();
+	retval.left = center.x - size.x;
+	retval.right = center.x + size.x;
+	retval.bottom = center.y - size.y;
+	retval.top = center.y + size.y;
 	return retval;
 }
 

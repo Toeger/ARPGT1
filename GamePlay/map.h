@@ -17,7 +17,7 @@ struct Map
 	bool get(int x, int y);
 private:
 	std::vector<bool> create_map(std::size_t width, std::size_t height);
-	std::size_t width;
+	int width;
 	std::vector<bool> map; //bitmap of which tiles are blocked
 };
 

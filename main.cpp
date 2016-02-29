@@ -320,20 +320,25 @@ static void render_frame(sf::RenderWindow &window){
 			fps = 0;
 		}
 	}
-	//TODO: draw map
 	{
 		//idea: don't draw all tiles, instead get the tiles that the camera can currently see, put an AABB around it and draw these tiles
 		auto &m = *map.get<Map>();
 		auto &p = Player::player;
 		auto aabb = p.camera.get_visual_aabb();
+		//aabb.left += (aabb.right - aabb.left) / 2;
+		//std::cout << aabb.left << ' ' << aabb.right << '\n' << std::endl;
+		sf::RectangleShape rect;
+		rect.setSize(sf::Vector2f(m.block_size, m.block_size));
 		for (int x = aabb.left / m.block_size; x < aabb.right / m.block_size + 1; x++){
 			for (int y = aabb.bottom / m.block_size; y < aabb.top / m.block_size + 1; y++){
+				rect.setPosition(x * m.block_size, y * m.block_size);
 				if (m.get(x, y)){
-					//Draw blocking block
+					rect.setFillColor(sf::Color::Black);
 				}
 				else{
-					//Draw non-blocking block
+					rect.setFillColor(sf::Color::Green);
 				}
+				window.draw(rect);
 			}
 		}
 	}
