@@ -308,7 +308,7 @@ static void update_logical_frame(){
 }
 
 static void render_frame(sf::RenderWindow &window){
-	window.clear(sf::Color::Black);
+	window.clear(sf::Color::Red);
 	{
 		static int fps;
 		fps++;
@@ -321,23 +321,20 @@ static void render_frame(sf::RenderWindow &window){
 		}
 	}
 	{
-		//idea: don't draw all tiles, instead get the tiles that the camera can currently see, put an AABB around it and draw these tiles
 		auto &m = *map.get<Map>();
 		auto &p = Player::player;
 		auto aabb = p.camera.get_visual_aabb();
-		//aabb.left += (aabb.right - aabb.left) / 2;
-		//std::cout << aabb.left << ' ' << aabb.right << '\n' << std::endl;
 		sf::RectangleShape rect;
 		rect.setSize(sf::Vector2f(m.block_size, m.block_size));
-		for (int x = aabb.left / m.block_size; x < aabb.right / m.block_size + 1; x++){
-			for (int y = aabb.bottom / m.block_size; y < aabb.top / m.block_size + 1; y++){
+		const int xstart = aabb.left / m.block_size;
+		const int xend = aabb.right / m.block_size + 1;
+		const int ystart = aabb.bottom / m.block_size;
+		const int yend = aabb.top / m.block_size + 1;
+		std::cout << (xend - xstart) * (yend - ystart) << '\n' << std::flush;
+		for (int x = xstart; x < xend; x++){
+			for (int y = ystart; y < yend; y++){
 				rect.setPosition(x * m.block_size, y * m.block_size);
-				if (m.get(x, y)){
-					rect.setFillColor(sf::Color::Black);
-				}
-				else{
-					rect.setFillColor(sf::Color::Green);
-				}
+				rect.setFillColor(sf::Color(0, 127 * !m.get(x, y), 0));
 				window.draw(rect);
 			}
 		}
