@@ -1,4 +1,5 @@
 #include "ECS/entity.h"
+#include "GamePlay/map.h"
 #include "Physics/body.h"
 #include "Physics/collision.h"
 #include "Tests/tests_utility.h"
@@ -234,6 +235,10 @@ static void test_circle_rect(){
 	assert(!Physical::collides(cicle, t1, rect, t2));
 }
 
+static void test_collision_with_map(){
+
+}
+
 void test_collisions(){
 	test_helper_collides_point_circle();
 	test_helper_collides_point_rect();
@@ -241,5 +246,8 @@ void test_collisions(){
 	test_line_line_collisions();
 	test_line_circle_collision();
 	test_circle_rect();
+	ECS::Entity map;
+	Map::current_map = &map.emplace<Map>(1, 1);
 	run_towards_each_other_and_get_stuck_bug_test();
+	test_collision_with_map();
 }

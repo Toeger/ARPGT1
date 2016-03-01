@@ -15,6 +15,7 @@ struct Map
 	bool collides(const Physical::Circle &circle, const Physical::Transformator &transformator);
 	int block_size = 100;
 	bool get(int x, int y);
+	static Map *current_map;
 private:
 	std::vector<bool> create_map(std::size_t width, std::size_t height);
 	int width;

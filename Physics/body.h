@@ -5,6 +5,7 @@
 #include "collision.h"
 #include "ECS/entity.h"
 #include "ECS/utility.h"
+#include "GamePlay/map.h"
 #include "Physics/physics_utility.h"
 #include "Physics/shapes.h"
 
@@ -148,7 +149,9 @@ namespace Physical{
 		//end of recursion
 		template <size_t type_index>
 		std::enable_if_t<type_index == number_of_supported_types, ECS::Entity_handle>
-		colliding(const Transformator &){
+		colliding(const Transformator &t){
+			if (Map::current_map->collides(shape, t))
+				return ECS::System::component_to_entity_handle(*Map::current_map);
 			return {};
 		}
 		template <size_t type_index>

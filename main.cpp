@@ -128,7 +128,7 @@ namespace Spawner {
 static void shoot_fireball(){
 	//TODO: build real skill system and map keys to logical actions
 	//shoot a ball from the player in the facing direction
-	//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, coolddown
+	//standard projectile properties: range, Physical::Body, direction, speed, destruction when range ran out or something was hit, cooldown
 	ECS::Entity ball;
 	auto transformator = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
 	const auto ball_radius = 10;
@@ -324,6 +324,9 @@ static void render_frame(sf::RenderWindow &window){
 		auto &m = *map.get<Map>();
 		auto &p = Player::player;
 		auto aabb = p.camera.get_visual_aabb();
+		std::swap(aabb.bottom, aabb.top);
+		aabb.top = -aabb.top;
+		aabb.bottom = -aabb.bottom;
 		sf::RectangleShape rect;
 		rect.setSize(sf::Vector2f(m.block_size, m.block_size));
 		const int xstart = aabb.left / m.block_size;
@@ -333,7 +336,7 @@ static void render_frame(sf::RenderWindow &window){
 		std::cout << (xend - xstart) * (yend - ystart) << '\n' << std::flush;
 		for (int x = xstart; x < xend; x++){
 			for (int y = ystart; y < yend; y++){
-				rect.setPosition(x * m.block_size, y * m.block_size);
+				rect.setPosition(x * m.block_size, -y * m.block_size);
 				rect.setFillColor(sf::Color(0, 127 * !m.get(x, y), 0));
 				window.draw(rect);
 			}
@@ -379,16 +382,15 @@ int main(){
 	Player &p = Player::player;
 	p.set_window(&window);
 	{
-		Physical::DynamicBody<Physical::Circle> b{100};
+		Physical::DynamicBody<Physical::Circle> b{100, {500, 500}};
 		p.add(std::move(b));
 		p.add(Textures::player);
 		//p.add(Common_components::Animation{Animations::fireball});
 		p.add(Common_components::Speed{50});
 	}
 
-	map.emplace<Map>(1024, 1024);
+	Map::current_map = &map.emplace<Map>(1024, 1024);
 	map.emplace<Common_components::Map>();
-	//auto map = generate_map<1024, 1024>();
 
 	//Network::run();
 	while (window.isOpen()){
