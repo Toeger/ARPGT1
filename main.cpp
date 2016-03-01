@@ -324,6 +324,7 @@ static void render_frame(sf::RenderWindow &window){
 		auto &m = *map.get<Map>();
 		auto &p = Player::player;
 		auto aabb = p.camera.get_visual_aabb();
+		//swap the y component because sfml... not ideal
 		std::swap(aabb.bottom, aabb.top);
 		aabb.top = -aabb.top;
 		aabb.bottom = -aabb.bottom;
