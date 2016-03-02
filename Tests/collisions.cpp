@@ -201,14 +201,12 @@ static void run_towards_each_other_and_get_stuck_bug_test(){
 }
 
 static void test_circle_rect(){
-	Physical::Transformator t1;
-	Physical::Transformator t2;
 	const auto r = 100.f;
 	const auto w = 200.f;
 	const auto h = 300.f;
-	Physical::Circle cicle(r);
-	Physical::Rect rect(w, h);
-	float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
+	const Physical::Circle cicle(r);
+	const Physical::Rect rect(w, h);
+	const float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
 	for (auto  x : testnumbers){
 		for (auto y : testnumbers){
 			for (auto dx : testnumbers){
@@ -216,6 +214,8 @@ static void test_circle_rect(){
 					Physical::Transformator t({x, y}, {dx, dy});
 					//positive tests
 					auto factor = 0.9f;
+					Physical::Transformator t1;
+					Physical::Transformator t2;
 					assert(Physical::collides(cicle, t + t1, rect, t + t2));
 					t1.vector.x = w + r * factor;
 					assert(Physical::collides(cicle, t + t1, rect, t + t2));

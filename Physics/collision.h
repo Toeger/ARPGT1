@@ -41,7 +41,8 @@ namespace Physical {
 
 	inline bool collides(const Physical::Circle &c, const Transformator &t1, const Physical::Rect &a, const Transformator &t2){
 		//Idea: place the Rect to the center in an axis aligned way
-		auto t = t1 - t2; //t is the new circle position, a is now at 0/0
+		auto t = -t2 + t1; //t is the new circle position, a is now at 0/0
+		//remember that operators on Transformators are not commutative, so t = -t2 + t1; is not necessarily equal to t = t1 - t2;
 		if (t.vector.x + c.radius < 0)
 			return false;
 		if (t.vector.x - c.radius > a.width)
