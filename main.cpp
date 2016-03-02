@@ -334,7 +334,7 @@ static void render_frame(sf::RenderWindow &window){
 		const int xend = aabb.right / m.block_size + 1;
 		const int ystart = aabb.bottom / m.block_size;
 		const int yend = aabb.top / m.block_size + 1;
-		std::cout << (xend - xstart) * (yend - ystart) << '\n' << std::flush;
+		//std::cout << (xend - xstart) * (yend - ystart) << '\n' << std::flush;
 		for (int x = xstart; x < xend; x++){
 			for (int y = ystart; y < yend; y++){
 				rect.setPosition(x * m.block_size, -y * m.block_size);
@@ -380,18 +380,32 @@ int main(){
 		ECS::System::add_system<Spawner::Run_straight_AI>(fun, precomputer);
 	}
 
+	constexpr std::size_t map_width = 1024;
+	constexpr std::size_t map_height = 1024;
+	Map::current_map = &map.emplace<Map>(map_width, map_height);
+	map.emplace<Common_components::Map>();
+
 	Player &p = Player::player;
 	p.set_window(&window);
 	{
-		Physical::DynamicBody<Physical::Circle> b{100, {500, 500}};
+		Physical::DynamicBody<Physical::Circle> b{100};
+		bool blocked = false;
+		auto check_blocked_function = [&blocked](const Physical::Transformator &, ECS::Entity_handle){
+			blocked = true;
+			return Physical::Vector{};
+		};
+		std::normal_distribution<float> xpos_gen(map_width / 2, map_width / 10);
+		std::normal_distribution<float> ypos_gen(map_height / 2, map_height / 10);
+		do {
+			static int try_count = 0;
+			std::cout << "try number " << ++try_count << '\n' << std::flush;
+			blocked = false;
+			b.move(Physical::Vector{xpos_gen(rng) * Map::current_map->block_size, ypos_gen(rng) * Map::current_map->block_size}, check_blocked_function);
+		} while(blocked);
 		p.add(std::move(b));
 		p.add(Textures::player);
-		//p.add(Common_components::Animation{Animations::fireball});
 		p.add(Common_components::Speed{50});
 	}
-
-	Map::current_map = &map.emplace<Map>(1024, 1024);
-	map.emplace<Common_components::Map>();
 
 	//Network::run();
 	while (window.isOpen()){

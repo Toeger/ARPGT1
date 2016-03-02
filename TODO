@@ -11,8 +11,6 @@ TODO
         Update synchronized state whenever possible
         Recalculate predicted state whenever new relevant data arrives
     Next steps:
-        spawn in the center
-        don't spawn in a wall
         make sure areas are connected and you are not stuck on a small island
         write a shader for the graphics to get decent performance
         add path finding for monsters
