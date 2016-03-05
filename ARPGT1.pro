@@ -10,8 +10,6 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     player.cpp \
-    practicedummy.cpp \
-    camera.cpp \
     Graphics/physicals.cpp \
     Tests/tester.cpp \
     Tests/collisions.cpp \
@@ -19,13 +17,11 @@ SOURCES += main.cpp \
     Tests/ecs_test.cpp \
     Tests/include_tester.cpp \
     ECS/entity_base.cpp \
-    Graphics/textures.cpp \
-    Graphics/animations.cpp \
     network.cpp \
     Tests/perlin_test.cpp \
     GamePlay/map.cpp
 
-LIBS += -lsfml-graphics -lsfml-window -lsfml-system -lpthread
+LIBS += -lpthread -lIrrlicht
 
 HEADERS += \
     ECS/entity.h \
@@ -33,8 +29,6 @@ HEADERS += \
     ECS/systemiterator.h \
     ECS/ecs_impl.h \
     player.h \
-    practicedummy.h \
-    camera.h \
     make_function.h \
     Physics/body.h \
     Physics/circle.h \
@@ -54,8 +48,6 @@ HEADERS += \
     ECS/entity_base.h \
     ECS/entity_handle.h \
     ECS/common_components.h \
-    Graphics/textures.h \
-    Graphics/animations.h \
     network.h \
     ECS/utility.h \
     Utility/vmap.h \

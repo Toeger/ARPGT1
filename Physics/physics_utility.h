@@ -1,8 +1,6 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include <SFML/System/Vector2.hpp>
-
 #include <array>
 #include <cmath>
 #include <limits>
@@ -19,15 +17,6 @@ namespace Physical {
 			y(y)
 		{}
 		constexpr Vector(const Vector &) = default;
-
-		//compatibility with sf::Vector2f
-		constexpr Vector(const sf::Vector2f &v) :
-			x(v.x),
-			y(v.y)
-		{}
-		operator sf::Vector2f(){
-			return {x, y};
-		}
 		constexpr float length() const{
 			return std::sqrt(x*x + y*y);
 		}
@@ -36,7 +25,6 @@ namespace Physical {
 			y *= scale;
 			return *this;
 		}
-
 		//data
 		float x, y;
 	};

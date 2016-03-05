@@ -1,11 +1,8 @@
 #ifndef PHYSICALS_H
 #define PHYSICALS_H
 
-#include <SFML/Graphics.hpp>
-
 namespace Graphics{
-	extern sf::Clock clock;
-	void draw_physicals(sf::RenderWindow &window);
+	void draw_physicals();
 }
 
 #endif // PHYSICALS_H
