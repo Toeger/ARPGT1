@@ -25,6 +25,12 @@ namespace Physical {
 			y *= scale;
 			return *this;
 		}
+		constexpr Vector &operator /= (float scale){
+			x /= scale;
+			y /= scale;
+			return *this;
+		}
+
 		//data
 		float x, y;
 	};
@@ -36,6 +42,12 @@ namespace Physical {
 	}
 	inline Vector operator -(const Vector &lhs, const Vector &rhs){
 		return {lhs.x - rhs.x, lhs.y - rhs.y};
+	}
+	inline Vector operator *(Vector lhs, float rhs){
+		return lhs *= rhs;
+	}
+	inline Vector operator /(Vector lhs, float rhs){
+		return lhs /= rhs;
 	}
 
 	//A Direction defines the direction an object is oriented towards
