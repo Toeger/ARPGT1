@@ -89,7 +89,7 @@ namespace Physical {
 			return from_radians(degrees * pi / 180);
 		}
 		constexpr Direction(const Direction &) = default;
-		constexpr Direction &operator =(const Direction &) = default;
+		Direction &operator =(const Direction &) = default;
 	private:
 		constexpr void normalize(){
 			auto sq = x * x + y * y;
@@ -158,7 +158,7 @@ namespace Physical {
 			direction += other.direction;
 			return *this;
 		}
-		constexpr Transformator &operator = (const Transformator &other) = default;
+		Transformator &operator = (const Transformator &other) = default;
 		//inverting transformations
 		constexpr Transformator operator -() const{
 			Transformator t;

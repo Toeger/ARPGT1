@@ -44,7 +44,7 @@ namespace Physical{
 		}
 		constexpr AABB(const AABB &other) = default;
 		~AABB() = default;
-		constexpr AABB &operator = (const AABB &other) = default;
+		AABB &operator = (const AABB &other) = default;
 		constexpr AABB &combine(const AABB &other){
 			left = std::min(left, other.left);
 			right = std::max(right, other.right);
