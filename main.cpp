@@ -18,6 +18,7 @@
 #include <chrono>
 #include <initializer_list>
 #include <iostream>
+#include <irrlicht/irrlicht.h>
 #include <memory>
 #include <random>
 #include <tuple>
@@ -88,6 +89,35 @@ int main(){
 	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
 	assert(Tester::run());
 
+	//setup irrlicht graphics
+	auto render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(800, 600), 32, false, false, true, nullptr);
+	assert(render_device);
+	ON_SCOPE_EXIT(render_device->drop(););
+	render_device->setWindowCaption(L"ARPGT1");
+	auto video_driver = render_device->getVideoDriver();
+	auto scene_manager = render_device->getSceneManager();
+	auto camera = scene_manager->addCameraSceneNodeFPS(0,100.0f,1.2f);
+	camera->setPosition(irr::core::vector3df(2700*2,255*10,2600*2));
+	camera->setTarget(irr::core::vector3df(2397*2,343*2,2700*2));
+	camera->setFarValue(42000.0f);
+	irr::scene::ITerrainSceneNode* terrain = scene_manager->addTerrainSceneNode(
+				"Art/perlin_map.bmp",
+				0,											//parent node
+				-1,											//node id
+				irr::core::vector3df(0.f, 0.f, 0.f),		//position
+				irr::core::vector3df(0.f, 0.f, 0.f),		//rotation
+				irr::core::vector3df(100.f, 50.f, 100.f),	//scale
+				irr::video::SColor ( 255, 255, 255, 255 ),	//vertexColor
+				5,											//maxLOD
+				irr::scene::ETPS_9,							//patchSize
+				0											//smoothFactor
+				);
+	terrain->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+	terrain->setMaterialTexture(0, video_driver->getTexture("Art/wood-rotten.png"));
+	terrain->setMaterialTexture(1, video_driver->getTexture("Art/Parchment.jpg"));
+	terrain->setMaterialType(irr::video::EMT_DETAIL_MAP);
+	terrain->scaleTexture(1.0f, 20.0f);
+
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
 
@@ -134,13 +164,17 @@ int main(){
 	}
 
 	//Network::run();
-	for (;;){
+	while (render_device->run()){
+		//render
+		video_driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+		scene_manager->drawAll();
+		video_driver->endScene();
+		//resolve physics
 		while (now() - last_update_timepoint > Config::logical_frame_duration){
 			last_update_timepoint += Config::logical_frame_duration;
 			Network::update();
 			update_logical_frame();
 		}
-		//TODO: render
 	}
 	//Network::stop();
 }

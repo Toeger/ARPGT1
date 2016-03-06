@@ -91,6 +91,6 @@ void test_perlin(){
 		}
 	}
 	assert(is_bmp_writable);
-	bool success = video_driver->writeImageToFile(image, "Graphics/perlin_map.bmp");
+	bool success = video_driver->writeImageToFile(image, "Art/perlin_map.bmp");
 	assert(success);
 }
