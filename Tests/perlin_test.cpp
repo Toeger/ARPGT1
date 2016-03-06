@@ -77,9 +77,20 @@ void test_perlin(){
 			assert(value <= max);
 			//unsigned char c = value < separator ? 0 : 255;
 			unsigned char c = value * 255;
-			image->setPixel(x, y, {c, c, c, 0});
+			image->setPixel(x, y, {0, c, c, c});
 		}
 	}
-	bool success = video_driver->writeImageToFile(image, "media/perlin_map.bmp");
+	bool is_bmp_writable = false;
+	std::cout << video_driver->getImageWriterCount() << '\n' << std::flush;
+	for (auto image_writer_index = 0u; image_writer_index < video_driver->getImageWriterCount(); image_writer_index++){
+		auto image_write = video_driver->getImageWriter(image_writer_index);
+		std::cout << image_write->getDebugName() << '\n' << std::flush;
+		if (image_write->isAWriteableFileExtension(".bmp")){
+			is_bmp_writable = true;
+			break;
+		}
+	}
+	assert(is_bmp_writable);
+	bool success = video_driver->writeImageToFile(image, "Graphics/perlin_map.bmp");
 	assert(success);
 }
