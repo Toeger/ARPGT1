@@ -42,7 +42,7 @@ std::vector<bool> Map::create_map(std::size_t width, std::size_t height)
 	std::vector<bool> retval(width * height);
 	const auto min = 0.f;
 	const auto max = 1.f;
-	const auto separator = 0.47f;
+	const auto separator = 0.53f;
 	auto noise = get_perlin_noise(width, height, 40, min, max, 20);
 	for (std::size_t y = 0; y < height; y++){
 		for (std::size_t x = 0; x < width; x++){

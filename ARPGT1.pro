@@ -19,7 +19,12 @@ SOURCES += main.cpp \
     ECS/entity_base.cpp \
     network.cpp \
     Tests/perlin_test.cpp \
-    GamePlay/map.cpp
+    GamePlay/map.cpp \
+    Graphics/window.cpp \
+    Utility/converter.cpp \
+    Graphics/camera.cpp \
+    Graphics/terrain.cpp \
+    Graphics/input_handler.cpp
 
 LIBS += -lpthread -lIrrlicht
 
@@ -54,7 +59,12 @@ HEADERS += \
     Graphics/perlinnoise.h \
     Tests/perlin_test.h \
     GamePlay/map.h \
-    Physics/aarect.h
+    Physics/aarect.h \
+    Graphics/window.h \
+    Utility/converter.h \
+    Graphics/camera.h \
+    Graphics/terrain.h \
+    Graphics/input_handler.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb -fsanitize=undefined,address#,safe-stack
