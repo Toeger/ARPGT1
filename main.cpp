@@ -111,7 +111,7 @@ int main(){
 	Input_handler input_handler;
 	Window window(input_handler);
 	Camera camera(window);
-	Terrain terrain(window);
+	Terrain terrain(window, "Art/perlin_map.bmp", "Art/Parchment.jpg");
 
 	{ //add running straight AI system
 		auto fun = [](ECS::Entity_handle monster, Physical::Transformator &player_pos){
