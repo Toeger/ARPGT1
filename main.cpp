@@ -143,10 +143,10 @@ int main(){
 			blocked = true;
 			return Physical::Vector{};
 		};
-		//std::normal_distribution<float> ypos_gen(map_height / 2, map_height / 10);
-		//std::normal_distribution<float> xpos_gen(map_width / 2, map_width / 10);
-		std::normal_distribution<float> xpos_gen(0, map_width / 100);
-		std::normal_distribution<float> ypos_gen(0, map_height / 100);
+		std::normal_distribution<float> ypos_gen(map_height / 2, map_height / 10);
+		std::normal_distribution<float> xpos_gen(map_width / 2, map_width / 10);
+		//std::normal_distribution<float> xpos_gen(0, map_width / 100);
+		//std::normal_distribution<float> ypos_gen(0, map_height / 100);
 		do {
 			static int try_count = 0;
 			std::cout << "try number " << ++try_count << '\n' << std::flush;
@@ -163,9 +163,9 @@ int main(){
 		while (now() - last_update_timepoint > Config::logical_frame_duration){
 			//handle continuous input
 			handle_input(input_handler);
-			auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
-			camera.set_position(pos.x, 2000, pos.y - 100);
-			camera.look_at(pos.x, 0, pos.y);
+			//auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
+			//camera.set_position(pos.x, 2000, pos.y - 100);
+			//camera.look_at(pos.x, 0, pos.y);
 			//std::cerr << pos.x << ' ' << pos.y << '\n';
 			//update logic
 			last_update_timepoint += Config::logical_frame_duration;

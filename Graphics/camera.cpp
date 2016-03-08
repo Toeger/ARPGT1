@@ -2,8 +2,8 @@
 
 Camera::Camera(Window &window)
 {
-	//auto camera = scene_manager->addCameraSceneNodeFPS(0,100.0f,1.2f);
-	camera = window.scene_manager->addCameraSceneNode();
+	camera = window.scene_manager->addCameraSceneNodeFPS(0,100.0f,1.2f);
+	//camera = window.scene_manager->addCameraSceneNode();
 	camera->setFarValue(100000.0f);
 }
 
