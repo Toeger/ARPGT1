@@ -8,7 +8,7 @@ Terrain::Terrain(Window &window, const std::string &hight_bitmap, const std::str
 				-1,											//node id
 				irr::core::vector3df(0.f, 0.f, 0.f),		//position
 				irr::core::vector3df(0.f, 0.f, 0.f),		//rotation //comment says this is not yet implemented
-				irr::core::vector3df(50.f, 10.f, 50.f),		//scale
+				irr::core::vector3df(1.f, 1.f, 1.f),		//scale
 				irr::video::SColor(255, 255, 255, 255),		//vertexColor
 				5,											//maxLOD //TODO: figure out what this actually does
 				irr::scene::ETPS_9,							//patchSize //TODO: figure out what this actually does
