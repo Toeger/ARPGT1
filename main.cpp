@@ -186,8 +186,8 @@ int main(){
 			const float camera_height = 100;
 			camera.set_position(pos.x / Map::current_map->block_size, camera_height, pos.y / Map::current_map->block_size - camera_height / 2);
 			camera.look_at(pos.x / Map::current_map->block_size, 0, pos.y / Map::current_map->block_size);
-			auto cam_pos = camera.get_position();
-			std::cerr << "campos: " << cam_pos[0] << '/' << cam_pos[1] << '/' << cam_pos[2] << '\n';
+			//auto cam_pos = camera.get_position();
+			//std::cerr << "campos: " << cam_pos[0] << '/' << cam_pos[1] << '/' << cam_pos[2] << '\n';
 			//update logic
 			last_update_timepoint += Config::logical_frame_duration;
 			Network::update();

@@ -15,10 +15,10 @@ Terrain::Terrain(Window &window, const std::string &hight_bitmap, const std::str
 				0												//smoothFactor //shouldn't need to smooth since perlin does smoothing just fine
 				);
 	terrain->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-	//terrain->setMaterialTexture(0, window.video_driver->getTexture("Art/wood-rotten.png"));
-	terrain->setMaterialTexture(0, window.video_driver->getTexture(texture.c_str()));
+	terrain->setMaterialTexture(0, window.video_driver->getTexture(hight_bitmap.c_str()));
+	terrain->setMaterialTexture(1, window.video_driver->getTexture(texture.c_str()));
 	terrain->setMaterialType(irr::video::EMT_DETAIL_MAP);
-	terrain->scaleTexture(10.f, 1.f); //TODO: figure out how this works
+	terrain->scaleTexture(1.f, 10.f);
 }
 
 void Terrain::set_position(float x, float y, float z)
