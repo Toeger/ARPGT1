@@ -22,10 +22,15 @@ struct Input_handler : public irr::IEventReceiver{
 		camera_backward,
 		camera_up,
 		camera_down,
+		camera_zoom_out,
+		camera_zoom_in,
 		size
 	};
 	//defines the action for discrete events. Discrete events are activated once by a keypress
-	Action action_map[irr::KEY_KEY_CODES_COUNT] = {};
+	Action key_action_map[irr::KEY_KEY_CODES_COUNT] = {};
+	Action mouse_action_map[irr::EMIE_COUNT] = {};
+	enum Mouse_wheel_action{Mouse_wheel_up, Mouse_wheel_down, Mouse_wheel_count};
+	Action mouse_wheel[Mouse_wheel_count] = {};
 	//defines which continuous actions are happening. Continuous actions are happening when a key is pressed
 	bool continuous_actions[Action::size] = {};
 	//defines which function is called when an action occures

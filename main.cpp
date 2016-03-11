@@ -100,12 +100,11 @@ void handle_input(Input_handler &input){
 	}
 }
 
-
 void setup_controls(Input_handler &input_handler, Camera &camera)
 {
 	constexpr float camera_speed = 1.f;
 	auto assign_key = [&input_handler, &camera](irr::EKEY_CODE key, Input_handler::Action action, float x, float y, float z){
-		input_handler.action_map[key] = action;
+		input_handler.key_action_map[key] = action;
 		input_handler.instant_actions[action] = [&camera, x, y, z]{
 			auto pos = camera.get_position();
 			camera.set_position(pos[0] + x * camera_speed, pos[1] + z * camera_speed, pos[2] + y * camera_speed);
@@ -117,6 +116,14 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 	assign_key(irr::KEY_RIGHT, Input_handler::Action::camera_right, 1, 0, 0);
 	assign_key(irr::KEY_PLUS, Input_handler::Action::camera_up, 0, 0, 1);
 	assign_key(irr::KEY_OEM_2, Input_handler::Action::camera_down, 0, 0, -1); //# key
+	input_handler.mouse_wheel[Input_handler::Mouse_wheel_up] = Input_handler::Action::camera_zoom_in;
+	input_handler.instant_actions[Input_handler::Action::camera_zoom_in] = [&camera]{
+		camera.camera_height *= 0.9f;
+	};
+	input_handler.mouse_wheel[Input_handler::Mouse_wheel_down] = Input_handler::Action::camera_zoom_out;
+	input_handler.instant_actions[Input_handler::Action::camera_zoom_out] = [&camera]{
+		camera.camera_height /= 0.9f;
+	};
 }
 
 int main(){
@@ -183,7 +190,7 @@ int main(){
 			//handle continuous input
 			handle_input(input_handler);
 			auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
-			const float camera_height = 100;
+			const auto &camera_height = camera.camera_height;
 			camera.set_position(pos.x / Map::current_map->block_size, camera_height, pos.y / Map::current_map->block_size - camera_height / 2);
 			camera.look_at(pos.x / Map::current_map->block_size, 0, pos.y / Map::current_map->block_size);
 			//auto cam_pos = camera.get_position();

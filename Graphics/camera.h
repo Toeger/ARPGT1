@@ -11,6 +11,7 @@ struct Camera
 	void set_position(float x, float y, float z);
 	std::array<float, 3> get_position() const;
 	void look_at(float x, float y, float z);
+	float camera_height = 100;
 private:
 	irr::scene::ICameraSceneNode *camera;
 };
