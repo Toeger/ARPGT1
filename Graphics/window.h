@@ -6,11 +6,13 @@
 #include <irrlicht/irrlicht.h>
 #include <string>
 
+struct Camera;
+
 struct Window
 {
 	Window(Input_handler &input_handler, int width = 800, int height = 600, const std::string &title = "");
 	~Window();
-	bool update();
+	bool update(Camera &camera);
 private:
 	irr::IrrlichtDevice *render_device;
 	irr::video::IVideoDriver *video_driver;

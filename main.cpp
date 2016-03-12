@@ -187,15 +187,17 @@ int main(){
 	setup_controls(input_handler, camera);
 
 	//Network::run();
-	while (window.update()){
+	while (window.update(camera)){
 		//resolve logical frame
 		while (now() - last_update_timepoint > Config::logical_frame_duration){
 			//handle continuous input
 			handle_input(input_handler);
 			auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
 			const auto &camera_height = camera.camera_height;
-			camera.set_position(pos.x / Map::current_map->block_size, camera_height, pos.y / Map::current_map->block_size - camera_height / 2);
-			camera.look_at(pos.x / Map::current_map->block_size, 0, pos.y / Map::current_map->block_size);
+			const auto &x = pos.x;
+			const auto &y = pos.y;
+			camera.set_position(x / Map::current_map->block_size, camera_height, y / Map::current_map->block_size - camera_height / 2);
+			camera.look_at(x / Map::current_map->block_size, 0, y / Map::current_map->block_size);
 			//auto cam_pos = camera.get_position();
 			//std::cerr << "campos: " << cam_pos[0] << '/' << cam_pos[1] << '/' << cam_pos[2] << '\n';
 			//update logic

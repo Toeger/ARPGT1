@@ -22,3 +22,12 @@ void Camera::look_at(float x, float y, float z)
 {
 	camera->setTarget({x, y, z});
 }
+
+void Camera::set_aspect_ratio(float aspect_ratio)
+{
+	static float last_aspect_ratio = 1.f;
+	if (aspect_ratio - last_aspect_ratio < 0.001f)
+		return;
+	last_aspect_ratio = aspect_ratio;
+	camera->setAspectRatio(aspect_ratio);
+}

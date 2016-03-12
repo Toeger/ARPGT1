@@ -1,5 +1,6 @@
 #include "Utility/converter.h"
 #include "window.h"
+#include "camera.h"
 
 #include <cassert>
 #include <irrlicht/irrlicht.h>
@@ -19,10 +20,12 @@ Window::~Window()
 	render_device->drop();
 }
 
-bool Window::update()
+bool Window::update(Camera &camera)
 {
 	if (!render_device->run())
 		return false;
+	auto &vp = video_driver->getViewPort();
+	camera.set_aspect_ratio(vp.getWidth() * 1.f / vp.getHeight());
 	video_driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 	scene_manager->drawAll();
 	video_driver->endScene();

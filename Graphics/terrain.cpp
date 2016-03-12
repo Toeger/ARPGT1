@@ -18,7 +18,7 @@ Terrain::Terrain(Window &window, const std::string &hight_bitmap, const std::str
 	terrain->setMaterialTexture(0, window.video_driver->getTexture(hight_bitmap.c_str()));
 	terrain->setMaterialTexture(1, window.video_driver->getTexture(texture.c_str()));
 	terrain->setMaterialType(irr::video::EMT_DETAIL_MAP);
-	terrain->scaleTexture(1.f, 10.f);
+	terrain->scaleTexture(1.f, 50.f);
 }
 
 void Terrain::set_position(float x, float y, float z)
