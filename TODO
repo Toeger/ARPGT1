@@ -1,7 +1,6 @@
 Issues
     Find a way to not rely on UB on exit when component vectors are destroyed and static entities access those destructed component vectors in their destructor
 TODO
-    Make resizing of window not change zoom
     Make a safe login and network system
         RSA to exchange an AES key
         Think about replay attacks
@@ -12,9 +11,9 @@ TODO
         Recalculate predicted state whenever new relevant data arrives
     Next steps:
         make sure areas are connected and you are not stuck on a small island
-        write a shader for the graphics to get decent performance
         add path finding for monsters
         fix getting stuck on objects (slide instead)
         start designing skills
 To Read:
     k-d-Trees, other trees
+    triplanar mapping
