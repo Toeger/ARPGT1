@@ -186,7 +186,7 @@ int main(){
 		} while(blocked);
 		p.add(std::move(b));
 		p.add(Common_components::Speed{150});
-		p.emplace<Common_components::Animated_model>(window, "Art/sydney.md2", "Art/sydney.bmp");
+		p.emplace<Common_components::Animated_model>(window, "Art/Stick_Figure_by_Swp.OBJ", "Art/Stick_Figure_by_Swp_modified.png");
 	}
 	setup_controls(input_handler, camera);
 

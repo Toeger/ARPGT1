@@ -8,7 +8,7 @@ Common_components::Animated_model::Animated_model(Window &window, const std::str
 	node = window.add_model(path);
 	node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	node->setMaterialTexture( 0, window.get_texture(texture.c_str()));
-	const float scale = .3f;
+	const float scale = 3.f;
 	node->setScale({scale, scale, scale});
 	node->setMD2Animation(irr::scene::EMAT_STAND);
 }

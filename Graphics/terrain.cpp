@@ -27,11 +27,6 @@ Terrain::Terrain(Window &window, const std::string &height_bitmap, const std::st
 	create_terrain(window, height_bitmap, texture_1, texture_2);
 }
 
-Terrain::~Terrain()
-{
-	terrain->drop();
-}
-
 void Terrain::set_position(float x, float y, float z)
 {
 	terrain->setPosition({x, y, z});
