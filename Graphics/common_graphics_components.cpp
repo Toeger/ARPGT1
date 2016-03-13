@@ -6,11 +6,15 @@
 Common_components::Animated_model::Animated_model(Window &window, const std::string &path, const std::string &texture)
 {
 	node = window.add_model(path);
-	node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-	node->setMaterialTexture( 0, window.get_texture(texture.c_str()));
-	const float scale = 3.f;
+	//node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+	node->setMaterialTexture(0, window.get_texture(texture.c_str()));
+	const float scale = 10.f;
 	node->setScale({scale, scale, scale});
-	node->setMD2Animation(irr::scene::EMAT_STAND);
+	//node->setMD2Animation(irr::scene::EMAT_STAND);
+	//node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+	node->setMaterialType(irr::video::EMT_LIGHTMAP_ADD);
+	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
+	node->addShadowVolumeSceneNode();
 }
 
 Common_components::Animated_model::~Animated_model()

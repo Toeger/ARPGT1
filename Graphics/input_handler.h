@@ -24,6 +24,12 @@ struct Input_handler : public irr::IEventReceiver{
 		camera_down,
 		camera_zoom_out,
 		camera_zoom_in,
+		light_up,
+		light_down,
+		light_forward,
+		light_backward,
+		light_left,
+		light_right,
 		size
 	};
 	//defines the action for discrete events. Discrete events are activated once by a keypress

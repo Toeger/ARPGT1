@@ -129,6 +129,24 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 	}
 }
 
+void light_controls(Input_handler &input_handler, irr::scene::ILightSceneNode *light){
+	constexpr float light_speed = 10.f;
+	auto assign_light_key_action = [&input_handler, light](irr::EKEY_CODE key, Input_handler::Action action, float x, float y, float z){
+		input_handler.key_action_map[key] = action;
+		input_handler.instant_actions[action] = [light, x, y, z]{
+			auto pos = light->getRotation();
+			std::cerr << pos.X << ' ' << pos.Y << ' ' << pos.Z << '\n';
+			light->setRotation({pos.X + x * light_speed, pos.Y + z * light_speed, pos.Z + y * light_speed});
+		};
+	};
+	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_U, Input_handler::Action::light_right, 1, 0, 0);
+	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_J, Input_handler::Action::light_left, -1, 0, 0);
+	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_I, Input_handler::Action::light_up, 0, 1, 0);
+	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_K, Input_handler::Action::light_down, 0, -1, 0);
+	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_O, Input_handler::Action::light_forward, 0, 0, 1);
+	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_L, Input_handler::Action::light_backward, 0, 0, -1);
+}
+
 int main(){
 	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
 	assert(Tester::run());
@@ -186,9 +204,32 @@ int main(){
 		} while(blocked);
 		p.add(std::move(b));
 		p.add(Common_components::Speed{150});
-		p.emplace<Common_components::Animated_model>(window, "Art/Stick_Figure_by_Swp.OBJ", "Art/Stick_Figure_by_Swp_modified.png");
+		p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	}
 	setup_controls(input_handler, camera);
+
+	auto light_source = window.scene_manager->addLightSceneNode(0, {1, 1, 0}, {255, 255, 255, 0}, 100);
+	light_source->setLightType(irr::video::E_LIGHT_TYPE::ELT_DIRECTIONAL);
+	light_source->enableCastShadow();
+	auto light = irr::video::SLight();
+	light.CastShadows = true;
+	light.Direction = {0, -1, 0};
+	light.Position = {0, 512, 0};
+
+	light.Direction={0,0,0};
+	light.Type=irr::video::ELT_DIRECTIONAL;
+	light.AmbientColor=irr::video::SColorf(0.1f,0.1f,0.1f,1);
+	light.SpecularColor=irr::video::SColorf(0.4f,0.4f,0.4f,1);
+	light.DiffuseColor=irr::video::SColorf(1.0f,1.0f,1.0f,1);
+	light.CastShadows=true;
+
+	light_source->setLightData(light);
+	light_source->setPosition({512, 512, 512});
+	light_source->setRotation({0, 270, 90});
+	light_source->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+	light_source->setRadius(100);
+
+	light_controls(input_handler, light_source);
 
 	//Network::run();
 	while (window.update(camera)){
@@ -204,7 +245,7 @@ int main(){
 			camera.set_position(xpos, camera_height, ypos - camera_height / 2);
 			camera.look_at(xpos, 0, ypos);
 			auto &player_animation = *p.get<Common_components::Animated_model>();
-			player_animation.set_position(xpos, 2/.3f, ypos);
+			player_animation.set_position(xpos, 5, ypos);
 			player_animation.look_at(xpos, ypos + 1);
 			//update logic
 			last_update_timepoint += Config::logical_frame_duration;

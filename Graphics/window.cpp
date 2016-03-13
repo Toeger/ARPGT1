@@ -8,11 +8,12 @@
 Window::Window(Input_handler &input_handler, int width, int height, const std::string &title)
 {
 	//setup irrlicht graphics
-	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(width, height), 32, false, false, true, &input_handler);
+	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(width, height), 32, false, true, true, &input_handler);
 	assert(render_device);
 	render_device->setWindowCaption(Converter::str_to_wstring(title).c_str());
 	video_driver = render_device->getVideoDriver();
 	scene_manager = render_device->getSceneManager();
+	scene_manager->setShadowColor({150, 0, 0, 0});
 }
 
 Window::~Window()
