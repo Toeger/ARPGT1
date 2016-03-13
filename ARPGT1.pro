@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     Utility/converter.cpp \
     Graphics/camera.cpp \
     Graphics/terrain.cpp \
-    Graphics/input_handler.cpp
+    Graphics/input_handler.cpp \
+    Graphics/common_graphics_components.cpp
 
 LIBS += -lpthread -lIrrlicht
 
@@ -64,7 +65,8 @@ HEADERS += \
     Utility/converter.h \
     Graphics/camera.h \
     Graphics/terrain.h \
-    Graphics/input_handler.h
+    Graphics/input_handler.h \
+    Graphics/common_graphics_components.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb -fsanitize=undefined,address#,safe-stack

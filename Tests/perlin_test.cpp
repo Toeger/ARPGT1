@@ -70,14 +70,24 @@ void test_perlin(){
 	auto video_driver = render_device->getVideoDriver();
 	auto image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
 	ON_SCOPE_EXIT(image->drop(););
+	auto inverted_image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
+	ON_SCOPE_EXIT(inverted_image->drop(););
+	auto square = [](auto x){ return x * x; };
 	for (int y = 0; y < height; y++){
-		for (int x = 0; x < width; x++){
-			auto &value = noise[x][y];
+		for (int x_ = 0; x_ < width; x_++){
+			auto &value = noise[x_][y];
+			const auto x = width - 1 - x_;
 			assert(value >= min);
 			assert(value <= max);
 			//unsigned char c = value < separator ? 0 : 255;
 			unsigned char c = value * 255;
 			image->setPixel(x, y, {0, c, c, c});
+			unsigned char inv_c = 255 - c;
+			inverted_image->setPixel(x, y, {0, inv_c, inv_c, inv_c});
+			if (square(x) + square(y) < 10 * 10 * 10)
+				inverted_image->setPixel(x, y, {0, 255, 0, 0});
+			if (square(width - x) + square(y) < 10 * 10 * 10)
+				inverted_image->setPixel(x, y, {0, 0, 255, 0});
 		}
 	}
 	bool is_bmp_writable = false;
@@ -91,6 +101,8 @@ void test_perlin(){
 		}
 	}
 	assert(is_bmp_writable);
-	bool success = video_driver->writeImageToFile(image, "Art/perlin_map.bmp");
+	bool success = video_driver->writeImageToFile(image, "/tmp/perlin_map.bmp");
+	assert(success);
+	success = video_driver->writeImageToFile(inverted_image, "/tmp/inverted_perlin_map.png");
 	assert(success);
 }

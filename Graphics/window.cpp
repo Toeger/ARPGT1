@@ -31,3 +31,17 @@ bool Window::update(Camera &camera)
 	video_driver->endScene();
 	return true;
 }
+
+irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path)
+{
+	auto mesh = scene_manager->getMesh(path.c_str());
+	assert(mesh);
+	auto node = scene_manager->addAnimatedMeshSceneNode(mesh);
+	assert(node);
+	return node;
+}
+
+irr::video::ITexture *Window::get_texture(const std::string &path) const
+{
+	return video_driver->getTexture(path.c_str());
+}

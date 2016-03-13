@@ -3,6 +3,7 @@
 #include "ECS/utility.h"
 #include "GamePlay/map.h"
 #include "Graphics/camera.h"
+#include "Graphics/common_graphics_components.h"
 #include "Graphics/input_handler.h"
 #include "Graphics/perlinnoise.h"
 #include "Graphics/physicals.h"
@@ -30,7 +31,6 @@
 
 namespace {
 	std::mt19937 rng(std::random_device{}());
-	ECS::Entity map;
 }
 
 template <class T>
@@ -89,10 +89,10 @@ void handle_input(Input_handler &input){
 		player_movement.y--;
 	}
 	if (input.continuous_actions[Input_handler::Action::go_left]){
-		player_movement.x--;
+		player_movement.x++;
 	}
 	if (input.continuous_actions[Input_handler::Action::go_right]){
-		player_movement.x++;
+		player_movement.x--;
 	}
 	if (player_movement.length() > 0.5f){ //we have player movement
 		player_movement /= player_movement.length();
@@ -139,7 +139,14 @@ int main(){
 	Input_handler input_handler;
 	Window window(input_handler);
 	Camera camera(window);
-	Terrain terrain(window, "Art/perlin_map.bmp", "Art/cobble_stone.png");
+	ECS::Entity map;
+	{
+		constexpr std::size_t map_width = 1024;
+		constexpr std::size_t map_height = 1024;
+		Map::current_map = &map.emplace<Map>(map_width, map_height);
+		map.emplace<Common_components::Map>();
+	}
+	Terrain terrain(window, *Map::current_map, "Art/cobble_stone.png");
 
 	{ //add running straight AI system
 		auto fun = [](ECS::Entity_handle monster, Physical::Transformator &player_pos){
@@ -158,11 +165,6 @@ int main(){
 		ECS::System::add_system<Common_components::Run_straight_AI>(fun, precomputer);
 	}
 
-	constexpr std::size_t map_width = 1024;
-	constexpr std::size_t map_height = 1024;
-	Map::current_map = &map.emplace<Map>(map_width, map_height);
-	map.emplace<Common_components::Map>();
-
 	Player &p = Player::player;
 	{
 		Physical::DynamicBody<Physical::Circle> b{100};
@@ -171,18 +173,20 @@ int main(){
 			blocked = true;
 			return Physical::Vector{};
 		};
+		const auto &map_height = Map::current_map->get_height();
+		const auto &map_width = Map::current_map->get_width();
 		std::normal_distribution<float> ypos_gen(map_height / 2, map_height / 10);
 		std::normal_distribution<float> xpos_gen(map_width / 2, map_width / 10);
-		//std::normal_distribution<float> xpos_gen(0, map_width / 100);
-		//std::normal_distribution<float> ypos_gen(0, map_height / 100);
 		do {
 			static int try_count = 0;
 			std::cout << "try number " << ++try_count << '\n' << std::flush;
 			blocked = false;
-			b.move(Physical::Vector{xpos_gen(rng) * Map::current_map->block_size, ypos_gen(rng) * Map::current_map->block_size}, check_blocked_function);
+			const auto block_size = Map::current_map->get_block_size();
+			b.move(Physical::Vector{xpos_gen(rng) * block_size, ypos_gen(rng) * block_size}, check_blocked_function);
 		} while(blocked);
 		p.add(std::move(b));
-		p.add(Common_components::Speed{50});
+		p.add(Common_components::Speed{150});
+		p.emplace<Common_components::Animated_model>(window, "Art/sydney.md2", "Art/sydney.bmp");
 	}
 	setup_controls(input_handler, camera);
 
@@ -192,14 +196,16 @@ int main(){
 		while (now() - last_update_timepoint > Config::logical_frame_duration){
 			//handle continuous input
 			handle_input(input_handler);
+			const auto block_size = Map::current_map->get_block_size();
 			auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
 			const auto &camera_height = camera.camera_height;
-			const auto &x = pos.x;
-			const auto &y = pos.y;
-			camera.set_position(x / Map::current_map->block_size, camera_height, y / Map::current_map->block_size - camera_height / 2);
-			camera.look_at(x / Map::current_map->block_size, 0, y / Map::current_map->block_size);
-			//auto cam_pos = camera.get_position();
-			//std::cerr << "campos: " << cam_pos[0] << '/' << cam_pos[1] << '/' << cam_pos[2] << '\n';
+			auto xpos = Map::current_map->get_width() - 1 - pos.x / block_size;
+			auto ypos = pos.y / block_size;
+			camera.set_position(xpos, camera_height, ypos - camera_height / 2);
+			camera.look_at(xpos, 0, ypos);
+			auto &player_animation = *p.get<Common_components::Animated_model>();
+			player_animation.set_position(xpos, 2/.3f, ypos);
+			player_animation.look_at(xpos, ypos + 1);
 			//update logic
 			last_update_timepoint += Config::logical_frame_duration;
 			Network::update();
