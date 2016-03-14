@@ -80,7 +80,7 @@ DISTFILES += \
     TODO
 
 copyart.target = always
-copyart.commands = mkdir -p Art; cp $${PWD}/Art/*.png Art;
+copyart.commands = mkdir -p Art; cp $${PWD}/Art/* Art || true;
 QMAKE_EXTRA_TARGETS += copyart
 PRE_TARGETDEPS += always
 
