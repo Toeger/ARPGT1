@@ -24,6 +24,8 @@ struct Input_handler : public irr::IEventReceiver{
 		camera_down,
 		camera_zoom_out,
 		camera_zoom_in,
+		camera_rotate_clockwise,
+		camera_rotate_counterclockwise,
 		light_up,
 		light_down,
 		light_forward,
@@ -37,11 +39,12 @@ struct Input_handler : public irr::IEventReceiver{
 	Action mouse_action_map[irr::EMIE_COUNT] = {};
 	enum Mouse_wheel_action{Mouse_wheel_up, Mouse_wheel_down, Mouse_wheel_count};
 	Action mouse_wheel[Mouse_wheel_count] = {};
-	//defines which continuous actions are happening. Continuous actions are happening when a key is pressed
-	bool continuous_actions[Action::size] = {};
 	//defines which function is called when an action occures
 	std::function<void()> instant_actions[Action::size];
+	bool is_action_happening(Action action) const;
 private:
+	//defines which continuous actions are happening. Continuous actions are happening when a key is pressed
+	bool continuous_actions[Action::size] = {};
 	bool OnEvent(const irr::SEvent& event) override;
 };
 

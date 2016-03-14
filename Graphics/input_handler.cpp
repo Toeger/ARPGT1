@@ -14,6 +14,11 @@ Input_handler::Input_handler()
 	key_action_map[irr::KEY_RIGHT] = Action::go_right;
 }
 
+bool Input_handler::is_action_happening(Input_handler::Action action) const
+{
+	return continuous_actions[action];
+}
+
 bool Input_handler::OnEvent(const irr::SEvent &event)
 {
 	switch (event.EventType){

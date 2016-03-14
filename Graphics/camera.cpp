@@ -1,5 +1,7 @@
 #include "camera.h"
 
+const Physical::Direction Camera::turn_speed{10, 1};
+
 Camera::Camera(Window &window)
 {
 	//camera = window.scene_manager->addCameraSceneNodeFPS(0,100.0f,1.2f);
@@ -12,7 +14,7 @@ Camera::Camera(Window &window)
 void Camera::set_position(float x, float y)
 {
 	light->setPosition({x, 100, y});
-	camera->setPosition({x, camera_height, y - camera_height / 2});
+	camera->setPosition({x + direction.get_x() * camera_height / 2, camera_height, y + direction.get_y() * camera_height / 2});
 }
 
 std::array<float, 3> Camera::get_position() const
@@ -33,4 +35,24 @@ void Camera::set_aspect_ratio(float aspect_ratio)
 		return;
 	last_aspect_ratio = aspect_ratio;
 	camera->setAspectRatio(aspect_ratio);
+}
+
+void Camera::turn_clockwise()
+{
+	direction += turn_speed;
+}
+
+void Camera::turn_counterclockwise()
+{
+	direction -= turn_speed;
+}
+
+void Camera::zoom_in()
+{
+	camera_height *= zoom_speed;
+}
+
+void Camera::zoom_out()
+{
+	camera_height /= zoom_speed;
 }

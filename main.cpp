@@ -79,24 +79,30 @@ static void update_logical_frame(){
 }
 
 //handle continuous actions
-void handle_input(Input_handler &input){
+void handle_input(Input_handler &input, Camera &camera){
 	//player movement
 	Physical::Vector player_movement;
-	if (input.continuous_actions[Input_handler::Action::go_forward]){
+	if (input.is_action_happening(Input_handler::Action::go_forward)){
 		player_movement.y++;
 	}
-	if (input.continuous_actions[Input_handler::Action::go_backward]){
+	if (input.is_action_happening(Input_handler::Action::go_backward)){
 		player_movement.y--;
 	}
-	if (input.continuous_actions[Input_handler::Action::go_left]){
+	if (input.is_action_happening(Input_handler::Action::go_left)){
 		player_movement.x++;
 	}
-	if (input.continuous_actions[Input_handler::Action::go_right]){
+	if (input.is_action_happening(Input_handler::Action::go_right)){
 		player_movement.x--;
 	}
 	if (player_movement.length() > 0.5f){ //we have player movement
 		player_movement /= player_movement.length();
 		(*Player::player.get<Physical::DynamicBody<Physical::Circle>>()) += player_movement * Player::player.get<Common_components::Speed>()->speed;
+	}
+	if (input.is_action_happening(Input_handler::Action::camera_rotate_clockwise)){
+		camera.turn_clockwise();
+	}
+	if (input.is_action_happening(Input_handler::Action::camera_rotate_counterclockwise)){
+		camera.turn_counterclockwise();
 	}
 }
 
@@ -106,11 +112,19 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 	{
 		input_handler.mouse_wheel[Input_handler::Mouse_wheel_up] = Input_handler::Action::camera_zoom_in;
 		input_handler.instant_actions[Input_handler::Action::camera_zoom_in] = [&camera]{
-			camera.camera_height *= 0.9f;
+			camera.zoom_in();
 		};
 		input_handler.mouse_wheel[Input_handler::Mouse_wheel_down] = Input_handler::Action::camera_zoom_out;
 		input_handler.instant_actions[Input_handler::Action::camera_zoom_out] = [&camera]{
-			camera.camera_height /= 0.9f;
+			camera.zoom_out();
+		};
+		input_handler.key_action_map[irr::KEY_KEY_E] = Input_handler::camera_rotate_clockwise;
+		input_handler.instant_actions[Input_handler::Action::camera_rotate_clockwise] = [&camera]{
+			camera.turn_clockwise();
+		};
+		input_handler.key_action_map[irr::KEY_KEY_Q] = Input_handler::camera_rotate_counterclockwise;
+		input_handler.instant_actions[Input_handler::Action::camera_rotate_counterclockwise] = [&camera]{
+			camera.turn_counterclockwise();
 		};
 	}
 }
@@ -199,7 +213,7 @@ int main(){
 		//resolve logical frame
 		while (now() - last_update_timepoint > Config::logical_frame_duration){
 			//handle continuous input
-			handle_input(input_handler);
+			handle_input(input_handler, camera);
 			const auto block_size = Map::current_map->get_block_size();
 			auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
 			auto xpos = Map::current_map->get_width() - 1 - pos.x / block_size;
