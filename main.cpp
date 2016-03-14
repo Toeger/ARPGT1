@@ -123,13 +123,7 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 			camera.zoom_out();
 		};
 		input_handler.key_action_map[irr::KEY_KEY_Q] = Input_handler::camera_rotate_clockwise;
-		input_handler.instant_actions[Input_handler::Action::camera_rotate_clockwise] = [&camera]{
-			camera.turn_clockwise();
-		};
 		input_handler.key_action_map[irr::KEY_KEY_E] = Input_handler::camera_rotate_counterclockwise;
-		input_handler.instant_actions[Input_handler::Action::camera_rotate_counterclockwise] = [&camera]{
-			camera.turn_counterclockwise();
-		};
 	}
 }
 
