@@ -104,20 +104,6 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 {
 	//camera
 	{
-		constexpr float camera_speed = 1.f;
-		auto assign_cam_key_action = [&input_handler, &camera](irr::EKEY_CODE key, Input_handler::Action action, float x, float y, float z){
-			input_handler.key_action_map[key] = action;
-			input_handler.instant_actions[action] = [&camera, x, y, z]{
-				auto pos = camera.get_position();
-				camera.set_position(pos[0] + x * camera_speed, pos[1] + z * camera_speed, pos[2] + y * camera_speed);
-			};
-		};
-		assign_cam_key_action(irr::KEY_UP, Input_handler::Action::camera_forward, 0, 1, 0);
-		assign_cam_key_action(irr::KEY_DOWN, Input_handler::Action::camera_backward, 0, -1, 0);
-		assign_cam_key_action(irr::KEY_LEFT, Input_handler::Action::camera_left, -1, 0, 0);
-		assign_cam_key_action(irr::KEY_RIGHT, Input_handler::Action::camera_right, 1, 0, 0);
-		assign_cam_key_action(irr::KEY_PLUS, Input_handler::Action::camera_up, 0, 0, 1);
-		assign_cam_key_action(irr::KEY_OEM_2, Input_handler::Action::camera_down, 0, 0, -1); //# key
 		input_handler.mouse_wheel[Input_handler::Mouse_wheel_up] = Input_handler::Action::camera_zoom_in;
 		input_handler.instant_actions[Input_handler::Action::camera_zoom_in] = [&camera]{
 			camera.camera_height *= 0.9f;
@@ -208,11 +194,6 @@ int main(){
 	auto player_model = p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	setup_controls(input_handler, camera);
 
-	auto light_source = window.scene_manager->addLightSceneNode(player_model.node, {20, 100, 20}, {1, 1, 1, .5f}, 1000);
-	light_source->setRotation({0, 270, 90});
-
-	light_controls(input_handler, light_source);
-
 	//Network::run();
 	while (window.update(camera)){
 		//resolve logical frame
@@ -221,14 +202,14 @@ int main(){
 			handle_input(input_handler);
 			const auto block_size = Map::current_map->get_block_size();
 			auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
-			const auto &camera_height = camera.camera_height;
 			auto xpos = Map::current_map->get_width() - 1 - pos.x / block_size;
 			auto ypos = pos.y / block_size;
-			camera.set_position(xpos, camera_height, ypos - camera_height / 2);
+			camera.set_position(xpos, ypos);
 			camera.look_at(xpos, 0, ypos);
 			auto &player_animation = *p.get<Common_components::Animated_model>();
-			player_animation.set_position(xpos, 5, ypos);
-			player_animation.look_at(xpos, ypos + 1);
+			player_animation.set_position(xpos, 0, ypos);
+			//player_animation.look_at(xpos, ypos + 1);
+			player_animation.set_rotation(std::chrono::high_resolution_clock::now().time_since_epoch().count() / 10000000 % 360);
 			//update logic
 			last_update_timepoint += Config::logical_frame_duration;
 			Network::update();

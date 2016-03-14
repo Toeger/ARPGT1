@@ -8,8 +8,6 @@ Common_components::Animated_model::Animated_model(Window &window, const std::str
 	node = window.add_model(path);
 	//node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	node->setMaterialTexture(0, window.get_texture(texture.c_str()));
-	const float scale = 1.f;
-	node->setScale({scale, scale, scale});
 	node->addShadowVolumeSceneNode();
 	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 }
@@ -30,5 +28,10 @@ void Common_components::Animated_model::look_at(float x, float y)
 	const auto dy = y - pos.Z;
 	const auto dx = x - pos.X;
 	const auto angle = std::atan2(-dy, dx) * 180 / static_cast<float>(M_PI);
+	node->setRotation({0, angle, 0});
+}
+
+void Common_components::Animated_model::set_rotation(float angle)
+{
 	node->setRotation({0, angle, 0});
 }

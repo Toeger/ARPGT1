@@ -12,6 +12,7 @@ namespace Common_components
 		~Animated_model();
 		void set_position(float x, float y, float z);
 		void look_at(float x, float y);
+		void set_rotation(float angle);
 		irr::scene::IAnimatedMeshSceneNode *node;
 	};
 };
