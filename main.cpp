@@ -134,9 +134,9 @@ void light_controls(Input_handler &input_handler, irr::scene::ILightSceneNode *l
 	auto assign_light_key_action = [&input_handler, light](irr::EKEY_CODE key, Input_handler::Action action, float x, float y, float z){
 		input_handler.key_action_map[key] = action;
 		input_handler.instant_actions[action] = [light, x, y, z]{
-			auto pos = light->getRotation();
+			auto pos = light->getPosition();
 			std::cerr << pos.X << ' ' << pos.Y << ' ' << pos.Z << '\n';
-			light->setRotation({pos.X + x * light_speed, pos.Y + z * light_speed, pos.Z + y * light_speed});
+			light->setPosition({pos.X + x * light_speed, pos.Y + y * light_speed, pos.Z + z * light_speed});
 		};
 	};
 	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_U, Input_handler::Action::light_right, 1, 0, 0);
@@ -204,30 +204,12 @@ int main(){
 		} while(blocked);
 		p.add(std::move(b));
 		p.add(Common_components::Speed{150});
-		p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	}
+	auto player_model = p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	setup_controls(input_handler, camera);
 
-	auto light_source = window.scene_manager->addLightSceneNode(0, {1, 1, 0}, {255, 255, 255, 0}, 100);
-	light_source->setLightType(irr::video::E_LIGHT_TYPE::ELT_DIRECTIONAL);
-	light_source->enableCastShadow();
-	auto light = irr::video::SLight();
-	light.CastShadows = true;
-	light.Direction = {0, -1, 0};
-	light.Position = {0, 512, 0};
-
-	light.Direction={0,0,0};
-	light.Type=irr::video::ELT_DIRECTIONAL;
-	light.AmbientColor=irr::video::SColorf(0.1f,0.1f,0.1f,1);
-	light.SpecularColor=irr::video::SColorf(0.4f,0.4f,0.4f,1);
-	light.DiffuseColor=irr::video::SColorf(1.0f,1.0f,1.0f,1);
-	light.CastShadows=true;
-
-	light_source->setLightData(light);
-	light_source->setPosition({512, 512, 512});
+	auto light_source = window.scene_manager->addLightSceneNode(player_model.node, {20, 100, 20}, {1, 1, 1, .5f}, 1000);
 	light_source->setRotation({0, 270, 90});
-	light_source->setMaterialFlag(irr::video::EMF_LIGHTING, true);
-	light_source->setRadius(100);
 
 	light_controls(input_handler, light_source);
 

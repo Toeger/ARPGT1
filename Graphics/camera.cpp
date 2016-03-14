@@ -4,7 +4,7 @@ Camera::Camera(Window &window)
 {
 	//camera = window.scene_manager->addCameraSceneNodeFPS(0,100.0f,1.2f);
 	camera = window.scene_manager->addCameraSceneNode();
-	camera->setFarValue(100000.0f);
+	camera->setFarValue(1000000.0f);
 }
 
 void Camera::set_position(float x, float y, float z)

@@ -51,7 +51,7 @@ void Terrain::create_terrain(Window &window, const std::string &hight_bitmap, co
 	terrain->setMaterialTexture(1, window.video_driver->getTexture(texture_2.c_str()));
 	terrain->setMaterialType(irr::video::EMT_DETAIL_MAP);
 	terrain->scaleTexture(1.f, 50.f);
-	terrain->setMaterialFlag(irr::video::EMF_LIGHTING, true);
-	terrain->setMaterialType(irr::video::EMT_LIGHTMAP_LIGHTING
-							 );
+	window.scene_manager->getMeshManipulator()->makePlanarTextureMapping(terrain->getMesh(), 0.004f);
+	//terrain->addShadowVolumeSceneNode();
+	terrain->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 }

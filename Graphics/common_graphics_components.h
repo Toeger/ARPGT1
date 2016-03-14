@@ -12,7 +12,6 @@ namespace Common_components
 		~Animated_model();
 		void set_position(float x, float y, float z);
 		void look_at(float x, float y);
-	private:
 		irr::scene::IAnimatedMeshSceneNode *node;
 	};
 };
