@@ -11,6 +11,7 @@ struct Camera
 	Camera(Window &window);
 	void set_position(float x, float y);
 	std::array<float, 3> get_position() const;
+	const Physical::Direction &get_direction() const;
 	void look_at(float x, float y, float z);
 	void set_aspect_ratio(float aspect_ratio);
 	void turn_clockwise();

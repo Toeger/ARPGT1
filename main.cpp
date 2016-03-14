@@ -81,22 +81,26 @@ static void update_logical_frame(){
 //handle continuous actions
 void handle_input(Input_handler &input, Camera &camera){
 	//player movement
-	Physical::Vector player_movement;
-	if (input.is_action_happening(Input_handler::Action::go_forward)){
-		player_movement.y++;
-	}
-	if (input.is_action_happening(Input_handler::Action::go_backward)){
-		player_movement.y--;
-	}
-	if (input.is_action_happening(Input_handler::Action::go_left)){
-		player_movement.x++;
-	}
-	if (input.is_action_happening(Input_handler::Action::go_right)){
-		player_movement.x--;
-	}
-	if (player_movement.length() > 0.5f){ //we have player movement
-		player_movement /= player_movement.length();
-		(*Player::player.get<Physical::DynamicBody<Physical::Circle>>()) += player_movement * Player::player.get<Common_components::Speed>()->speed;
+	{
+		int x = 0;
+		int y = 0;
+		if (input.is_action_happening(Input_handler::Action::go_forward)){
+			y++;
+		}
+		if (input.is_action_happening(Input_handler::Action::go_backward)){
+			y--;
+		}
+		if (input.is_action_happening(Input_handler::Action::go_left)){
+			x++;
+		}
+		if (input.is_action_happening(Input_handler::Action::go_right)){
+			x--;
+		}
+		if (x | y){ //we have player movement
+			Physical::Direction move_direction = Physical::Direction(x, y) - camera.get_direction() - Physical::Direction{0, 1};
+			(*Player::player.get<Physical::DynamicBody<Physical::Circle>>()) +=
+					Physical::Vector{move_direction.get_x(), move_direction.get_y()} * Player::player.get<Common_components::Speed>()->speed;
+		}
 	}
 	if (input.is_action_happening(Input_handler::Action::camera_rotate_clockwise)){
 		camera.turn_clockwise();
@@ -118,11 +122,11 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 		input_handler.instant_actions[Input_handler::Action::camera_zoom_out] = [&camera]{
 			camera.zoom_out();
 		};
-		input_handler.key_action_map[irr::KEY_KEY_E] = Input_handler::camera_rotate_clockwise;
+		input_handler.key_action_map[irr::KEY_KEY_Q] = Input_handler::camera_rotate_clockwise;
 		input_handler.instant_actions[Input_handler::Action::camera_rotate_clockwise] = [&camera]{
 			camera.turn_clockwise();
 		};
-		input_handler.key_action_map[irr::KEY_KEY_Q] = Input_handler::camera_rotate_counterclockwise;
+		input_handler.key_action_map[irr::KEY_KEY_E] = Input_handler::camera_rotate_counterclockwise;
 		input_handler.instant_actions[Input_handler::Action::camera_rotate_counterclockwise] = [&camera]{
 			camera.turn_counterclockwise();
 		};

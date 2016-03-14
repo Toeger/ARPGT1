@@ -23,6 +23,11 @@ std::array<float, 3> Camera::get_position() const
 	return {{pos.X, pos.Y, pos.Z}};
 }
 
+const Physical::Direction &Camera::get_direction() const
+{
+	return direction;
+}
+
 void Camera::look_at(float x, float y, float z)
 {
 	camera->setTarget({x, y, z});
