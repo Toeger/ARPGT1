@@ -127,14 +127,14 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 	}
 }
 
-void light_controls(Input_handler &input_handler, irr::scene::ILightSceneNode *light){
+void light_controls(Input_handler &input_handler, Camera &camera){
 	constexpr float light_speed = 10.f;
-	auto assign_light_key_action = [&input_handler, light](irr::EKEY_CODE key, Input_handler::Action action, float x, float y, float z){
+	auto assign_light_key_action = [&input_handler, &camera](irr::EKEY_CODE key, Input_handler::Action action, float x, float y, float z){
 		input_handler.key_action_map[key] = action;
-		input_handler.instant_actions[action] = [light, x, y, z]{
-			auto pos = light->getPosition();
-			std::cerr << pos.X << ' ' << pos.Y << ' ' << pos.Z << '\n';
-			light->setPosition({pos.X + x * light_speed, pos.Y + y * light_speed, pos.Z + z * light_speed});
+		input_handler.instant_actions[action] = [&camera, x, y, z]{
+			auto pos = camera.get_light_position();
+			std::cerr << pos[0] << ' ' << pos[1] << ' ' << pos[2] << '\n';
+			camera.set_light_position(pos[0] + x * light_speed, pos[1] + y * light_speed, pos[2] + z * light_speed);
 		};
 	};
 	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_U, Input_handler::Action::light_right, 1, 0, 0);

@@ -6,6 +6,13 @@
 
 #include <array>
 
+namespace irr {
+	namespace scene {
+		class ICameraSceneNode;
+		class ILightSceneNode;
+	}
+}
+
 struct Camera
 {
 	Camera(Window &window);
@@ -16,6 +23,8 @@ struct Camera
 	void set_aspect_ratio(float aspect_ratio);
 	void turn_clockwise();
 	void turn_counterclockwise();
+	std::array<float, 3> get_light_position() const;
+	void set_light_position(float x, float y, float z);
 	void zoom_in();
 	void zoom_out();
 private:

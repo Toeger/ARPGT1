@@ -1,8 +1,9 @@
 #ifndef INPUT_HANDLER_H
 #define INPUT_HANDLER_H
 
-#include <irrlicht/irrlicht.h>
 #include <functional>
+#include <irrlicht/Keycodes.h>
+#include <irrlicht/IEventReceiver.h>
 
 struct Input_handler : public irr::IEventReceiver{
 

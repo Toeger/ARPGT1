@@ -3,10 +3,21 @@
 
 #include "input_handler.h"
 
-#include <irrlicht/irrlicht.h>
 #include <string>
 
 struct Camera;
+
+namespace irr {
+	namespace scene {
+		class IAnimatedMeshSceneNode;
+		class ISceneManager;
+	}
+	namespace video{
+		class ITexture;
+		class IVideoDriver;
+	}
+	class IrrlichtDevice;
+}
 
 struct Window
 {

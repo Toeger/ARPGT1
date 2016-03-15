@@ -1,5 +1,7 @@
 #include "input_handler.h"
 
+#include <irrlicht/irrlicht.h>
+
 Input_handler::Input_handler()
 {
 	//WASD movement

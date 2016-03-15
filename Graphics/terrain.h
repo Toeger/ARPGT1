@@ -1,11 +1,16 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include <irrlicht/irrlicht.h>
 #include <string>
 
 #include "window.h"
 #include "GamePlay/map.h"
+
+namespace irr {
+	namespace scene {
+		class ITerrainSceneNode;
+	}
+}
 
 struct Terrain
 {

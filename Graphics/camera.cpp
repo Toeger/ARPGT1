@@ -1,5 +1,7 @@
 #include "camera.h"
 
+#include <irrlicht/irrlicht.h>
+
 const Physical::Direction Camera::turn_speed{10, 1};
 
 Camera::Camera(Window &window)
@@ -50,6 +52,17 @@ void Camera::turn_clockwise()
 void Camera::turn_counterclockwise()
 {
 	direction -= turn_speed;
+}
+
+void Camera::set_light_position(float x, float y, float z)
+{
+	light->setPosition({x, y, z});
+}
+
+std::array<float, 3> Camera::get_light_position() const
+{
+	auto pos = light->getPosition();
+	return {{pos.X, pos.Y, pos.Z}};
 }
 
 void Camera::zoom_in()

@@ -1,6 +1,8 @@
 #include "terrain.h"
 #include"ECS/utility.h"
 
+#include <irrlicht/irrlicht.h>
+
 Terrain::Terrain(Window &window, const Map &map, const std::string &texture)
 {
 	auto height_map = window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {map.get_width(), map.get_height()});
