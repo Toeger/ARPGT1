@@ -5,9 +5,13 @@
 
 Terrain::Terrain(Window &window, const Map &map, const std::string &texture)
 {
-	auto height_map = window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {map.get_width(), map.get_height()});
+	auto height_map = window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {
+														   static_cast<unsigned>(map.get_width()),
+														   static_cast<unsigned>(map.get_height())});
 	ON_SCOPE_EXIT(height_map->drop(););
-	auto inverse_height_map = window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {map.get_width(), map.get_height()});
+	auto inverse_height_map = window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {
+																   static_cast<unsigned>(map.get_width()),
+																   static_cast<unsigned>(map.get_height())});
 	ON_SCOPE_EXIT(inverse_height_map->drop(););
 	for (int y = 0; y < map.get_height(); y++){
 		for (int x = 0; x < map.get_width(); x++){

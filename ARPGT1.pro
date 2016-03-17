@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     Graphics/camera.cpp \
     Graphics/terrain.cpp \
     Graphics/input_handler.cpp \
-    Graphics/common_graphics_components.cpp
+    Graphics/common_graphics_components.cpp \
+    GamePlay/skill.cpp
 
 LIBS += -lpthread -lIrrlicht
 
@@ -66,13 +67,15 @@ HEADERS += \
     Graphics/camera.h \
     Graphics/terrain.h \
     Graphics/input_handler.h \
-    Graphics/common_graphics_components.h
+    Graphics/common_graphics_components.h \
+    GamePlay/skill.h
 
 QMAKE_CXXFLAGS += -std=c++1z
-QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb -fsanitize=undefined,address#,safe-stack
+QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
+linux-clang:QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 #QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors -Wno-global-constructors
 #QMAKE_CXXFLAGS_DEBUG_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
-QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
+linux-clang:QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 QMAKE_CXXFLAGS_RELEASE += -O3
 #QMAKE_CFLAGS += -flto
 
