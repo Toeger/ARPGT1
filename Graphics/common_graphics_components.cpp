@@ -1,4 +1,5 @@
 #include "common_graphics_components.h"
+#include "Utility/casts.h"
 
 #include <cmath>
 #include <irrlicht/irrlicht.h>
@@ -27,7 +28,7 @@ void Common_components::Animated_model::look_at(float x, float y)
 	const auto &pos = node->getPosition();
 	const auto dy = y - pos.Z;
 	const auto dx = x - pos.X;
-	const auto angle = std::atan2(-dy, dx) * 180 / static_cast<float>(M_PI);
+	const auto angle = std::atan2(-dy, dx) * 180 / precision_cast(M_PI);
 	node->setRotation({0, angle, 0});
 }
 

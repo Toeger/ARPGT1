@@ -1,12 +1,14 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include "Utility/casts.h"
+
 #include <array>
 #include <cmath>
 #include <limits>
 #include <ostream>
 
-constexpr const auto pi = static_cast<float>(M_PI);
+constexpr const auto pi = precision_cast(M_PI);
 
 namespace Physical {
 	//A Vector defines a position through its x and y coordinate

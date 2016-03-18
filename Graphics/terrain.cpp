@@ -1,17 +1,18 @@
+#include "ECS/utility.h"
 #include "terrain.h"
-#include"ECS/utility.h"
+#include "Utility/casts.h"
 
 #include <irrlicht/irrlicht.h>
 
 Terrain::Terrain(Window &window, const Map &map, const std::string &texture)
 {
 	auto height_map = window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {
-														   static_cast<unsigned>(map.get_width()),
-														   static_cast<unsigned>(map.get_height())});
+														   unsigned_cast(map.get_width()),
+														   unsigned_cast(map.get_height())});
 	ON_SCOPE_EXIT(height_map->drop(););
 	auto inverse_height_map = window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {
-																   static_cast<unsigned>(map.get_width()),
-																   static_cast<unsigned>(map.get_height())});
+																   unsigned_cast(map.get_width()),
+																   unsigned_cast(map.get_height())});
 	ON_SCOPE_EXIT(inverse_height_map->drop(););
 	for (int y = 0; y < map.get_height(); y++){
 		for (int x = 0; x < map.get_width(); x++){

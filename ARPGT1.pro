@@ -68,7 +68,8 @@ HEADERS += \
     Graphics/terrain.h \
     Graphics/input_handler.h \
     Graphics/common_graphics_components.h \
-    GamePlay/skill.h
+    GamePlay/skill.h \
+    Utility/casts.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb

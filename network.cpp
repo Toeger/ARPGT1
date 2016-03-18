@@ -1,6 +1,7 @@
 #include "ECS/utility.h"
 #include "network.h"
 #include "Utility/asserts.h"
+#include "Utility/casts.h"
 
 #include <arpa/inet.h>
 #include <array>
@@ -18,12 +19,6 @@ namespace Config{
 	const auto host_name = "togersoft.com";
 	const auto host_port = 12345;
 	const std::size_t MAX_UDP_PAYLOAD = 512;
-}
-
-template <class Tout, class Tin>
-Tout *any_cast(Tin *p){
-	void *vp = p;
-	return static_cast<Tout *>(vp);
 }
 
 static std::thread network_thread;
