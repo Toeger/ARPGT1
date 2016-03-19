@@ -7,6 +7,7 @@ Mines: Don't get exploded by projectiles, but do get exploded by aoe that does a
 Frozen Orb: Create an orb that creates ice shard projectiles that fly in a turning clockwise direction (see diablo 2 frozen orb skill)
 Time dilation area: Area in which all actions take [X] times as long
 Hydra: Summon hydra heads that shoot fireballs at nearby enemies for a duration of [X]
+Seeking missiles: Projectile that corrects course up to [X] degrees per tick
 */
 
 {
