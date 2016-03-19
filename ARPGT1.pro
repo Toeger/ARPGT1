@@ -81,7 +81,8 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 #QMAKE_CFLAGS += -flto
 
 DISTFILES += \
-    TODO
+    TODO \
+    Data/skills.txt
 
 copyart.target = always
 copyart.commands = mkdir -p Art; cp $${PWD}/Art/* Art || true;

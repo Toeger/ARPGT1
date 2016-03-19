@@ -1,0 +1,39 @@
+﻿/*
+Skills that must be possible to express:
+
+Chain Lightning: Jumping from enemy to enemy [X] time if the next enemy is within disance [X] and less than [X] damage has been dealt with(out) hitting the same
+enemy twice.
+Mines: Don't get exploded by projectiles, but do get exploded by aoe that does at least [X] damage. Explode when target is closer than [X].
+Frozen Orb: Create an orb that creates ice shard projectiles that fly in a turning clockwise direction (see diablo 2 frozen orb skill)
+Time dilation area: Area in which all actions take [X] times as long
+Hydra: Summon hydra heads that shoot fireballs at nearby enemies for a duration of [X]
+*/
+
+{
+    name = Fireball
+    type = projectile
+    channeltime = 1
+    executiontime = 0.2
+    cooldown = 1
+    speed = 10
+    animation = soccerball.obj
+    collision = enemy, map
+    size = 20
+    onhit = create{
+        type = nova
+        range = 50
+        target = enemy
+        damage = 10
+        animation = circle.ms3d
+    }
+}
+
+{
+    name = Chain Lightning
+    ...
+}
+
+{
+    name = Mine
+    ...
+}
