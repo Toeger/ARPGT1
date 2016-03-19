@@ -30,7 +30,7 @@ bool Map::collides(const Physical::Circle &circle, const Physical::Transformator
 
 bool Map::get(int x, int y) const
 {
-	if (x < 0 || y < 0 || x > width || y >= signed_cast(map.size()) / width)
+	if (x < 0 || y < 0 || x > width || y >= make_signed(map.size()) / width)
 		return true; //outside the map return true to make everything outside the map block the character
 	return map[x + width * y];
 }
@@ -47,7 +47,7 @@ int Map::get_width() const
 
 int Map::get_height() const
 {
-	return signed_cast(map.size()) / width;
+	return make_signed(map.size()) / width;
 }
 
 std::vector<bool> Map::create_map(std::size_t width, std::size_t height)

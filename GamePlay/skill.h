@@ -33,7 +33,6 @@ namespace Skills
 		float size = 0.f;
 		int time = 0;
 		Common_components::Animated_model animation;
-		std::bitset<Targets::size> collisions;
 		ECS::Entity_handle owner;
 		Skill *effect = nullptr;
 		Type type; //tag that defines the content of data
@@ -42,9 +41,13 @@ namespace Skills
 				ECS::Entity_handle target;
 				float turnspeed; //in degrees per tick
 				float speed = 0.f;
+				std::bitset<Collisions::size> collisions;
 			};
 			struct Aura{
-
+				std::bitset<Collisions::size> collisions;
+			};
+			struct Instant{
+				ECS::Entity_handle target;
 			};
 		} data;
 	};

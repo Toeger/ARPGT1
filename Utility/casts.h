@@ -4,12 +4,12 @@
 #include <type_traits>
 
 template <class T>
-constexpr std::make_signed_t<T> signed_cast(T t){
+constexpr std::make_signed_t<T> make_signed(T t){
 	return static_cast<std::make_signed_t<T>>(t);
 }
 
 template <class T>
-constexpr std::make_unsigned_t<T> unsigned_cast(T t){
+constexpr std::make_unsigned_t<T> make_unsigned(T t){
 	return static_cast<std::make_unsigned_t<T>>(t);
 }
 
