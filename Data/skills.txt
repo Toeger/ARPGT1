@@ -10,6 +10,50 @@ Hydra: Summon hydra heads that shoot fireballs at nearby enemies for a duration 
 Seeking missiles: Projectile that corrects course up to [X] degrees per tick
 */
 
+/*
+Basic data types:
+    string - list of characters in utf-8. May contain spaces. One space in front and end is stripped if present.
+        Example: string = Foo bar
+    time - Time in seconds as a floating point number.
+        Example: 2.71
+    file - a string that is a file name. You must use / as the separator between directories. For compatibility reasons you may not start the file with
+        "C:\" or "/" and you may not use "..". You may include spaces.
+        Example: fireball.obj
+        Example: Graphics Extensions/missile.ms3d
+    [something]* - allows you to specify a comma separated list of somethings
+        Example: [interaction]* = self, ally, map
+*/
+/*
+Skill types:
+    projectile: typically moves, has a size and can collide with an object and then applies an effect on it
+    aoe: an area where all objects in the area are affected
+    aura: an area relative to the user where some objects in the area are affected
+*/
+/*
+Interaction types: Defines what a skill can affect
+    self - the caster
+    ally - friendlies
+    neutral - neutral characters
+    enemy - enemies
+    map - walls, trees, ..., decides if you can shoot/affect targets through walls and if walls stop projectiles
+*/
+/*
+Generic skill properties:
+    name = [string] - unique skill name
+    type = [skill type] - see skill types
+    channeltime = [time] - time required to channel the skill before it is ready to be cast
+    executiontime = [time] - time required to execute a skill
+    cooldown = [time] - time after execution where the skill cannot be used
+    animation = [file] - animation to play for the skill
+    solid - If set the skill blocks movement
+    interaction = [interaction]* - What type of objects the skill interacts with
+*/
+/*
+Other skill properties:
+    speed - movement speed of a projectile or aoe, do not specify for infinite speed
+
+*/
+
 {
     name = Fireball
     type = projectile
@@ -21,7 +65,7 @@ Seeking missiles: Projectile that corrects course up to [X] degrees per tick
     collision = enemy, map
     size = 20
     onhit = create{
-        type = nova
+        type = aoe
         range = 50
         target = enemy
         damage = 10
