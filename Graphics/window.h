@@ -22,6 +22,8 @@ namespace irr {
 struct Window
 {
 	Window(Input_handler &input_handler, int width = 800, int height = 600, const std::string &title = "");
+	Window(const Window &) = delete;
+	Window &operator=(const Window &) = delete;
 	~Window();
 	bool update(Camera &camera);
 	irr::scene::IAnimatedMeshSceneNode *add_model(const std::string &path);

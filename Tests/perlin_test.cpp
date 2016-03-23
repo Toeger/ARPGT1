@@ -65,7 +65,7 @@ void test_perlin(){
 	};
 
 	std::transform(&noise[0][0], &noise[0][0] + width * height, &noise[0][0], sigmoid);
-	auto render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(800, 600), 32, false, false, true, nullptr);
+	auto render_device = irr::createDevice(irr::video::EDT_NULL);
 	ON_SCOPE_EXIT(render_device->drop(););
 	auto video_driver = render_device->getVideoDriver();
 	auto image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
