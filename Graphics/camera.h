@@ -16,6 +16,8 @@ namespace irr {
 struct Camera
 {
 	Camera(Window &window);
+	Camera(const Camera &) = delete;
+	Camera &operator=(const Camera &) = delete;
 	void set_position(float x, float y);
 	std::array<float, 3> get_position() const;
 	const Physical::Direction &get_direction() const;

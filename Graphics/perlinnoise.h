@@ -10,7 +10,7 @@
 #include <type_traits>
 
 static std::random_device rd;
-static std::mt19937 mt(rd());
+static std::mt19937_64 mt(rd());
 
 template <class T>
 T blend(T tl, T tr, T bl, T br, float bratio, float rratio){

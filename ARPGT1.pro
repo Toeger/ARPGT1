@@ -4,7 +4,6 @@
 #
 #-------------------------------------------------
 
-TEMPLATE = app
 CONFIG -= app_bundle
 CONFIG -= qt
 
@@ -71,7 +70,7 @@ HEADERS += \
     GamePlay/skill.h \
     Utility/casts.h
 
-QMAKE_CXXFLAGS += -std=c++1z
+QMAKE_CXXFLAGS += -std=c++14
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
 linux-clang:QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 #QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors -Wno-global-constructors
@@ -88,5 +87,3 @@ copyart.target = always
 copyart.commands = mkdir -p Art; cp $${PWD}/Art/* Art || true;
 QMAKE_EXTRA_TARGETS += copyart
 PRE_TARGETDEPS += always
-
-

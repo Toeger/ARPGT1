@@ -13,9 +13,22 @@ Common_components::Animated_model::Animated_model(Window &window, const std::str
 	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 }
 
+Common_components::Animated_model::Animated_model(Common_components::Animated_model &&other)
+	:node(nullptr)
+{
+	std::swap(node, other.node);
+}
+
+Common_components::Animated_model &Common_components::Animated_model::operator=(Common_components::Animated_model &&other)
+{
+	std::swap(node, other.node);
+	return *this;
+}
+
 Common_components::Animated_model::~Animated_model()
 {
-	//node->drop();
+	if (node)
+		node->remove();
 }
 
 void Common_components::Animated_model::set_position(float x, float y, float z)

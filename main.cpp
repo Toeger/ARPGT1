@@ -30,7 +30,7 @@
 #include <type_traits>
 
 namespace {
-	std::mt19937 rng(std::random_device{}());
+	std::mt19937_64 rng(std::random_device{}());
 }
 
 template <class T>
@@ -146,7 +146,6 @@ void light_controls(Input_handler &input_handler, Camera &camera){
 }
 
 int main(){
-	ON_SCOPE_EXIT(ECS::Entity::clear_all(););
 	assert(Tester::run());
 
 	auto &now =  std::chrono::high_resolution_clock::now;
@@ -203,7 +202,7 @@ int main(){
 		p.add(std::move(b));
 		p.add(Common_components::Speed{150});
 	}
-	auto player_model = p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
+	p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	setup_controls(input_handler, camera);
 
 	//Network::run();
@@ -229,4 +228,5 @@ int main(){
 		}
 	}
 	//Network::stop();
+	ECS::Entity::clear_all();
 }
