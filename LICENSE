@@ -1,6 +1,7 @@
-A modified MIT License for the code.
-Art files have individual licenses listed in Art/attribution.txt
+Code in the External folder is not by me and have individual licenses.
+Art files inside the Art folder have individual licenses listed in Art/attribution.txt
 See https://github.com/Toeger/ARPGT1/blob/master/Art/attribution.txt
+The rest of the code is licensed under a modified MIT License.
 
 Copyright (c) 2015 Toeger
 
