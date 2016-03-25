@@ -3,8 +3,7 @@
 #include "perlin_test.h"
 #include "physics_utility.h"
 #include "tester.h"
-
-#include <cassert>
+#include "skill_loader_test.h"
 
 bool Tester::run()
 {
@@ -12,5 +11,6 @@ bool Tester::run()
 	test_collisions();
 	test_ecs();
 	test_perlin();
+	test_skill_loader();
 	return true;
 }

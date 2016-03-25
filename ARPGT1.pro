@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     Graphics/terrain.cpp \
     Graphics/input_handler.cpp \
     Graphics/common_graphics_components.cpp \
-    GamePlay/skill.cpp
+    GamePlay/skill.cpp \
+    Tests/skill_loader_test.cpp
 
 LIBS += -lpthread -lIrrlicht
 
@@ -68,7 +69,9 @@ HEADERS += \
     Graphics/input_handler.h \
     Graphics/common_graphics_components.h \
     GamePlay/skill.h \
-    Utility/casts.h
+    Utility/casts.h \
+    Tests/skill_loader_test.h \
+    External/json.hpp
 
 QMAKE_CXXFLAGS += -std=c++14
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
@@ -81,7 +84,9 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 
 DISTFILES += \
     TODO \
-    Data/skills.txt
+    Data/skills.txt \
+    LICENSE \
+    README.md
 
 copyart.target = always
 copyart.commands = mkdir -p Art; cp $${PWD}/Art/* Art || true;

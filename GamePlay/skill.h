@@ -4,12 +4,13 @@
 #include "Graphics/common_graphics_components.h"
 #include "ECS/entity.h"
 
-#include <string>
 #include <bitset>
+#include <istream>
+#include <string>
+#include <vector>
 
 namespace Skills
 {
-	void load_skills(const std::string &file_path);
 	enum class Type{
 		projectile,
 		aura,
@@ -51,6 +52,8 @@ namespace Skills
 			};
 		} data;
 	};
+
+	std::vector<Skill> load(std::istream &is);
 }
 
 #endif // SKILL_H
