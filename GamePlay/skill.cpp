@@ -9,8 +9,7 @@ std::vector<Skills::Skill> Skills::load(std::istream &is)
 	std::vector<Skills::Skill> retval;
 	json j(is);
 	for (auto &e : j){
-		std::cout << e << '\n';
+		std::cerr << e << '\n';
 	}
-	std::cout << std::flush;
 	return retval;
 }

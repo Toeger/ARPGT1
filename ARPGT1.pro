@@ -84,9 +84,12 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 
 DISTFILES += \
     TODO \
-    Data/skills.txt \
     LICENSE \
-    README.md
+    README.md \
+    Data/skills.json \
+    Data/skill documentation.txt \
+    Data/skill documentation.txt \
+    Data/skill_documentation.txt
 
 copyart.target = always
 copyart.commands = mkdir -p Art; cp $${PWD}/Art/* Art || true;
