@@ -1,10 +1,10 @@
 #ifndef SKILL_H
 #define SKILL_H
 
-#include "Graphics/common_graphics_components.h"
 #include "ECS/entity.h"
 
 #include <bitset>
+#include <functional>
 #include <istream>
 #include <string>
 #include <vector>
@@ -24,33 +24,26 @@ namespace Skills
 		size
 	};
 
+	//skill concepts:
+	/* Target - Either the target entity or an area
+	 * Effect - What happens when the skill hits
+	 * Generic stats - Cooldown, channeltime, executiontime, cost, ...
+	 * Affected - List of types of objects affected, could be enemies, allies, other skills
+	 * Functions to get data, because the channeltime may depend on buffs or effects
+	 * Graphics - Data such as size and animation speed for the graphics to use
+	 */
+	using Logical_time = int; //time in logical frames for things to happen
+
 	struct Skill{
-		void activate();
-		void cancel();
 		std::string name;
-		float channeltime = 0.f;
-		float executiontime = 0.f;
-		float cooldown = 0.f;
-		float size = 0.f;
-		int time = 0;
-		Common_components::Animated_model animation;
-		ECS::Entity_handle owner;
-		Skill *effect = nullptr;
-		Type type; //tag that defines the content of data
-		union{
-			struct Projectile{
-				ECS::Entity_handle target;
-				float turnspeed; //in degrees per tick
-				float speed = 0.f;
-				std::bitset<Collisions::size> collisions;
-			};
-			struct Aura{
-				std::bitset<Collisions::size> collisions;
-			};
-			struct Instant{
-				ECS::Entity_handle target;
-			};
-		} data;
+		Logical_time channeltime{0};
+		Logical_time executiontime{0};
+		Logical_time cooldown{0};
+		ECS::Entity_handle caster;
+		ECS::Entity_handle target;
+		std::vector<Collisions> affected;
+		std::function<void(Skill &)> create = [](Skill &){}; //function to be called when an instance of the skill is created
+		std::function<void(Skill &)> tick = [](Skill &){}; //function to be called every tick
 	};
 
 	std::vector<Skill> load(std::istream &is);

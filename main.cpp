@@ -147,6 +147,7 @@ void light_controls(Input_handler &input_handler, Camera &camera){
 
 int main(){
 	assert(Tester::run());
+	return 0;
 
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();

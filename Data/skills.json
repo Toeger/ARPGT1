@@ -1,26 +1,25 @@
 ﻿{
-    "name" : "Fireball",
-    "type" : "projectile",
-    "channeltime" : 1,
-    "executiontime" : 0.2,
-    "cooldown" : 1,
-    "speed" : 10,
-    "animation" : "soccerball.obj",
-    "collision" : ["enemy", "map"],
-    "size" : 20,
-    "onhit" : {
-        "type" : "aoe",
-        "range" : 50,
-        "target" : "enemy",
-        "damage" : 10,
-        "animation" : "circle.ms3d"
+    "Fireball" : {
+        "type" : "projectile",
+        "channeltime" : 1,
+        "executiontime" : 0.2,
+        "cooldown" : 1,
+        "speed" : 10,
+        "animation" : "soccerball.obj",
+        "collision" : ["enemy", "map"],
+        "size" : 20,
+        "onhit" : {
+            "type" : "aoe",
+            "range" : 50,
+            "target" : "enemy",
+            "damage" : 10,
+            "animation" : "circle.ms3d"
+        }
+    },
+
+    "Chain Lightning" : {
+    },
+
+    "Mine" : {
     }
-}
-
-{
-    "name" : "Chain Lightning"
-}
-
-{
-    "name" : "Mine"
 }

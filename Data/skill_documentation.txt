@@ -28,6 +28,7 @@ Interaction types: Defines what a skill can affect
     map - walls, trees, ..., decides if you can shoot/affect targets through walls and if walls stop projectiles
 
 Generic skill properties:
+    ignore : true|false - if set to true the skill is not loaded, defaults to false if not set
     name : [string] - unique skill name
     type : [skill type] - see skill types
     channeltime : [time] - time required to channel the skill before it is ready to be cast
