@@ -1,0 +1,4 @@
+//this file is in tolua syntax, see http://toluaxx.luaforge.net/toluaxx.html
+//it defines which C++ functions and variables to make available to lua
+$#include "luaskills.h"
+void print(const std::string &string);

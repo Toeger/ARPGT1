@@ -7,71 +7,80 @@
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.cpp \
-    player.cpp \
+INCLUDEPATH += /usr/include/lua5.1
+
+LIBS += -lpthread
+LIBS += -lIrrlicht
+LIBS += -llua5.1
+LIBS += -ltolua++5.1
+
+SOURCES += \
+    ECS/entity_base.cpp \
+    GamePlay/map.cpp \
+    GamePlay/skill.cpp \
+    GamePlay/Skills/luaskills.cpp \
+    Graphics/camera.cpp \
+    Graphics/common_graphics_components.cpp \
+    Graphics/input_handler.cpp \
     Graphics/physicals.cpp \
-    Tests/tester.cpp \
+    Graphics/terrain.cpp \
+    Graphics/window.cpp \
+    main.cpp \
+    network.cpp \
+    player.cpp \
     Tests/collisions.cpp \
-    Tests/physics_utility.cpp \
     Tests/ecs_test.cpp \
     Tests/include_tester.cpp \
-    ECS/entity_base.cpp \
-    network.cpp \
     Tests/perlin_test.cpp \
-    GamePlay/map.cpp \
-    Graphics/window.cpp \
-    Utility/converter.cpp \
-    Graphics/camera.cpp \
-    Graphics/terrain.cpp \
-    Graphics/input_handler.cpp \
-    Graphics/common_graphics_components.cpp \
-    GamePlay/skill.cpp \
-    Tests/skill_loader_test.cpp
-
-LIBS += -lpthread -lIrrlicht
+    Tests/physics_utility.cpp \
+    Tests/skill_loader_test.cpp \
+    Tests/tester.cpp \
+    Utility/converter.cpp
 
 HEADERS += \
+    ECS/common_components.h \
+    ECS/ecs_impl.h \
+    ECS/entity_base.h \
     ECS/entity.h \
+    ECS/entity_handle.h \
     ECS/system.h \
     ECS/systemiterator.h \
-    ECS/ecs_impl.h \
-    player.h \
+    ECS/utility.h \
+    External/json.hpp \
+    GamePlay/map.h \
+    GamePlay/skill.h \
+    GamePlay/Skills/luaskills.pkg \
+    Graphics/camera.h \
+    Graphics/common_graphics_components.h \
+    Graphics/input_handler.h \
+    Graphics/perlinnoise.h \
+    Graphics/physicals.h \
+    Graphics/terrain.h \
+    Graphics/window.h \
     make_function.h \
+    network.h \
+    Physics/aabb.h \
+    Physics/aarect.h \
     Physics/body.h \
     Physics/circle.h \
-    Physics/physics_utility.h \
-    Graphics/physicals.h \
     Physics/collision.h \
-    Physics/aabb.h \
     Physics/line.h \
+    Physics/physics_utility.h \
+    Physics/sensor.h \
     Physics/shapes.h \
-    Tests/tester.h \
+    player.h \
     Tests/collisions.h \
+    Tests/ecs_test.h \
+    Tests/perlin_test.h \
     Tests/physics_utility.h \
+    Tests/skill_loader_test.h \
+    Tests/tester.h \
     Tests/tests_utility.h \
     Utility/asserts.h \
-    Physics/sensor.h \
-    Tests/ecs_test.h \
-    ECS/entity_base.h \
-    ECS/entity_handle.h \
-    ECS/common_components.h \
-    network.h \
-    ECS/utility.h \
-    Utility/vmap.h \
-    Graphics/perlinnoise.h \
-    Tests/perlin_test.h \
-    GamePlay/map.h \
-    Physics/aarect.h \
-    Graphics/window.h \
-    Utility/converter.h \
-    Graphics/camera.h \
-    Graphics/terrain.h \
-    Graphics/input_handler.h \
-    Graphics/common_graphics_components.h \
-    GamePlay/skill.h \
     Utility/casts.h \
-    Tests/skill_loader_test.h \
-    External/json.hpp
+    Utility/converter.h \
+    Utility/vmap.h \
+    GamePlay/Skills/luaskills.h
 
 QMAKE_CXXFLAGS += -std=c++14
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
@@ -87,8 +96,6 @@ DISTFILES += \
     LICENSE \
     README.md \
     Data/skills.json \
-    Data/skill documentation.txt \
-    Data/skill documentation.txt \
     Data/skill_documentation.txt
 
 copyart.target = always
