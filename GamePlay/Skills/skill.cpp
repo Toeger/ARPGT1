@@ -1,24 +1,10 @@
 #include "External/json.hpp"
+#include "External/LuaContext.hpp"
 #include "skill.h"
 
 #include <iostream>
-#include <luabind/luabind.hpp>
+#include <sstream>
 #include <stdexcept>
-#include <tolua++.h>
-
-#include "luaskillbindings.h" //this header is auto generated and missing an #include, so we put it after #including the right thing
-
-template <class Function, class... Args>
-static void call_lua_function(Function function, lua_State *state, Args... args){
-	auto error = function(state, args...);
-	if (error){
-		const char *lua_error = lua_tostring(state, error);
-		if (!lua_error)
-			lua_error = "unknown";
-		auto error_message = std::string("lua error: ") + lua_error;
-		throw std::runtime_error(std::move(error_message));
-	}
-}
 
 std::vector<Skills::Skill> Skills::load(std::istream &is)
 {
@@ -40,13 +26,12 @@ std::vector<Skills::Skill> Skills::load(std::istream &is)
 			if (property_name == "oncreate"){
 				if (!property_value.is_string())
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a lua program as the content");
-				skill.oncreate = [code = property_value.get<std::string>()](Skills::Skill &skill){
+				skill.oncreate = [code = property_value.get<std::string>()](Skills::Skill &skill) mutable{
 					(void)skill;
 					//todo: execute the lua code that was captured
-					auto state = lua_open();
-					//call_lua_function(&tolua_luaskillbindings_open, state);
-					call_lua_function(&luaL_loadstring, state, code.c_str());
-					call_lua_function(&lua_pcall, state, 0, 0, 0);
+					std::stringstream codestream(std::move(code));
+					LuaContext context;
+					context.executeCode(codestream);
 				};
 			}
 			else{

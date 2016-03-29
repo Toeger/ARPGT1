@@ -81,7 +81,8 @@ HEADERS += \
     Utility/asserts.h \
     Utility/casts.h \
     Utility/converter.h \
-    Utility/vmap.h
+    Utility/vmap.h \
+    External/LuaContext.hpp
 
 QMAKE_CXXFLAGS += -std=c++14
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb

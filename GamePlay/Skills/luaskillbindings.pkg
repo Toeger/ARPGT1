@@ -3,5 +3,4 @@
 
 $#include "luaskills.h"
 $#pragma GCC diagnostic ignored "-Wunused-parameter" //disable warnings preventing the generated code to compile
-void print(const std::string &);
 void test();
