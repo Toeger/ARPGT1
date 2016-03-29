@@ -1,5 +1,6 @@
+#include "GamePlay/Skills/luaskills.h"
+#include "GamePlay/Skills/skill.h"
 #include "skill_loader_test.h"
-#include "GamePlay/skill.h"
 
 #include <boost/algorithm/string/join.hpp>
 #include <sstream>
@@ -46,7 +47,12 @@ static void lua_test(){
 	assert(skills.size() == 1);
 	auto &skill = skills.front();
 	assert(skill.oncreate);
+	bool success = false;
+	test_function = [&success]{
+		success = true;
+	};
 	skill.oncreate(skill);
+	assert(success);
 }
 
 void test_skill_loader()

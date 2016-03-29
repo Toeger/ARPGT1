@@ -2,3 +2,4 @@
 //it defines which C++ functions and variables to make available to lua
 $#include "luaskills.h"
 void print(const std::string &string);
+void test();
