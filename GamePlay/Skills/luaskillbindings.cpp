@@ -1,6 +1,6 @@
 /*
 ** Lua binding: luaskillbindings
-** Generated automatically by tolua++-1.0.93 on Tue Mar 29 15:41:58 2016.
+** Generated automatically by tolua++-1.0.93 on Tue Mar 29 16:10:46 2016.
 */
 
 #ifndef __cplusplus
@@ -14,7 +14,7 @@
 TOLUA_API int  tolua_luaskillbindings_open (lua_State* tolua_S);
 
 #include "luaskills.h"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-parameter" //disable warnings preventing the generated code to compile
 
 /* function to register type */
 static void tolua_reg_types (lua_State* tolua_S)

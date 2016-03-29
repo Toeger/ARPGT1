@@ -106,6 +106,12 @@ PRE_TARGETDEPS += always
 
 generateluacode.target = $${PWD}/GamePlay/Skills/luaskillbindings.cpp
 generateluacode.depends = $${PWD}/GamePlay/Skills/luaskillbindings.pkg
-generateluacode.commands = tolua++5.1 -o $${PWD}/GamePlay/Skills/luaskillbindings.cpp $${PWD}/GamePlay/Skills/luaskillbindings.pkg
+generateluacode.commands = tolua++5.1\
+    -o $${PWD}/GamePlay/Skills/luaskillbindings.cpp\
+    -H $${PWD}/GamePlay/Skills/luaskillbindings.h\
+    $${PWD}/GamePlay/Skills/luaskillbindings.pkg
 QMAKE_EXTRA_TARGETS += generateluacode
 PRE_TARGETDEPS += $${PWD}/GamePlay/Skills/luaskillbindings.cpp
+
+QMAKE_CLEAN += $${PWD}/GamePlay/Skills/luaskillbindings.h
+QMAKE_CLEAN += $${PWD}/GamePlay/Skills/luaskillbindings.cpp
