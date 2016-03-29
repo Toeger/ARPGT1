@@ -103,3 +103,9 @@ copyart.target = always
 copyart.commands = mkdir -p Art; cp $${PWD}/Art/* Art || true;
 QMAKE_EXTRA_TARGETS += copyart
 PRE_TARGETDEPS += always
+
+generateluacode.target = $${PWD}/GamePlay/Skills/luaskillbindings.cpp
+generateluacode.depends = $${PWD}/GamePlay/Skills/luaskillbindings.pkg
+generateluacode.commands = tolua++5.1 -o $${PWD}/GamePlay/Skills/luaskillbindings.cpp $${PWD}/GamePlay/Skills/luaskillbindings.pkg
+QMAKE_EXTRA_TARGETS += generateluacode
+PRE_TARGETDEPS += $${PWD}/GamePlay/Skills/luaskillbindings.cpp

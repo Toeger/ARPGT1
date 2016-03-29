@@ -1,5 +1,6 @@
 //this file is in tolua syntax, see http://toluaxx.luaforge.net/toluaxx.html
 //it defines which C++ functions and variables to make available to lua
 $#include "luaskills.h"
-void print(const std::string &string);
+$#pragma GCC diagnostic ignored "-Wunused-parameter"
+void print(const std::string &);
 void test();
