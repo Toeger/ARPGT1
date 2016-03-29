@@ -42,8 +42,8 @@ namespace Skills
 		ECS::Entity_handle caster;
 		ECS::Entity_handle target;
 		std::vector<Collisions> affected;
-		std::function<void(Skill &)> create = [](Skill &){}; //function to be called when an instance of the skill is created
-		std::function<void(Skill &)> tick = [](Skill &){}; //function to be called every tick
+		std::function<void(Skill &)> oncreate; //function to be called when an instance of the skill is created
+		std::function<void(Skill &)> ontick; //function to be called every tick
 	};
 
 	std::vector<Skill> load(std::istream &is);

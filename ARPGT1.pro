@@ -18,7 +18,6 @@ SOURCES += \
     ECS/entity_base.cpp \
     GamePlay/map.cpp \
     GamePlay/skill.cpp \
-    GamePlay/Skills/luaskills.cpp \
     Graphics/camera.cpp \
     Graphics/common_graphics_components.cpp \
     Graphics/input_handler.cpp \
@@ -35,7 +34,8 @@ SOURCES += \
     Tests/physics_utility.cpp \
     Tests/skill_loader_test.cpp \
     Tests/tester.cpp \
-    Utility/converter.cpp
+    Utility/converter.cpp \
+    GamePlay/Skills/luaskillbindings.cpp
 
 HEADERS += \
     ECS/common_components.h \
@@ -49,7 +49,6 @@ HEADERS += \
     External/json.hpp \
     GamePlay/map.h \
     GamePlay/skill.h \
-    GamePlay/Skills/luaskills.pkg \
     Graphics/camera.h \
     Graphics/common_graphics_components.h \
     Graphics/input_handler.h \
@@ -80,7 +79,8 @@ HEADERS += \
     Utility/casts.h \
     Utility/converter.h \
     Utility/vmap.h \
-    GamePlay/Skills/luaskills.h
+    GamePlay/Skills/luaskills.h \
+    GamePlay/Skills/luaskillbindings.pkg
 
 QMAKE_CXXFLAGS += -std=c++14
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb

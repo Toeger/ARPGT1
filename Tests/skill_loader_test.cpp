@@ -40,9 +40,19 @@ static void load_name(){
 	assert(names.size() == 0);
 }
 
+static void lua_test(){
+	std::stringstream data{R"xxx({"skillname" : {"oncreate":"print(\"foo\")"}})xxx"};
+	auto skills = Skills::load(data);
+	assert(skills.size() == 1);
+	auto &skill = skills.front();
+	assert(skill.oncreate);
+	skill.oncreate(skill);
+}
+
 void test_skill_loader()
 {
 	load_empty();
 	ignore_comments();
 	load_name();
+	lua_test();
 }
