@@ -17,7 +17,6 @@ LIBS += -ltolua++5.1
 SOURCES += \
     ECS/entity_base.cpp \
     GamePlay/map.cpp \
-    GamePlay/Skills/luaskillbindings.cpp \
     GamePlay/Skills/skill.cpp \
     Graphics/camera.cpp \
     Graphics/common_graphics_components.cpp \
@@ -35,8 +34,7 @@ SOURCES += \
     Tests/physics_utility.cpp \
     Tests/skill_loader_test.cpp \
     Tests/tester.cpp \
-    Utility/converter.cpp \
-    GamePlay/Skills/luaskills.cpp
+    Utility/converter.cpp
 
 HEADERS += \
     ECS/common_components.h \
@@ -48,9 +46,8 @@ HEADERS += \
     ECS/systemiterator.h \
     ECS/utility.h \
     External/json.hpp \
+    External/LuaContext.hpp \
     GamePlay/map.h \
-    GamePlay/Skills/luaskillbindings.pkg \
-    GamePlay/Skills/luaskills.h \
     GamePlay/Skills/skill.h \
     Graphics/camera.h \
     Graphics/common_graphics_components.h \
@@ -81,8 +78,7 @@ HEADERS += \
     Utility/asserts.h \
     Utility/casts.h \
     Utility/converter.h \
-    Utility/vmap.h \
-    External/LuaContext.hpp
+    Utility/vmap.h
 
 QMAKE_CXXFLAGS += -std=c++14
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
@@ -104,15 +100,3 @@ copyart.target = always
 copyart.commands = mkdir -p Art; cp $${PWD}/Art/* Art || true;
 QMAKE_EXTRA_TARGETS += copyart
 PRE_TARGETDEPS += always
-
-generateluacode.target = $${PWD}/GamePlay/Skills/luaskillbindings.cpp
-generateluacode.depends = $${PWD}/GamePlay/Skills/luaskillbindings.pkg
-generateluacode.commands = tolua++5.1\
-    -o $${PWD}/GamePlay/Skills/luaskillbindings.cpp\
-    -H $${PWD}/GamePlay/Skills/luaskillbindings.h\
-    $${PWD}/GamePlay/Skills/luaskillbindings.pkg
-QMAKE_EXTRA_TARGETS += generateluacode
-PRE_TARGETDEPS += $${PWD}/GamePlay/Skills/luaskillbindings.cpp
-
-QMAKE_CLEAN += $${PWD}/GamePlay/Skills/luaskillbindings.h
-QMAKE_CLEAN += $${PWD}/GamePlay/Skills/luaskillbindings.cpp

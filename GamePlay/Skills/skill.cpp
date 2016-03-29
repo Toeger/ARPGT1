@@ -30,7 +30,7 @@ std::vector<Skills::Skill> Skills::load(std::istream &is)
 					(void)skill;
 					//todo: execute the lua code that was captured
 					std::stringstream codestream(std::move(code));
-					LuaContext context;
+					LuaContext context(false);
 					context.executeCode(codestream);
 				};
 			}
