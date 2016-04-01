@@ -7,12 +7,11 @@
 CONFIG -= app_bundle
 CONFIG -= qt
 
-INCLUDEPATH += /usr/include/lua5.1
+linux:INCLUDEPATH += /usr/include/lua5.1
 
 LIBS += -lpthread
 LIBS += -lIrrlicht
 LIBS += -llua5.1
-LIBS += -ltolua++5.1
 
 SOURCES += \
     ECS/entity_base.cpp \
