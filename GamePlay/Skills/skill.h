@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+class LuaContext;
+
 namespace Skills
 {
 	enum class Type{
@@ -46,7 +48,33 @@ namespace Skills
 		std::function<void(Skill &)> ontick; //function to be called every tick
 	};
 
-	std::vector<Skill> load(std::istream &is);
+	struct Modifier{
+		//modifies a skill, contains the name of the modifier, the priority (in what order modifiers are to be applied) and a function to modify a Skill
+		enum class Priority : char{
+			First,
+			Before,
+			Normal,
+			After,
+			Last
+		};
+		template<class String, class Function>
+		Modifier(String &&name, Function &&function, Priority priority = Priority::Normal)
+			:name(std::forward<String>(name))
+			,apply(std::forward<Function>(function))
+			,priority(priority)
+		{}
+
+		std::string name;
+		std::function<void(Skills::Skill)> apply;
+		Priority priority;
+	};
+	inline bool operator <(const Modifier &lhs, const Modifier &rhs){
+		return std::tie(lhs.priority, lhs.name) < std::tie(rhs.priority, rhs.name);
+	}
+
+	void setup_default_lua_environment(LuaContext &lua_context);
+
+	std::vector<Skill> load(std::istream &is, void (*setup_lua_environment)(LuaContext &) = &setup_default_lua_environment);
 }
 
 #endif // SKILL_H

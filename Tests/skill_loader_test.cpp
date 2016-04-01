@@ -1,8 +1,10 @@
 #include "GamePlay/Skills/skill.h"
 #include "skill_loader_test.h"
+#include "External/LuaContext.hpp"
 
 #include <boost/algorithm/string/join.hpp>
 #include <sstream>
+#include <string>
 
 static void load_empty(){
 	std::stringstream data{R"({})"};
@@ -40,13 +42,20 @@ static void load_name(){
 	assert(names.size() == 0);
 }
 
+std::string test_write_string;
 static void lua_test(){
-	std::stringstream data{R"xxx({"skillname" : {"oncreate":"print(\"foo\")"}})xxx"};
-	auto skills = Skills::load(data);
+	std::stringstream data{R"xxx({"skillname" : {"oncreate":"test(\"success\")"}})xxx"};
+	assert(test_write_string.empty());
+	auto skills = Skills::load(data, [](LuaContext &context){
+		context.writeFunction("test", [](const std::string &s){
+		test_write_string = s;
+		});
+	});
 	assert(skills.size() == 1);
 	auto &skill = skills.front();
 	assert(skill.oncreate);
 	skill.oncreate(skill);
+	assert(test_write_string == "success");
 }
 
 void test_skill_loader()
