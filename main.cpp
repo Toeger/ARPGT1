@@ -21,6 +21,7 @@
 #include <bitset>
 #include <cassert>
 #include <chrono>
+#include <fstream>
 #include <initializer_list>
 #include <iostream>
 #include <memory>
@@ -125,6 +126,18 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 		input_handler.key_action_map[irr::KEY_KEY_Q] = Input_handler::camera_rotate_clockwise;
 		input_handler.key_action_map[irr::KEY_KEY_E] = Input_handler::camera_rotate_counterclockwise;
 	}
+	//skills
+	{
+		input_handler.key_action_map[irr::KEY_SPACE] = Input_handler::cast_skill_1;
+		input_handler.key_action_map[irr::KEY_ESCAPE] = Input_handler::interrupt_cast;
+		input_handler.instant_actions[Input_handler::cast_skill_1] = []{
+			auto &p = Player::player;
+			(void)p;
+			//TODO: create a Skill_instance from the first Skill_definition
+			//TODO: check if the skill is on cooldown
+			//TODO: make sure that walking interrupts the casting if the Skill_definition says so and no modifier says otherwise
+		};
+	}
 }
 
 void light_controls(Input_handler &input_handler, Camera &camera){
@@ -147,7 +160,7 @@ void light_controls(Input_handler &input_handler, Camera &camera){
 
 int main(){
 	assert(Tester::run());
-	return 0;
+	//return 0;
 
 	auto &now =  std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
@@ -202,6 +215,9 @@ int main(){
 		} while(blocked);
 		p.add(std::move(b));
 		p.add(Common_components::Speed{150});
+		std::ifstream f("Data/skills.json");
+		assert_fast(f);
+		p.skills = Skills::load(f);
 	}
 	p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	setup_controls(input_handler, camera);

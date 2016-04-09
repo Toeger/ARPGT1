@@ -33,10 +33,14 @@ namespace Skills
 	 * Affected - List of types of objects affected, could be enemies, allies, other skills
 	 * Functions to get data, because the channeltime may depend on buffs or effects
 	 * Graphics - Data such as size and animation speed for the graphics to use
+	 * Need to keep the skill description separate from modifiers and instances of skills
 	 */
 	using Logical_time = int; //time in logical frames for things to happen
 
-	struct Skill{
+	struct Skill_instance;
+
+	struct Skill_definition{
+		//the definition of a skill including base stats, descriptions and behaviors
 		std::string name;
 		Logical_time channeltime{0};
 		Logical_time executiontime{0};
@@ -44,8 +48,22 @@ namespace Skills
 		ECS::Entity_handle caster;
 		ECS::Entity_handle target;
 		std::vector<Collisions> affected;
-		std::function<void(Skill &)> oncreate; //function to be called when an instance of the skill is created
-		std::function<void(Skill &)> ontick; //function to be called every tick
+		std::function<void(Skill_instance &)> on_create; //function to be called when an instance of the skill is created
+		std::function<void(Skill_instance &)> on_tick; //function to be called every tick
+		Skill_instance create();
+	};
+
+	struct Modifier;
+
+	struct Skill_instance{
+		//instances of skills with specific data such as the current modifiers, position, direction and state
+		Skill_instance(const Skill_definition &skill_definition);
+		Skill_instance(Skill_instance &&) = default;
+		Skill_instance &operator = (Skill_instance &&) = default;
+		const Skill_definition *skill_definition = nullptr;
+		std::vector<Skills::Modifier> modifiers;
+		void on_create();
+		void on_tick();
 	};
 
 	struct Modifier{
@@ -65,7 +83,7 @@ namespace Skills
 		{}
 
 		std::string name;
-		std::function<void(Skills::Skill)> apply;
+		std::function<void(Skills::Skill_instance)> apply;
 		Priority priority;
 	};
 	inline bool operator <(const Modifier &lhs, const Modifier &rhs){
@@ -74,7 +92,7 @@ namespace Skills
 
 	void setup_default_lua_environment(LuaContext &lua_context);
 
-	std::vector<Skill> load(std::istream &is, void (*setup_lua_environment)(LuaContext &) = &setup_default_lua_environment);
+	std::vector<Skill_definition> load(std::istream &is, void (*setup_lua_environment)(LuaContext &) = &setup_default_lua_environment);
 }
 
 #endif // SKILL_H

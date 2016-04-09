@@ -6,10 +6,10 @@
 #include <sstream>
 #include <stdexcept>
 
-std::vector<Skills::Skill> Skills::load(std::istream &is, void (*setup_lua_environment)(LuaContext &))
+std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setup_lua_environment)(LuaContext &))
 {
 	using json = nlohmann::json;
-	std::vector<Skills::Skill> retval;
+	std::vector<Skills::Skill_definition> retval;
 	json j(is);
 	using std::begin;
 	using std::end;
@@ -26,11 +26,10 @@ std::vector<Skills::Skill> Skills::load(std::istream &is, void (*setup_lua_envir
 			if (property_name == "oncreate"){
 				if (!property_value.is_string())
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a lua program as the content");
-				skill.oncreate = [code = property_value.get<std::string>(), setup_lua_environment](Skills::Skill &skill){
+				skill.on_create = [code = property_value.get<std::string>(), setup_lua_environment](Skills::Skill_instance &skill){
 					(void)skill;
 					LuaContext context(false);
 					setup_lua_environment(context);
-					//todo: execute the lua code that was captured
 					std::stringstream codestream(code);
 					context.executeCode(codestream);
 				};
@@ -46,5 +45,26 @@ std::vector<Skills::Skill> Skills::load(std::istream &is, void (*setup_lua_envir
 
 void Skills::setup_default_lua_environment(LuaContext &lua_context)
 {
+	//TODO: provide access to the caster, the target and various other stuff that a skill might need access to
 	(void)lua_context;
+}
+
+Skills::Skill_instance Skills::Skill_definition::create()
+{
+	Skills::Skill_instance instance(*this);
+	return instance;
+}
+
+Skills::Skill_instance::Skill_instance(const Skills::Skill_definition &skill_definition)
+	:skill_definition(&skill_definition)
+{}
+
+void Skills::Skill_instance::on_create()
+{
+	skill_definition->on_create(*this);
+}
+
+void Skills::Skill_instance::on_tick()
+{
+	skill_definition->on_tick(*this);
 }

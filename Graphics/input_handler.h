@@ -33,6 +33,9 @@ struct Input_handler : public irr::IEventReceiver{
 		light_backward,
 		light_left,
 		light_right,
+		cast_skill_1,
+		cast_skill_2,
+		interrupt_cast,
 		size
 	};
 	//defines the action for discrete events. Discrete events are activated once by a keypress
