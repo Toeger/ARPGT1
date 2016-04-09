@@ -13,8 +13,9 @@
 #endif
 
 #if ASSERT_LEVEL > 0
-inline void assert_fast(bool test){
-	if (!test){
+template <class T>
+inline void assert_fast(T &&t){
+	if (!t){
 #ifdef _NDEBUG //make sure assert is activated even during a release build
 #undef _NDEBUG
 		assert(!"assertion failure");
@@ -29,8 +30,9 @@ inline void assert_fast(bool){}
 #endif
 
 #if ASSERT_LEVEL > 1
-inline void assert_debug(bool test){
-	if (!test){
+template <class T>
+inline void assert_debug(T &&t){
+	if (!t){
 #ifdef _NDEBUG //make sure assert is activated even during a release build
 #undef _NDEBUG
 		assert(!"assertion failure");
@@ -45,8 +47,9 @@ inline void assert_debug(bool){}
 #endif
 
 #if ASSERT_LEVEL > 2
-inline void assert_all(bool test){
-	if (!test){
+template <class T>
+inline void assert_all(T &&t){
+	if (!t){
 #ifdef _NDEBUG //make sure assert is activated even during a release build
 #undef _NDEBUG
 		assert(!"assertion failure");
