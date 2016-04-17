@@ -9,6 +9,7 @@
 #include "Graphics/physicals.h"
 #include "Graphics/terrain.h"
 #include "Graphics/window.h"
+#include "main.h"
 #include "make_function.h"
 #include "network.h"
 #include "Physics/body.h"
@@ -52,11 +53,6 @@ void debug_print(const Physical::Circle &c, const Physical::Transformator &t){
 void debug_print(const Physical::Line &l, const Physical::Transformator &t){
 	auto pos = t + l.vector;
 	std::cout << "line: x1: " << t.vector.x << " y1: " << t.vector.y << " x2: " << pos.vector.x << " y2: " << pos.vector.y << '\n';
-}
-
-namespace Config{
-	const auto lfps = 30; //logical frames per second, independent of graphical fps
-	const auto logical_frame_duration = std::chrono::milliseconds(1000) / lfps;
 }
 
 //remove temporary entities

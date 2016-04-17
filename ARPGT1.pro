@@ -35,7 +35,8 @@ SOURCES += \
     Tests/physics_utility.cpp \
     Tests/skill_loader_test.cpp \
     Tests/tester.cpp \
-    Utility/converter.cpp
+    Utility/converter.cpp \
+    ECS/system.cpp
 
 HEADERS += \
     ECS/common_components.h \
@@ -79,16 +80,22 @@ HEADERS += \
     Utility/asserts.h \
     Utility/casts.h \
     Utility/converter.h \
-    Utility/vmap.h
+    Utility/vmap.h \
+    main.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
-linux-clang:QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 #QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors -Wno-global-constructors
 #QMAKE_CXXFLAGS_DEBUG_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
-linux-clang:QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
+linux-clang{
+    QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
+    QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
+}
 QMAKE_CXXFLAGS_RELEASE += -O3
-#QMAKE_CFLAGS += -flto
+#gcc{
+#    QMAKE_CXXFLAGS += -flto
+#    QMAKE_LFLAGS += -flto
+#}
 
 DISTFILES += \
     TODO \

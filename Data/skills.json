@@ -8,13 +8,7 @@
         "animation" : "soccerball.obj",
         "collision" : ["enemy", "map"],
         "size" : 20,
-        "onhit" : {
-            "type" : "aoe",
-            "range" : 50,
-            "target" : "enemy",
-            "damage" : 10,
-            "animation" : "circle.ms3d"
-        }
+        "onhit" : "--todo: write a lua program"
     },
 
     "Chain Lightning" : {

@@ -14,15 +14,17 @@ class LuaContext;
 namespace Skills
 {
 	enum class Type{
-		projectile,
 		aura,
 		instant,
+		invalid,
+		projectile,
+		size
 	};
 	enum Collisions{
-		enemies,
 		allies,
-		self,
+		enemies,
 		map,
+		self,
 		size
 	};
 
@@ -42,14 +44,20 @@ namespace Skills
 	struct Skill_definition{
 		//the definition of a skill including base stats, descriptions and behaviors
 		std::string name;
+		std::string animation;
+		float size = 0.f;
+		float speed = 0.f;
 		Logical_time channeltime{0};
 		Logical_time executiontime{0};
 		Logical_time cooldown{0};
 		ECS::Entity_handle caster;
 		ECS::Entity_handle target;
-		std::vector<Collisions> affected;
+		std::bitset<Collisions::size> affected;
 		std::function<void(Skill_instance &)> on_create; //function to be called when an instance of the skill is created
 		std::function<void(Skill_instance &)> on_tick; //function to be called every tick
+		std::function<void(Skill_instance &)> on_hit; //function to be called every tick
+		Type type = Type::invalid;
+
 		Skill_instance create();
 	};
 
