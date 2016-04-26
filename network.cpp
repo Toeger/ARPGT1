@@ -1,5 +1,5 @@
-#include "ECS/utility.h"
 #include "network.h"
+#include "ECS/utility.h"
 #include "Utility/asserts.h"
 #include "Utility/casts.h"
 
@@ -15,7 +15,7 @@
 #include <thread>
 #include <unistd.h>
 
-namespace Config{
+namespace Config {
 	const auto host_name = "togersoft.com";
 	const auto host_port = 12345;
 	const std::size_t MAX_UDP_PAYLOAD = 512;
@@ -24,17 +24,17 @@ namespace Config{
 static std::thread network_thread;
 static std::atomic<bool> network_should_quit;
 
-void handle(char *buffer, size_t size){
+void handle(char *buffer, size_t size) {
 	std::cout << std::string(buffer, buffer + size) << '\n' << std::flush;
 }
 
-static void run_network(){
+static void run_network() {
 	network_should_quit = false;
-	ON_SCOPE_EXIT( /*TODO: push "network down" event */);
+	ON_SCOPE_EXIT(/*TODO: push "network down" event */);
 	//connect
 	hostent *host;
 	host = gethostbyname(Config::host_name);
-	if (!host){
+	if (!host) {
 		std::cerr << "failed resolving " << Config::host_name << '\n';
 	}
 	sockaddr_in server = {};
@@ -42,7 +42,7 @@ static void run_network(){
 	server.sin_port = Config::host_port;
 	memcpy(&server.sin_addr, host->h_addr_list, sizeof server.sin_addr);
 	int fd = socket(AF_INET, SOCK_DGRAM, 0);
-	if (fd < 0){
+	if (fd < 0) {
 		perror("Failed creating socket");
 		return;
 	}
@@ -51,7 +51,7 @@ static void run_network(){
 	{
 		timeval timeout = {};
 		timeout.tv_usec = 100000; //should be 100ms
-		if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout) < 0){
+		if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout) < 0) {
 			perror("Error setting timeout");
 			return;
 		}
@@ -59,7 +59,7 @@ static void run_network(){
 	//login
 	{
 		auto logintext = "LOGIN";
-		if (sendto(fd, logintext, sizeof logintext, 0, any_cast<sockaddr>(&server), sizeof server) != sizeof logintext){
+		if (sendto(fd, logintext, sizeof logintext, 0, any_cast<sockaddr>(&server), sizeof server) != sizeof logintext) {
 			perror("Failed sending data");
 			return;
 		}
@@ -68,9 +68,9 @@ static void run_network(){
 	std::array<char, Config::MAX_UDP_PAYLOAD> buffer;
 
 	socklen_t socket_length = sizeof server;
-	for (;!network_should_quit;){
+	for (; !network_should_quit;) {
 		auto size = recvfrom(fd, buffer.data(), buffer.size(), 0, any_cast<sockaddr>(&server), &socket_length);
-		if (size == -1){
+		if (size == -1) {
 			perror("Failed recieving data");
 			continue;
 		}
@@ -79,19 +79,16 @@ static void run_network(){
 	//todo: logout
 }
 
-void Network::run()
-{
+void Network::run() {
 	assert_fast(!network_thread.joinable());
 	network_thread = std::thread(run_network);
 }
 
-void Network::update()
-{
+void Network::update() {
 	//TODO: send actions of this client to server
 }
 
-void Network::stop()
-{
+void Network::stop() {
 	//stop the network thread (logout)
 	network_should_quit = true;
 	network_thread.join();

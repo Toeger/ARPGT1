@@ -11,22 +11,9 @@
 
 class LuaContext;
 
-namespace Skills
-{
-	enum class Type{
-		aura,
-		instant,
-		invalid,
-		projectile,
-		size
-	};
-	enum class Collisions{
-		allies,
-		enemies,
-		map,
-		self,
-		size
-	};
+namespace Skills {
+	enum class Type { aura, instant, invalid, projectile, size };
+	enum class Collisions { allies, enemies, map, self, size };
 
 	//skill concepts:
 	/* Target - Either the target entity or an area
@@ -41,7 +28,7 @@ namespace Skills
 
 	struct Skill_instance;
 
-	struct Skill_definition{
+	struct Skill_definition {
 		//the definition of a skill including base stats, descriptions and behaviors
 		std::string name;
 		std::string animation;
@@ -63,38 +50,31 @@ namespace Skills
 
 	struct Modifier;
 
-	struct Skill_instance{
+	struct Skill_instance {
 		//instances of skills with specific data such as the current modifiers, position, direction and state
 		Skill_instance(const Skill_definition &skill_definition);
 		Skill_instance(Skill_instance &&) = default;
-		Skill_instance &operator = (Skill_instance &&) = default;
+		Skill_instance &operator=(Skill_instance &&) = default;
 		const Skill_definition *skill_definition = nullptr;
 		std::vector<Skills::Modifier> modifiers;
 		void on_create();
 		void on_tick();
 	};
 
-	struct Modifier{
+	struct Modifier {
 		//modifies a skill, contains the name of the modifier, the priority (in what order modifiers are to be applied) and a function to modify a Skill
-		enum class Priority : char{
-			First,
-			Before,
-			Normal,
-			After,
-			Last
-		};
-		template<class String, class Function>
+		enum class Priority : char { First, Before, Normal, After, Last };
+		template <class String, class Function>
 		Modifier(String &&name, Function &&function, Priority priority = Priority::Normal)
-			:name(std::forward<String>(name))
-			,apply(std::forward<Function>(function))
-			,priority(priority)
-		{}
+			: name(std::forward<String>(name))
+			, apply(std::forward<Function>(function))
+			, priority(priority) {}
 
 		std::string name;
 		std::function<void(Skills::Skill_instance)> apply;
 		Priority priority;
 	};
-	inline bool operator <(const Modifier &lhs, const Modifier &rhs){
+	inline bool operator<(const Modifier &lhs, const Modifier &rhs) {
 		return std::tie(lhs.priority, lhs.name) < std::tie(rhs.priority, rhs.name);
 	}
 

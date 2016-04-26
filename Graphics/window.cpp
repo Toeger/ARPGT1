@@ -1,12 +1,11 @@
-#include "Utility/converter.h"
 #include "window.h"
+#include "Utility/converter.h"
 #include "camera.h"
 
 #include <cassert>
 #include <irrlicht/irrlicht.h>
 
-Window::Window(Input_handler &input_handler, int width, int height, const std::string &title)
-{
+Window::Window(Input_handler &input_handler, int width, int height, const std::string &title) {
 	//setup irrlicht graphics
 	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(width, height), 32, false, true, true, &input_handler);
 	assert(render_device);
@@ -16,13 +15,11 @@ Window::Window(Input_handler &input_handler, int width, int height, const std::s
 	scene_manager->setShadowColor({150, 0, 0, 0});
 }
 
-Window::~Window()
-{
+Window::~Window() {
 	render_device->drop();
 }
 
-bool Window::update(Camera &camera)
-{
+bool Window::update(Camera &camera) {
 	if (!render_device->run())
 		return false;
 	auto &vp = video_driver->getViewPort();
@@ -33,8 +30,7 @@ bool Window::update(Camera &camera)
 	return true;
 }
 
-irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path)
-{
+irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path) {
 	auto mesh = scene_manager->getMesh(path.c_str());
 	assert(mesh);
 	auto node = scene_manager->addAnimatedMeshSceneNode(mesh);
@@ -42,7 +38,6 @@ irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path)
 	return node;
 }
 
-irr::video::ITexture *Window::get_texture(const std::string &path) const
-{
+irr::video::ITexture *Window::get_texture(const std::string &path) const {
 	return video_driver->getTexture(path.c_str());
 }

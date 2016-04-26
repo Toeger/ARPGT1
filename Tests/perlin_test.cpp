@@ -1,16 +1,15 @@
-#include "Graphics/perlinnoise.h"
 #include "perlin_test.h"
 #include "ECS/utility.h"
+#include "Graphics/perlinnoise.h"
 
 #include <cassert>
-#include <irrlicht/irrlicht.h>
 #include <iostream>
+#include <irrlicht/irrlicht.h>
 
 constexpr int max_i = 64;
 
 template <int i = 0>
-void run_perlin()
-{
+void run_perlin() {
 	//not sure how to automatically test perlin noise, so just dump an image for now and manually check it
 	const int width = 1024;
 	const int height = 1024;
@@ -23,8 +22,8 @@ void run_perlin()
 	auto video_driver = render_device->getVideoDriver();
 	auto image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
 	ON_SCOPE_EXIT(image->drop(););
-	for (int y = 0; y < height; y++){
-		for (int x = 0; x < width; x++){
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
 			auto &value = noise[x][y];
 			assert(value >= min);
 			assert(value <= max);
@@ -36,15 +35,15 @@ void run_perlin()
 }
 
 template <int i = 0>
-void multi_test_perlin(){
+void multi_test_perlin() {
 	run_perlin<i>();
 	multi_test_perlin<i + 1>();
 }
 
-template<>
-void multi_test_perlin<max_i>(){}
+template <>
+void multi_test_perlin<max_i>() {}
 
-void test_perlin(){
+void test_perlin() {
 	//multi_test_perlin();
 	const int width = 1024;
 	const int height = 1024;
@@ -54,12 +53,12 @@ void test_perlin(){
 
 	auto noise = get_perlin_noise<float, width, height, 40>(min, max, 20);
 	float minimum = 255, maximum = 0;
-	for (const auto &array : noise){
+	for (const auto &array : noise) {
 		auto minmax = std::minmax_element(begin(array), end(array));
 		minimum = std::min(minimum, *minmax.first);
 		maximum = std::max(maximum, *minmax.second);
 	}
-	auto sigmoid = [minimum, maximum, cutoff = 1 - separator, steepness = 64](float f){
+	auto sigmoid = [ minimum, maximum, cutoff = 1 - separator, steepness = 64 ](float f) {
 		auto normal_f = (f - minimum) / (maximum - minimum);
 		return 1 / (1 + std::exp(-steepness * (normal_f - cutoff)));
 	};
@@ -72,9 +71,9 @@ void test_perlin(){
 	ON_SCOPE_EXIT(image->drop(););
 	auto inverted_image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
 	ON_SCOPE_EXIT(inverted_image->drop(););
-	auto square = [](auto x){ return x * x; };
-	for (int y = 0; y < height; y++){
-		for (int x_ = 0; x_ < width; x_++){
+	auto square = [](auto x) { return x * x; };
+	for (int y = 0; y < height; y++) {
+		for (int x_ = 0; x_ < width; x_++) {
 			auto &value = noise[x_][y];
 			const auto x = width - 1 - x_;
 			assert(value >= min);
@@ -92,10 +91,10 @@ void test_perlin(){
 	}
 	bool is_bmp_writable = false;
 	std::cout << video_driver->getImageWriterCount() << '\n' << std::flush;
-	for (auto image_writer_index = 0u; image_writer_index < video_driver->getImageWriterCount(); image_writer_index++){
+	for (auto image_writer_index = 0u; image_writer_index < video_driver->getImageWriterCount(); image_writer_index++) {
 		auto image_write = video_driver->getImageWriter(image_writer_index);
 		std::cout << image_write->getDebugName() << '\n' << std::flush;
-		if (image_write->isAWriteableFileExtension(".bmp")){
+		if (image_write->isAWriteableFileExtension(".bmp")) {
 			is_bmp_writable = true;
 			break;
 		}

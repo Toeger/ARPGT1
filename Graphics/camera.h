@@ -1,8 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "window.h"
 #include "Physics/physics_utility.h"
+#include "window.h"
 
 #include <array>
 
@@ -13,8 +13,7 @@ namespace irr {
 	}
 }
 
-struct Camera
-{
+struct Camera {
 	Camera(Window &window);
 	Camera(const Camera &) = delete;
 	Camera &operator=(const Camera &) = delete;
@@ -29,7 +28,8 @@ struct Camera
 	void set_light_position(float x, float y, float z);
 	void zoom_in();
 	void zoom_out();
-private:
+
+		private:
 	//static constexpr Physical::Direction turn_speed{10.f, 1.f}; //this really should compile -.-
 	static const Physical::Direction turn_speed;
 	Physical::Direction direction;

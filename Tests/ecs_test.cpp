@@ -1,27 +1,26 @@
+#include "ecs_test.h"
 #include "ECS/entity.h"
 #include "ECS/entity_handle.h"
 #include "ECS/system.h"
-#include "ecs_test.h"
 
 #include <cassert>
 
 //move only test component
-struct Test_component{
+struct Test_component {
 	Test_component(int n)
-		:n(n)
-	{
+		: n(n) {
 		object_count++;
 	}
 	Test_component(Test_component &&other)
-		:n(other.n){
+		: n(other.n) {
 		other.n = 0;
 	}
 
-	Test_component &operator=(Test_component &&other){
+	Test_component &operator=(Test_component &&other) {
 		std::swap(n, other.n);
 		return *this;
 	}
-	~Test_component(){
+	~Test_component() {
 		object_count--;
 	}
 
@@ -31,7 +30,7 @@ struct Test_component{
 
 size_t Test_component::object_count = 0;
 
-static void test_entity(){
+static void test_entity() {
 	ECS::Entity n;
 	Test_component tc(42);
 	assert(ECS::System::get_components<Test_component>().size() == 0);
@@ -50,7 +49,7 @@ static void test_entity(){
 	assert(ECS::System::get_components<Test_component>().size() == 0);
 }
 
-static void test_entity_handle(){
+static void test_entity_handle() {
 	ECS::Entity n;
 	n.emplace<Test_component>(007);
 	auto eh = ECS::System::component_to_entity_handle(*n.get<Test_component>());
@@ -72,8 +71,7 @@ static void test_entity_handle(){
 	assert(eh.get<Test_component>() == nullptr);
 }
 
-void test_ecs()
-{
+void test_ecs() {
 	test_entity();
 	test_entity_handle();
 }

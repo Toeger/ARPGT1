@@ -3,10 +3,9 @@
 
 #include <vector>
 
-namespace Network
-{
+namespace Network {
 	//represents something that happened, such as a character moving or using a skill
-	struct Event{
+	struct Event {
 		//TODO: think about how to represent various events
 		//use some kind of tagged union? or separate containers for different types of events?
 	};

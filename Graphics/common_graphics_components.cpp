@@ -4,8 +4,7 @@
 #include <cmath>
 #include <irrlicht/irrlicht.h>
 
-Common_components::Animated_model::Animated_model(Window &window, const std::string &path, const std::string &texture)
-{
+Common_components::Animated_model::Animated_model(Window &window, const std::string &path, const std::string &texture) {
 	node = window.add_model(path);
 	//node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	node->setMaterialTexture(0, window.get_texture(texture.c_str()));
@@ -14,30 +13,25 @@ Common_components::Animated_model::Animated_model(Window &window, const std::str
 }
 
 Common_components::Animated_model::Animated_model(Common_components::Animated_model &&other)
-	:node(nullptr)
-{
+	: node(nullptr) {
 	std::swap(node, other.node);
 }
 
-Common_components::Animated_model &Common_components::Animated_model::operator=(Common_components::Animated_model &&other)
-{
+Common_components::Animated_model &Common_components::Animated_model::operator=(Common_components::Animated_model &&other) {
 	std::swap(node, other.node);
 	return *this;
 }
 
-Common_components::Animated_model::~Animated_model()
-{
+Common_components::Animated_model::~Animated_model() {
 	if (node)
 		node->remove();
 }
 
-void Common_components::Animated_model::set_position(float x, float y, float z)
-{
+void Common_components::Animated_model::set_position(float x, float y, float z) {
 	node->setPosition({x, y, z});
 }
 
-void Common_components::Animated_model::look_at(float x, float y)
-{
+void Common_components::Animated_model::look_at(float x, float y) {
 	const auto &pos = node->getPosition();
 	const auto dy = y - pos.Z;
 	const auto dx = x - pos.X;
@@ -45,7 +39,6 @@ void Common_components::Animated_model::look_at(float x, float y)
 	node->setRotation({0, angle, 0});
 }
 
-void Common_components::Animated_model::set_rotation(float angle)
-{
+void Common_components::Animated_model::set_rotation(float angle) {
 	node->setRotation({0, angle, 0});
 }

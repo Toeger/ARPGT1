@@ -1,7 +1,7 @@
 #ifndef PHYSICALS_H
 #define PHYSICALS_H
 
-namespace Graphics{
+namespace Graphics {
 	void draw_physicals();
 }
 

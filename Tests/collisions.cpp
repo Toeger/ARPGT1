@@ -1,23 +1,23 @@
+#include "Physics/collision.h"
 #include "ECS/entity.h"
 #include "GamePlay/map.h"
 #include "Physics/body.h"
-#include "Physics/collision.h"
 #include "Tests/tests_utility.h"
 
 #include <cassert>
 
-static void test_helper_collides_point_circle(){
+static void test_helper_collides_point_circle() {
 	float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
-	for (float dx : testnumbers){
-		for (float dy : testnumbers){
-			for (float radius : {1.f, 0.1f, 100.f}){
+	for (float dx : testnumbers) {
+		for (float dy : testnumbers) {
+			for (float radius : {1.f, 0.1f, 100.f}) {
 				assert(Physical::Helper::collides({dx, dy}, {dx, dy}, radius));
 				assert(Physical::Helper::collides({dx + radius * 0.8f, dy}, {dx, dy}, radius));
 				assert(Physical::Helper::collides({dx - radius * 0.8f, dy}, {dx, dy}, radius));
 				assert(Physical::Helper::collides({dx, dy + radius * 0.8f}, {dx, dy}, radius));
 				assert(Physical::Helper::collides({dx, dy + radius * 0.8f}, {dx, dy}, radius));
-				for (float sign1 : {1, -1}){
-					for (float sign2 : {1, -1}){
+				for (float sign1 : {1, -1}) {
+					for (float sign2 : {1, -1}) {
 						assert(Physical::Helper::collides({dx + sign1 * radius * 0.7f, dy + sign2 * radius * 0.7f}, {dx, dy}, radius));
 						assert(!Physical::Helper::collides({dx + sign1 * radius * 1.1f, dy}, {dx, dy}, radius));
 						assert(!Physical::Helper::collides({dx, dy + sign1 * radius * 1.1f}, {dx, dy}, radius));
@@ -29,11 +29,11 @@ static void test_helper_collides_point_circle(){
 	}
 }
 
-static void test_helper_collides_point_rect(){
+static void test_helper_collides_point_rect() {
 	float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
-	for (float x : testnumbers){
-		for (float y : testnumbers){
-			for (float d : {0.1f, 1.f, 10.f, 33.f, 444.f}){
+	for (float x : testnumbers) {
+		for (float y : testnumbers) {
+			for (float d : {0.1f, 1.f, 10.f, 33.f, 444.f}) {
 				assert(Physical::Helper::collides({x, y}, {x - d, x + d, y - d, y + d}));
 				assert(!Physical::Helper::collides({x, y}, {x + d, x + 2 * d, y - d, y + d}));
 				assert(!Physical::Helper::collides({x, y}, {x - 2 * d, x - d, y - d, y + d}));
@@ -44,7 +44,7 @@ static void test_helper_collides_point_rect(){
 	}
 }
 
-static void test_circle_circle_collisions(){
+static void test_circle_circle_collisions() {
 	Physical::Transformator t1({0, 0}, {}), t2({0, 0}, {});
 	Physical::Circle c1(10), c2(20);
 	assert(Physical::collides(c1, t1, c2, t2));
@@ -87,7 +87,7 @@ static void test_circle_circle_collisions(){
 	t2.vector.y = 0;
 }
 
-static void test_line_line_collisions(){
+static void test_line_line_collisions() {
 	Physical::Line l1(0, 0), l2(0, 0);
 	Physical::Transformator t1({}, {}), t2({}, {});
 	assert(Physical::collides(l1, t1, l2, t2));
@@ -98,7 +98,7 @@ static void test_line_line_collisions(){
 	//assert(!Physical::collides(l1, t1, l2, t2));
 }
 
-static void test_line_circle_collision(){
+static void test_line_circle_collision() {
 	Physical::Line l(5, 0);
 	Physical::Circle c(1);
 	Physical::Transformator t1({}, {}), t2({}, {});
@@ -141,12 +141,12 @@ static void test_line_circle_collision(){
 	t1.vector.y = 0;
 
 	float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
-	for (auto  x : testnumbers){
-		for (auto y : testnumbers){
-			for (auto dx : testnumbers){
-				for (auto dy : testnumbers){
+	for (auto x : testnumbers) {
+		for (auto y : testnumbers) {
+			for (auto dx : testnumbers) {
+				for (auto dy : testnumbers) {
 					Physical::Transformator t({x, y}, {dx, dy});
-					for (auto &cleared : {t + -t, -t + t}){
+					for (auto &cleared : {t + -t, -t + t}) {
 						assert_equal(cleared.vector.x, 0);
 						assert_equal(cleared.vector.y, 0);
 						assert_equal(cleared.direction.get_x(), 1);
@@ -157,7 +157,7 @@ static void test_line_circle_collision(){
 		}
 	}
 	Physical::Transformator transformators[] = {{{}, {}}, {{199, 323}, {23, 49}}, {{199, -323}, {-23, 49}}, {{-199, 323}, {23, -49}}, {{-199, 323}, {-23, 49}}};
-	for (auto &t : transformators){
+	for (auto &t : transformators) {
 		Physical::Transformator cleared = t + -t;
 		assert_equal(cleared.vector.length(), 0);
 		assert_equal(cleared.direction.get_x(), 1);
@@ -187,7 +187,7 @@ static void test_line_circle_collision(){
 	}
 }
 
-static void run_towards_each_other_and_get_stuck_bug_test(){
+static void run_towards_each_other_and_get_stuck_bug_test() {
 	ECS::Entity e1;
 	ECS::Entity e2;
 	e1.add(Physical::DynamicBody<Physical::Circle>(100));
@@ -200,17 +200,17 @@ static void run_towards_each_other_and_get_stuck_bug_test(){
 	assert_equal(b2.get_next_transformator().vector.x, 1000.f);
 }
 
-static void test_circle_rect(){
+static void test_circle_rect() {
 	const auto r = 100.f;
 	const auto w = 200.f;
 	const auto h = 300.f;
 	const Physical::Circle cicle(r);
 	const Physical::Rect rect(w, h);
 	const float testnumbers[] = {0, .1f, 1, 10, 33, 444, -.1f, -1, -10, -33, -444};
-	for (auto  x : testnumbers){
-		for (auto y : testnumbers){
-			for (auto dx : testnumbers){
-				for (auto dy : testnumbers){
+	for (auto x : testnumbers) {
+		for (auto y : testnumbers) {
+			for (auto dx : testnumbers) {
+				for (auto dy : testnumbers) {
 					Physical::Transformator t({x, y}, {dx, dy});
 					//positive tests
 					auto factor = 0.9f;
@@ -245,11 +245,9 @@ static void test_circle_rect(){
 	}
 }
 
-static void test_collision_with_map(){
+static void test_collision_with_map() {}
 
-}
-
-void test_collisions(){
+void test_collisions() {
 	test_helper_collides_point_circle();
 	test_helper_collides_point_rect();
 	test_circle_circle_collisions();

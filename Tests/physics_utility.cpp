@@ -3,7 +3,7 @@
 
 using namespace Physical;
 
-static void test_vector(){
+static void test_vector() {
 	Vector v;
 	assert_equal(v.x, 0);
 	assert_equal(v.y, 0);
@@ -13,7 +13,7 @@ static void test_vector(){
 	assert_equal(v.length(), 5);
 }
 
-static void test_direction(){
+static void test_direction() {
 	Direction d;
 	assert_equal(d.to_degrees(), 0);
 	d = Direction::from_degrees(30);
@@ -22,7 +22,7 @@ static void test_direction(){
 	assert_equal((d + d - d).to_degrees(), 30);
 }
 
-static void test_transformator(){
+static void test_transformator() {
 	Transformator t;
 	assert_equal(t.direction.get_x(), 1);
 	assert_equal(t.direction.get_y(), 0);
@@ -57,8 +57,7 @@ static void test_transformator(){
 	assert_equal((t3 + t4).vector.y, 0);
 }
 
-void test_physics_utility()
-{
+void test_physics_utility() {
 	test_vector();
 	test_direction();
 	test_transformator();

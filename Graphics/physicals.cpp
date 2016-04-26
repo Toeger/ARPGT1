@@ -8,7 +8,6 @@
 #include "ECS/entity.h"
 #include "ECS/utility.h"
 
-void Graphics::draw_physicals()
-{
+void Graphics::draw_physicals() {
 	//todo
 }

@@ -12,15 +12,14 @@ namespace irr {
 		class IAnimatedMeshSceneNode;
 		class ISceneManager;
 	}
-	namespace video{
+	namespace video {
 		class ITexture;
 		class IVideoDriver;
 	}
 	class IrrlichtDevice;
 }
 
-struct Window
-{
+struct Window {
 	Window(Input_handler &input_handler, int width = 800, int height = 600, const std::string &title = "");
 	Window(const Window &) = delete;
 	Window &operator=(const Window &) = delete;
@@ -28,7 +27,7 @@ struct Window
 	bool update(Camera &camera);
 	irr::scene::IAnimatedMeshSceneNode *add_model(const std::string &path);
 	irr::video::ITexture *get_texture(const std::string &path) const;
-//private:
+	//private:
 	irr::IrrlichtDevice *render_device;
 	irr::video::IVideoDriver *video_driver;
 	irr::scene::ISceneManager *scene_manager;
