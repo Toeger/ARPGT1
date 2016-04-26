@@ -128,10 +128,7 @@ void setup_controls(Input_handler &input_handler, Camera &camera)
 		input_handler.key_action_map[irr::KEY_ESCAPE] = Input_handler::interrupt_cast;
 		input_handler.instant_actions[Input_handler::cast_skill_1] = []{
 			auto &p = Player::player;
-			(void)p;
-			//TODO: create a Skill_instance from the first Skill_definition
-			//TODO: check if the skill is on cooldown
-			//TODO: make sure that walking interrupts the casting if the Skill_definition says so and no modifier says otherwise
+			p.get<std::vector<Skills::Skill_instance>>()->emplace_back(p.skills[1].create());
 		};
 	}
 }
@@ -190,6 +187,15 @@ int main(){
 		ECS::System::add_system<Common_components::Run_straight_AI>(fun, precomputer);
 	}
 
+	{ //add skill system
+		auto fun = [](ECS::Entity_handle character){
+			auto skill = character.get<Skills::Skill_instance>();
+			skill->on_tick();
+		};
+
+		ECS::System::add_system<Skills::Skill_instance>(fun);
+	}
+
 	Player &p = Player::player;
 	{
 		Physical::DynamicBody<Physical::Circle> b{100};
@@ -214,6 +220,7 @@ int main(){
 		std::ifstream f("Data/skills.json");
 		assert_fast(f);
 		p.skills = Skills::load(f);
+		p.emplace<std::vector<Skills::Skill_instance>>();
 	}
 	p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	setup_controls(input_handler, camera);
