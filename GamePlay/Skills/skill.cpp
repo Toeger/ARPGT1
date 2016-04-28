@@ -10,6 +10,8 @@
 #include <sstream>
 #include <stdexcept>
 
+std::vector<Skills::Skill_instance> Skills::Skill_instance::instances;
+
 std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setup_lua_environment)(LuaContext &)) {
 	using json = nlohmann::json;
 	std::vector<Skills::Skill_definition> retval;

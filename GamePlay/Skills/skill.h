@@ -60,6 +60,7 @@ namespace Skills {
 		std::vector<Skills::Modifier> modifiers;
 		void on_create();
 		void on_tick();
+		static std::vector<Skills::Skill_instance> instances;
 	};
 
 	struct Modifier {
