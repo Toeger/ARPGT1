@@ -139,8 +139,7 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 		const auto block_size = Map::current_map->get_block_size();
 		auto xpos = Map::current_map->get_width() - 1 - pos.x / block_size;
 		auto ypos = pos.y / block_size;
-		instance.emplace<Common_components::Animated_model>(*Global::window, animation).set_position(xpos, 0, ypos);
-		//(void) player_pos;
+		instance.emplace<Common_components::Animated_model>(*Window::current_window, animation).set_position(xpos, 0, ypos);
 	} break;
 	case Type::invalid:
 	case Type::size:

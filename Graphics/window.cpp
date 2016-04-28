@@ -5,6 +5,8 @@
 #include <cassert>
 #include <irrlicht/irrlicht.h>
 
+Window *Window::current_window;
+
 Window Window::get_dummy()
 {
 	return {};

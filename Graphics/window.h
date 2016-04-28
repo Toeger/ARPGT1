@@ -28,6 +28,7 @@ struct Window {
 	Window &operator=(const Window &) = delete;
 	~Window();
 	bool update(Camera &camera);
+	static Window *current_window;
 	irr::scene::IAnimatedMeshSceneNode *add_model(const std::string &path);
 	irr::video::ITexture *get_texture(const std::string &path) const;
 	//private:
