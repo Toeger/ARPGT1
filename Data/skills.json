@@ -5,7 +5,8 @@
         "executiontime" : 0.2,
         "cooldown" : 1,
         "speed" : 10,
-        "animation" : "soccerball.obj",
+        "animation" : "Art/circle.ms3d",
+        "texture" : "Art/circle.png",
         "collision" : ["enemy", "map"],
         "size" : 20,
         "onhit" : "--todo: write a lua program"
