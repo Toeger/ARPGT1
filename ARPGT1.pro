@@ -17,17 +17,16 @@ LIBS += -llua5.1
 
 SOURCES += \
     ECS/entity_base.cpp \
-    GamePlay/map.cpp \
+    ECS/log.cpp \
+    ECS/system.cpp \
     GamePlay/Skills/skill.cpp \
+    GamePlay/map.cpp \
     Graphics/camera.cpp \
     Graphics/common_graphics_components.cpp \
     Graphics/input_handler.cpp \
     Graphics/physicals.cpp \
     Graphics/terrain.cpp \
     Graphics/window.cpp \
-    main.cpp \
-    network.cpp \
-    player.cpp \
     Tests/collisions.cpp \
     Tests/ecs_test.cpp \
     Tests/include_tester.cpp \
@@ -36,21 +35,24 @@ SOURCES += \
     Tests/skill_loader_test.cpp \
     Tests/tester.cpp \
     Utility/converter.cpp \
-    ECS/system.cpp
+    main.cpp \
+    network.cpp \
+    player.cpp
 
 HEADERS += \
     ECS/common_components.h \
     ECS/ecs_impl.h \
-    ECS/entity_base.h \
     ECS/entity.h \
+    ECS/entity_base.h \
     ECS/entity_handle.h \
+    ECS/log.h \
     ECS/system.h \
     ECS/systemiterator.h \
     ECS/utility.h \
-    External/json.hpp \
     External/LuaContext.hpp \
-    GamePlay/map.h \
+    External/json.hpp \
     GamePlay/Skills/skill.h \
+    GamePlay/map.h \
     Graphics/camera.h \
     Graphics/common_graphics_components.h \
     Graphics/input_handler.h \
@@ -58,8 +60,6 @@ HEADERS += \
     Graphics/physicals.h \
     Graphics/terrain.h \
     Graphics/window.h \
-    make_function.h \
-    network.h \
     Physics/aabb.h \
     Physics/aarect.h \
     Physics/body.h \
@@ -69,7 +69,6 @@ HEADERS += \
     Physics/physics_utility.h \
     Physics/sensor.h \
     Physics/shapes.h \
-    player.h \
     Tests/collisions.h \
     Tests/ecs_test.h \
     Tests/perlin_test.h \
@@ -81,7 +80,10 @@ HEADERS += \
     Utility/casts.h \
     Utility/converter.h \
     Utility/vmap.h \
-    main.h
+    main.h \
+    make_function.h \
+    network.h \
+    player.h
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
