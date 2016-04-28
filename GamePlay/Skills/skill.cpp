@@ -2,6 +2,9 @@
 #include "External/LuaContext.hpp"
 #include "External/json.hpp"
 #include "main.h"
+#include "Graphics/common_graphics_components.h"
+#include "player.h"
+#include "Physics/body.h"
 
 #include <iostream>
 #include <sstream>
@@ -57,6 +60,10 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 				if (!property_value.is_string())
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a path to a 3D model");
 				skill.animation = property_value.get_ref<const std::string &>();
+			} else if (property_name == "texture") {
+				if (!property_value.is_string())
+					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a path to a 3D model");
+				skill.texture = property_value.get_ref<const std::string &>();
 			} else if (property_name == "channeltime") {
 				if (!property_value.is_number())
 					throw std::runtime_error("value of skill property " + property_name + " must be of type number denoting a time in seconds");
@@ -127,8 +134,14 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 		break;
 	case Type::instant:
 		break;
-	case Type::projectile:
-		break;
+	case Type::projectile: {
+		auto &pos = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
+		const auto block_size = Map::current_map->get_block_size();
+		auto xpos = Map::current_map->get_width() - 1 - pos.x / block_size;
+		auto ypos = pos.y / block_size;
+		instance.emplace<Common_components::Animated_model>(*Global::window, animation).set_position(xpos, 0, ypos);
+		//(void) player_pos;
+	} break;
 	case Type::invalid:
 	case Type::size:
 		throw std::runtime_error("invalid skill type");

@@ -32,6 +32,7 @@ namespace Skills {
 		//the definition of a skill including base stats, descriptions and behaviors
 		std::string name;
 		std::string animation;
+		std::string texture;
 		float size = 0.f;
 		float speed = 0.f;
 		Logical_time channeltime{0};
@@ -50,7 +51,7 @@ namespace Skills {
 
 	struct Modifier;
 
-	struct Skill_instance {
+	struct Skill_instance : ECS::Entity {
 		//instances of skills with specific data such as the current modifiers, position, direction and state
 		Skill_instance(const Skill_definition &skill_definition);
 		Skill_instance(Skill_instance &&) = default;
