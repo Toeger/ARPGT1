@@ -31,6 +31,8 @@
 #include <type_traits>
 #include <typeinfo>
 
+Window *Global::window;
+
 namespace {
 	std::mt19937_64 rng(std::random_device{}());
 }
@@ -152,6 +154,7 @@ int main() {
 
 	Input_handler input_handler;
 	Window window(input_handler);
+	Global::window = &window;
 	Camera camera(window);
 	ECS::Entity map;
 	{
