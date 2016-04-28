@@ -5,6 +5,11 @@
 #include <cassert>
 #include <irrlicht/irrlicht.h>
 
+Window Window::get_dummy()
+{
+	return {};
+}
+
 Window::Window(Input_handler &input_handler, int width, int height, const std::string &title) {
 	//setup irrlicht graphics
 	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(width, height), 32, false, true, true, &input_handler);
@@ -40,4 +45,13 @@ irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path) {
 
 irr::video::ITexture *Window::get_texture(const std::string &path) const {
 	return video_driver->getTexture(path.c_str());
+}
+
+Window::Window()
+{
+	//setup irrlicht graphics
+	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(800, 600), 32, false, false, true, nullptr);
+	assert(render_device);
+	video_driver = render_device->getVideoDriver();
+	scene_manager = render_device->getSceneManager();
 }

@@ -20,8 +20,11 @@ namespace irr {
 }
 
 struct Window {
+	static Window get_dummy();
 	Window(Input_handler &input_handler, int width = 800, int height = 600, const std::string &title = "");
+	Window(Window &&) = default;
 	Window(const Window &) = delete;
+	Window &operator=(Window &&) = default;
 	Window &operator=(const Window &) = delete;
 	~Window();
 	bool update(Camera &camera);
@@ -33,6 +36,8 @@ struct Window {
 	irr::scene::ISceneManager *scene_manager;
 	friend struct Camera;
 	friend struct Terrain;
+private:
+	Window();
 };
 
 #endif // WINDOW_H
