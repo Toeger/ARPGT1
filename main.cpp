@@ -120,7 +120,7 @@ void setup_controls(Input_handler &input_handler, Camera &camera) {
 		input_handler.key_action_map[irr::KEY_ESCAPE] = Input_handler::interrupt_cast;
 		input_handler.instant_actions[Input_handler::cast_skill_1] = [] {
 			auto &p = Player::player;
-			p.get<std::vector<Skills::Skill_instance>>()->emplace_back(p.skills[1].create());
+			Skills::Skill_instance::instances.emplace_back(p.skills[1].create());
 		};
 	}
 }
@@ -211,9 +211,8 @@ int main() {
 		std::ifstream f("Data/skills.json");
 		assert_fast(f);
 		p.skills = Skills::load(f);
-		p.emplace<std::vector<Skills::Skill_instance>>();
+		p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	}
-	p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
 	setup_controls(input_handler, camera);
 
 	//Network::run();
@@ -239,5 +238,6 @@ int main() {
 		}
 	}
 	//Network::stop();
+	Skills::Skill_instance::instances.clear();
 	ECS::Entity::clear_all();
 }
