@@ -1,8 +1,11 @@
 #include "GamePlay/Skills/skill.h"
 #include "External/LuaContext.hpp"
+#include "Graphics/window.h"
+#include "main.h"
 #include "skill_loader_test.h"
 
 #include <boost/algorithm/string/join.hpp>
+#include <irrlicht/irrlicht.h>
 #include <sstream>
 #include <string>
 
@@ -42,6 +45,8 @@ static void load_name() {
 }
 
 static void lua_oncreate_test() {
+	auto window = Window::get_dummy();
+	Global::window = &window;
 	static std::string test_write_string; //need to make this static so I can use it with the lambda without capturing it,
 	test_write_string.clear();            //because capturing would prevent the lambda from being convertible to a function pointer
 	std::stringstream data{R"xxx({"skillname" : {"type" : "projectile","oncreate":"test(\"success\")"}})xxx"};
@@ -50,9 +55,9 @@ static void lua_oncreate_test() {
 	assert(skill_definitions.size() == 1);
 	auto &skill_definition = skill_definitions.front();
 	assert(skill_definition.on_create);
-	//auto skill_instance = skill_definition.create();
-	//skill_instance.on_create();
-	//assert(test_write_string == "success");
+	auto skill_instance = skill_definition.create();
+	skill_instance.on_create();
+	assert(test_write_string == "success");
 }
 
 void test_skill_loader() {
