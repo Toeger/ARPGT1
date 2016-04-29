@@ -77,6 +77,10 @@ namespace Physical {
 		DynamicBody &operator+=(const Direction &direction) {
 			return *this += Transformator(direction);
 		}
+		template <class Transformator>
+		void force_move(const Transformator &offset) {
+			move(offset, [](const Transformator &t, ECS::Entity_handle) { return t; });
+		}
 		template <class Transformator, class F>
 		void move(const Transformator &offset, F &&f) {
 			//Transformator can be anything that can be added to an actual Physical::Transformator such as a Physical::Vector and Physical::Direction

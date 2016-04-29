@@ -187,6 +187,10 @@ int main() {
 		ECS::System::add_system<Skills::Skill_instance>(fun);
 	}
 
+	{ //add physics system
+
+	}
+
 	Player &p = Player::player;
 	{
 		Physical::DynamicBody<Physical::Circle> b{100};
