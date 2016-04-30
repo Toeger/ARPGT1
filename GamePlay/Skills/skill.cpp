@@ -150,7 +150,9 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation).set_position(xpos, 0, ypos);
 		}
 		instance.emplace<Common_components::Speed>(speed);
-		instance.emplace<Physical::DynamicBody<Physical::Circle>>(size).force_move(player_trans);
+		auto &projectile_body = instance.emplace<Physical::DynamicBody<Physical::Circle>>(size);
+		projectile_body.force_move(player_trans);
+		break;
 	} break;
 	case Type::invalid:
 	case Type::size:

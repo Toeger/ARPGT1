@@ -23,7 +23,8 @@ Window::Window(Input_handler &input_handler, int width, int height, const std::s
 }
 
 Window::~Window() {
-	render_device->drop();
+	if (render_device)
+		render_device->drop();
 }
 
 bool Window::update(Camera &camera) {

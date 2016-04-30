@@ -91,9 +91,11 @@ void handle_input(Input_handler &input, Camera &camera) {
 			x--;
 		}
 		if (x | y) { //we have player movement
-			Physical::Direction move_direction = Physical::Direction(x, y) - camera.get_direction() - Physical::Direction{0, 1};
-			(*Player::player.get<Physical::DynamicBody<Physical::Circle>>()) +=
-				Physical::Vector{move_direction.get_x(), move_direction.get_y()} * Player::player.get<Common_components::Speed>()->speed;
+			auto &player_body = *Player::player.get<Physical::DynamicBody<Physical::Circle>>();
+			player_body += -camera.get_direction() - player_body.get_current_transformator().direction - Physical::Direction::from_degrees(90);
+			Physical::Vector move_direction(x, y);
+			move_direction /= move_direction.length();
+			player_body += move_direction * Player::player.get<Common_components::Speed>()->speed;
 		}
 	}
 	if (input.is_action_happening(Input_handler::Action::camera_rotate_clockwise)) {
@@ -145,7 +147,7 @@ void light_controls(Input_handler &input_handler, Camera &camera) {
 
 int main() {
 	assert(Tester::run());
-	//return 0;
+	return 0;
 
 	auto &now = std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
@@ -188,7 +190,6 @@ int main() {
 	}
 
 	{ //add physics system
-
 	}
 
 	Player &p = Player::player;

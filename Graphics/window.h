@@ -1,6 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include "ECS/utility.h"
 #include "input_handler.h"
 
 #include <string>
@@ -31,13 +32,13 @@ struct Window {
 	static Window *current_window;
 	irr::scene::IAnimatedMeshSceneNode *add_model(const std::string &path);
 	irr::video::ITexture *get_texture(const std::string &path) const;
-	//private:
-	irr::IrrlichtDevice *render_device;
-	irr::video::IVideoDriver *video_driver;
-	irr::scene::ISceneManager *scene_manager;
+
+	private:
+	Utility::Move_only_pointer<irr::IrrlichtDevice> render_device;
+	Utility::Move_only_pointer<irr::video::IVideoDriver> video_driver;
+	Utility::Move_only_pointer<irr::scene::ISceneManager> scene_manager;
 	friend struct Camera;
 	friend struct Terrain;
-private:
 	Window();
 };
 
