@@ -7,8 +7,7 @@
 
 Window *Window::current_window;
 
-Window Window::get_dummy()
-{
+Window Window::get_dummy() {
 	return {};
 }
 
@@ -50,10 +49,9 @@ irr::video::ITexture *Window::get_texture(const std::string &path) const {
 	return video_driver->getTexture(path.c_str());
 }
 
-Window::Window()
-{
+Window::Window() {
 	//setup irrlicht graphics
-	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(800, 600), 32, false, false, true, nullptr);
+	render_device = irr::createDevice(irr::video::EDT_NULL);
 	assert(render_device);
 	video_driver = render_device->getVideoDriver();
 	scene_manager = render_device->getSceneManager();
