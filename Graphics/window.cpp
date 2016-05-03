@@ -37,10 +37,13 @@ bool Window::update(Camera &camera) {
 	return true;
 }
 
-irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path) {
+irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path, Physical::Vector position, Physical::Direction direction, float scale,
+													  irr::scene::ISceneNode *parent) {
 	auto mesh = scene_manager->getMesh(path.c_str());
 	assert(mesh);
-	auto node = scene_manager->addAnimatedMeshSceneNode(mesh);
+	auto node = scene_manager->addAnimatedMeshSceneNode(mesh, parent, -1, {position.x, 0, position.y});
+	node->setRotation({0, direction.to_degrees(), 0});
+	node->setScale({scale, scale, scale});
 	assert(node);
 	return node;
 }

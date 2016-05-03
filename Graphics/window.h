@@ -2,6 +2,7 @@
 #define WINDOW_H
 
 #include "ECS/utility.h"
+#include "Physics/physics_utility.h"
 #include "input_handler.h"
 
 #include <string>
@@ -12,6 +13,7 @@ namespace irr {
 	namespace scene {
 		class IAnimatedMeshSceneNode;
 		class ISceneManager;
+		class ISceneNode;
 	}
 	namespace video {
 		class ITexture;
@@ -30,7 +32,8 @@ struct Window {
 	~Window();
 	bool update(Camera &camera);
 	static Window *current_window;
-	irr::scene::IAnimatedMeshSceneNode *add_model(const std::string &path);
+	irr::scene::IAnimatedMeshSceneNode *add_model(const std::string &path, Physical::Vector position = {}, Physical::Direction direction = {}, float size = 1.f,
+												  irr::scene::ISceneNode *parent = nullptr);
 	irr::video::ITexture *get_texture(const std::string &path) const;
 
 	private:
