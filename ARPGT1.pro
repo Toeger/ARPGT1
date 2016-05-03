@@ -94,10 +94,15 @@ linux-clang{
     QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 }
 QMAKE_CXXFLAGS_RELEASE += -O3
-#gcc{
-#    QMAKE_CXXFLAGS += -flto
-#    QMAKE_LFLAGS += -flto
-#}
+gcc{
+    clang{
+        #clang pretends to be gcc, so we need to trick it
+    }
+    else{
+        QMAKE_CXXFLAGS_RELEASE += -flto
+        QMAKE_LFLAGS_RELEASE += -flto
+    }
+}
 
 DISTFILES += \
     TODO \
