@@ -180,12 +180,13 @@ int main() {
 	}
 
 	{ //add skill system
-		auto fun = [](ECS::Entity_handle character) {
-			auto skill = character.get<Skills::Skill_instance>();
-			skill->on_tick();
+		auto updater = [] {
+			for (auto &skill_instance : Skills::Skill_instance::instances) {
+				skill_instance.on_tick();
+			}
 		};
 
-		ECS::System::add_system<Skills::Skill_instance>(fun);
+		ECS::System::add_independent_system(std::move(updater));
 	}
 
 	{ //add physics system
