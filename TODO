@@ -18,3 +18,5 @@ TODO
 To Read:
     k-d-Trees, other trees
     triplanar mapping
+Ideas:
+    Consider doing an interpolation_search instead of lower_bound to find entity IDs
