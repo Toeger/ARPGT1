@@ -51,8 +51,8 @@ static void lua_oncreate_test() {
 	auto window = Window::get_dummy();
 	Window::current_window = &window;
 	ON_SCOPE_EXIT(Window::current_window = nullptr;);
-	Map map(100, 100);
-	Map::current_map = &map;
+	ECS::Entity map;
+	Map::current_map = &map.emplace<Map>(100, 100);
 	ON_SCOPE_EXIT(Map::current_map = nullptr;);
 	Physical::DynamicBody<Physical::Circle> body{100};
 	Player::player.add(std::move(body));

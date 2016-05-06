@@ -138,21 +138,18 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 	case Type::instant:
 		break;
 	case Type::projectile: {
-		const auto player_trans = Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator();
-		auto &pos = player_trans.vector;
-		const auto block_size = Map::current_map->get_block_size();
-		auto xpos = Map::current_map->get_width() - 1 - pos.x / block_size;
-		auto ypos = pos.y / block_size;
-		if (texture.size()){
-			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation, texture).set_position(xpos, 0, ypos);
-		}
-		else{
-			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation).set_position(xpos, 0, ypos);
+		const auto player_body = Player::player.get<Physical::DynamicBody<Physical::Circle>>();
+		const auto player_trans = player_body->get_current_transformator();
+		const auto pos = Map::current_map->to_world_coords(player_trans.vector);
+		if (texture.size()) {
+			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation, texture).set_position(pos);
+		} else {
+			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation).set_position(pos);
 		}
 		instance.emplace<Common_components::Speed>(speed);
-		auto &projectile_body = instance.emplace<Physical::DynamicBody<Physical::Circle>>(size);
-		projectile_body.force_move(player_trans);
-		break;
+		const auto player_radius = player_body->get_shape().radius;
+		auto &projectile_body = instance.emplace<Physical::DynamicBody<Physical::Circle>>(size); //after this line player_body is invalid
+		projectile_body.force_move(player_trans + Physical::Vector{0, 2 * player_radius + size});
 	} break;
 	case Type::invalid:
 	case Type::size:
