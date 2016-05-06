@@ -181,8 +181,33 @@ int main() {
 
 	{ //add skill system
 		auto updater = [] {
-			for (auto &skill_instance : Skills::Skill_instance::instances) {
-				skill_instance.on_tick();
+			for (auto skill_it = std::begin(Skills::Skill_instance::instances); skill_it != std::end(Skills::Skill_instance::instances);) {
+				skill_it->on_tick();
+				auto speed = skill_it->get<Common_components::Speed>();
+				auto body = skill_it->get<Physical::DynamicBody<Physical::Circle>>();
+				if (speed && body) {
+					bool collided = false;
+					body->move(Physical::Vector{0, speed->speed},
+							   [&collided](const Physical::Vector &v, ECS::Entity_handle entity) {
+								   //TODO: check if entity is one of the collision types, if so deal damage and destroy skill_instance, otherwise keep moving
+								   //issue: we only get the first thing we hit, so if we hit both an object that we don't collide with and one that we collide
+								   //with we phase through the thing we were supposed to collide with
+								   (void)entity;
+								   collided = true;
+								   return (v);
+							   });
+					if (collided) {
+						skill_it = Skills::Skill_instance::instances.erase(skill_it);
+						continue;
+					}
+					auto animation = skill_it->get<Common_components::Animated_model>();
+					if (animation){
+						auto &trans = body->get_current_transformator();
+						animation->set_position(Map::current_map->to_world_coords(trans.vector));
+						animation->set_rotation(trans.direction.to_degrees());
+					}
+				}
+				++skill_it;
 			}
 		};
 
@@ -226,15 +251,11 @@ int main() {
 		while (now() - last_update_timepoint > Config::logical_frame_duration) {
 			//handle continuous input
 			handle_input(input_handler, camera);
-			const auto block_size = Map::current_map->get_block_size();
-			auto pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector;
-			auto xpos = Map::current_map->get_width() - 1 - pos.x / block_size;
-			auto ypos = pos.y / block_size;
-			camera.set_position(xpos, ypos);
-			camera.look_at(xpos, 0, ypos);
+			auto pos = Map::current_map->to_world_coords(p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector);
+			camera.set_position(pos.first, pos.second);
+			camera.look_at(pos.first, 0, pos.second);
 			auto &player_animation = *p.get<Common_components::Animated_model>();
-			player_animation.set_position(xpos, 0, ypos);
-			//player_animation.look_at(xpos, ypos + 1);
+			player_animation.set_position(pos);
 			player_animation.set_rotation(std::chrono::high_resolution_clock::now().time_since_epoch().count() / 10000000 % 360);
 			//update logic
 			last_update_timepoint += Config::logical_frame_duration;

@@ -17,6 +17,7 @@ struct Map {
 	int get_block_size() const;
 	int get_width() const;
 	int get_height() const;
+	std::pair<float, float> to_world_coords(const Physical::Vector &vec);
 
 		private:
 	int block_size = 100;

@@ -32,8 +32,19 @@ Common_components::Animated_model::~Animated_model() {
 		node->remove();
 }
 
+void Common_components::Animated_model::set_position(const std::pair<float, float> &xy_coords)
+{
+	set_position(xy_coords.first, 0, xy_coords.second);
+}
+
 void Common_components::Animated_model::set_position(float x, float y, float z) {
 	node->setPosition({x, y, z});
+}
+
+void Common_components::Animated_model::set_position_direction(float x, float y, float direction)
+{
+	set_position(x, 0, y);
+	set_rotation(direction);
 }
 
 void Common_components::Animated_model::look_at(float x, float y) {
