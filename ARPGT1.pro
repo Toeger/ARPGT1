@@ -93,7 +93,7 @@ linux-clang{
     QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
     QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 }
-QMAKE_CXXFLAGS_RELEASE += -O3
+QMAKE_CXXFLAGS_RELEASE += -O3 -DNDEBUG
 gcc{
     clang{
         #clang pretends to be gcc, so we need to trick it
@@ -109,7 +109,8 @@ DISTFILES += \
     LICENSE \
     README.md \
     Data/skills.json \
-    Data/skill_documentation.txt
+    Data/skill_documentation.txt \
+    CMakeLists.txt
 
 copyart.target = always
 copyart.commands = mkdir -p Data; cp $${PWD}/Data/* Data; mkdir -p Art; cp $${PWD}/Art/* Art || true;
