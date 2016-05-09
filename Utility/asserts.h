@@ -12,55 +12,59 @@
 #define ASSERT_LEVEL ASSERT_LEVEL_ALL //default assert level, #define ASSERT_LEVEL to whichever level you want before #including asserts.h
 #endif
 
+namespace { //prevent ODR violations
 #if ASSERT_LEVEL > 0
-template <class T>
-inline void assert_fast(T &&t) {
-	if (!t) {
+	template <class T>
+	inline void assert_fast(T &&t) {
+		if (!t) {
 #ifdef _NDEBUG //make sure assert is activated even during a release build
 #undef _NDEBUG
-		assert(!"assertion failure");
+			assert(!"assertion failure");
 #define _NDEBUG
 #else
-		assert(!"assertion failure");
+			assert(!"assertion failure");
 #endif
+		}
 	}
-}
 #else
-inline void assert_fast(bool) {}
+	template <class T>
+	inline void assert_fast(T &&) {}
 #endif
 
 #if ASSERT_LEVEL > 1
-template <class T>
-inline void assert_debug(T &&t) {
-	if (!t) {
+	template <class T>
+	inline void assert_debug(T &&t) {
+		if (!t) {
 #ifdef _NDEBUG //make sure assert is activated even during a release build
 #undef _NDEBUG
-		assert(!"assertion failure");
+			assert(!"assertion failure");
 #define _NDEBUG
 #else
-		assert(!"assertion failure");
+			assert(!"assertion failure");
 #endif
+		}
 	}
-}
 #else
-inline void assert_debug(bool) {}
+	template <class T>
+	inline void assert_debug(T &&) {}
 #endif
 
 #if ASSERT_LEVEL > 2
-template <class T>
-inline void assert_all(T &&t) {
-	if (!t) {
+	template <class T>
+	inline void assert_all(T &&t) {
+		if (!t) {
 #ifdef _NDEBUG //make sure assert is activated even during a release build
 #undef _NDEBUG
-		assert(!"assertion failure");
+			assert(!"assertion failure");
 #define _NDEBUG
 #else
-		assert(!"assertion failure");
+			assert(!"assertion failure");
 #endif
+		}
 	}
-}
 #else
-inline void assert_all(bool) {}
+	template <class T>
+	inline void assert_all(T &&) {}
 #endif
-
+}
 #endif // ASSERTS_H
