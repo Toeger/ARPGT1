@@ -18,3 +18,8 @@ target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(${PROJECT_NAME} Irrlicht)
 target_link_libraries(${PROJECT_NAME} lua5.1)
 
+if(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
+else()
+    execute_process(COMMAND ln -s -t ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/Art)
+    execute_process(COMMAND ln -s -t ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/Data)
+endif()
