@@ -37,7 +37,7 @@ SOURCES += \
     Utility/converter.cpp \
     main.cpp \
     network.cpp \
-    player.cpp
+    player.cpp \
 
 HEADERS += \
     ECS/common_components.h \
@@ -47,7 +47,8 @@ HEADERS += \
     ECS/entity_handle.h \
     ECS/log.h \
     ECS/system.h \
-    ECS/systemiterator.h \
+    ECS/system_base.h \
+    ECS/system_iterator.h \
     ECS/utility.h \
     External/LuaContext.hpp \
     External/json.hpp \
@@ -96,7 +97,7 @@ linux-clang{
 QMAKE_CXXFLAGS_RELEASE += -O3 -DNDEBUG
 gcc{
     clang{
-        #clang pretends to be gcc, so we need to trick it
+        #clang pretends to be gcc but doesn't support -flto
     }
     else{
         QMAKE_CXXFLAGS_RELEASE += -flto
@@ -105,12 +106,12 @@ gcc{
 }
 
 DISTFILES += \
-    TODO \
+    CMakeLists.txt \
+    Data/skill_documentation.txt \
+    Data/skills.json \
     LICENSE \
     README.md \
-    Data/skills.json \
-    Data/skill_documentation.txt \
-    CMakeLists.txt
+    TODO
 
 copyart.target = always
 copyart.commands = mkdir -p Data; cp $${PWD}/Data/* Data; mkdir -p Art; cp $${PWD}/Art/* Art || true;
