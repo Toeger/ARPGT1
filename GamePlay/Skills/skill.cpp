@@ -31,8 +31,9 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 	for (auto skill_it = begin(j); skill_it != end(j);
 		 ++skill_it) { //can't use a range based for, because that only iterates over values, not keys like in std::map
 		const auto &skill_name = skill_it.key();
-		if (skill_name == "comment") //skip comments
+		if (skill_name == "comment") { //skip comments
 			continue;
+		}
 		retval.emplace_back();
 		auto &skill = retval.back();
 		skill.name = skill_name;
@@ -40,8 +41,9 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 			const auto &property_name = property_it.key();
 			const auto &property_value = property_it.value();
 			if (property_name == "oncreate") {
-				if (!property_value.is_string())
+				if (!property_value.is_string()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a lua program as the content");
+				}
 				skill.on_create = [ code = property_value.get_ref<const std::string &>(), setup_lua_environment ](Skills::Skill_instance & skill) {
 					(void)skill;
 					LuaContext context(false);
@@ -50,8 +52,9 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 					context.executeCode(codestream);
 				};
 			} else if (property_name == "onhit") {
-				if (!property_value.is_string())
+				if (!property_value.is_string()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a lua program as the content");
+				}
 				skill.on_hit = [ code = property_value.get_ref<const std::string &>(), setup_lua_environment ](Skills::Skill_instance & skill) {
 					(void)skill;
 					LuaContext context(false);
@@ -60,23 +63,28 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 					context.executeCode(codestream);
 				};
 			} else if (property_name == "animation") {
-				if (!property_value.is_string())
+				if (!property_value.is_string()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a path to a 3D model");
+				}
 				skill.animation = property_value.get_ref<const std::string &>();
 			} else if (property_name == "texture") {
-				if (!property_value.is_string())
+				if (!property_value.is_string()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a path to a 3D model");
+				}
 				skill.texture = property_value.get_ref<const std::string &>();
 			} else if (property_name == "channeltime") {
-				if (!property_value.is_number())
+				if (!property_value.is_number()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type number denoting a time in seconds");
+				}
 				skill.channeltime = static_cast<Logical_time>(property_value.get<double>() * Config::lfps);
 			} else if (property_name == "collision") {
-				if (!property_value.is_array())
+				if (!property_value.is_array()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type array of strings of interaction types");
+				}
 				for (auto &interaction : property_value) {
-					if (!interaction.is_string())
+					if (!interaction.is_string()) {
 						throw std::runtime_error("value of skill property " + property_name + " must be of type array of strings of interaction types");
+					}
 					const auto &interaction_type_name = interaction.get_ref<const std::string &>();
 					const auto collision_strings = {
 						"allies", "enemies", "map", "self",
@@ -90,24 +98,29 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 					skill.affected[pos - begin(collision_strings)] = true;
 				}
 			} else if (property_name == "cooldown") {
-				if (!property_value.is_number())
+				if (!property_value.is_number()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type number denoting a time in seconds");
+				}
 				skill.cooldown = static_cast<Logical_time>(property_value.get<double>() * Config::lfps);
 			} else if (property_name == "executiontime") {
-				if (!property_value.is_number())
+				if (!property_value.is_number()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type number denoting a time in seconds");
+				}
 				skill.executiontime = static_cast<Logical_time>(property_value.get<double>() * Config::lfps);
 			} else if (property_name == "size") {
-				if (!property_value.is_number())
+				if (!property_value.is_number()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type number denoting the size of the skill");
+				}
 				skill.size = property_value.get<float>();
 			} else if (property_name == "speed") {
-				if (!property_value.is_number())
+				if (!property_value.is_number()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type number denoting the size of the skill");
+				}
 				skill.speed = property_value.get<float>();
 			} else if (property_name == "type") {
-				if (!property_value.is_string())
+				if (!property_value.is_string()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string denoting the type of the skill");
+				}
 				const auto type_strings = {
 					"aura", "instant", "invalid", "projectile",
 				};
@@ -141,10 +154,10 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 		const auto player_body = Player::player.get<Physical::DynamicBody<Physical::Circle>>();
 		const auto player_trans = player_body->get_current_transformator();
 		const auto pos = Map::current_map->to_world_coords(player_trans.vector);
-		if (texture.size()) {
-			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation, texture).set_position(pos);
-		} else {
+		if (texture.empty()) {
 			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation).set_position(pos);
+		} else {
+			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation, texture).set_position(pos);
 		}
 		instance.emplace<Common_components::Speed>(speed);
 		const auto player_radius = player_body->get_shape().radius;

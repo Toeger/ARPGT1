@@ -83,10 +83,12 @@ void test_perlin() {
 			image->setPixel(x, y, {0, c, c, c});
 			unsigned char inv_c = 255 - c;
 			inverted_image->setPixel(x, y, {0, inv_c, inv_c, inv_c});
-			if (square(x) + square(y) < 10 * 10 * 10)
+			if (square(x) + square(y) < 10 * 10 * 10) {
 				inverted_image->setPixel(x, y, {0, 255, 0, 0});
-			if (square(width - x) + square(y) < 10 * 10 * 10)
+			}
+			if (square(width - x) + square(y) < 10 * 10 * 10) {
 				inverted_image->setPixel(x, y, {0, 0, 255, 0});
+			}
 		}
 	}
 	bool is_bmp_writable = false;

@@ -19,16 +19,18 @@ bool Map::collides(const Physical::Circle &circle, const Physical::Transformator
 	for (int y = starty; y < endy; y++) {
 		for (int x = startx; x < endx; x++) {
 			if (get(x, y) && Physical::collides(circle, transformator, Physical::Rect(block_size, block_size),
-												Physical::Transformator(Physical::Vector(x * block_size, y * block_size))))
+												Physical::Transformator(Physical::Vector(x * block_size, y * block_size)))) {
 				return true;
+			}
 		}
 	}
 	return false;
 }
 
 bool Map::get(int x, int y) const {
-	if (x < 0 || y < 0 || x > width || y >= make_signed(map.size()) / width)
+	if (x < 0 || y < 0 || x > width || y >= make_signed(map.size()) / width) {
 		return true; //outside the map return true to make everything outside the map block the character
+	}
 	return map[x + width * y];
 }
 
@@ -44,8 +46,7 @@ int Map::get_height() const {
 	return make_signed(map.size()) / width;
 }
 
-std::pair<float, float> Map::to_world_coords(const Physical::Vector &vec)
-{
+std::pair<float, float> Map::to_world_coords(const Physical::Vector &vec) {
 	const auto block_size = Map::current_map->get_block_size();
 	return {width - 1 - vec.x / block_size, vec.y / block_size};
 }

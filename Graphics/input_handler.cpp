@@ -40,14 +40,16 @@ bool Input_handler::OnEvent(const irr::SEvent &event) {
 			int scroll = event.MouseInput.Wheel;
 			while (scroll > 0) {
 				auto &f = instant_actions[mouse_wheel[Mouse_wheel_up]];
-				if (f)
+				if (f) {
 					f();
+				}
 				scroll--;
 			}
 			while (scroll < 0) {
 				auto &f = instant_actions[mouse_wheel[Mouse_wheel_down]];
-				if (f)
+				if (f) {
 					f();
+				}
 				scroll++;
 			}
 		}

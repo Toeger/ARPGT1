@@ -9,8 +9,7 @@ Common_components::Animated_model::Animated_model(Window &window, const std::str
 	node->setMaterialTexture(0, window.get_texture(texture.c_str()));
 }
 
-Common_components::Animated_model::Animated_model(Window &window, const std::string &path)
-{
+Common_components::Animated_model::Animated_model(Window &window, const std::string &path) {
 	node = window.add_model(path);
 	//node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	node->addShadowVolumeSceneNode();
@@ -28,12 +27,12 @@ Common_components::Animated_model &Common_components::Animated_model::operator=(
 }
 
 Common_components::Animated_model::~Animated_model() {
-	if (node)
+	if (node) {
 		node->remove();
+	}
 }
 
-void Common_components::Animated_model::set_position(const std::pair<float, float> &xy_coords)
-{
+void Common_components::Animated_model::set_position(const std::pair<float, float> &xy_coords) {
 	set_position(xy_coords.first, 0, xy_coords.second);
 }
 
@@ -41,8 +40,7 @@ void Common_components::Animated_model::set_position(float x, float y, float z) 
 	node->setPosition({x, y, z});
 }
 
-void Common_components::Animated_model::set_position_direction(float x, float y, float direction)
-{
+void Common_components::Animated_model::set_position_direction(float x, float y, float direction) {
 	set_position(x, 0, y);
 	set_rotation(direction);
 }

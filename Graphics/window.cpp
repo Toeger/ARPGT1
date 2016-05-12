@@ -22,13 +22,15 @@ Window::Window(Input_handler &input_handler, int width, int height, const std::s
 }
 
 Window::~Window() {
-	if (render_device)
+	if (render_device) {
 		render_device->drop();
+	}
 }
 
 bool Window::update(Camera &camera) {
-	if (!render_device->run())
+	if (!render_device->run()) {
 		return false;
+	}
 	auto &vp = video_driver->getViewPort();
 	camera.set_aspect_ratio(vp.getWidth() * 1.f / vp.getHeight());
 	video_driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
