@@ -37,7 +37,7 @@ SOURCES += \
     Utility/converter.cpp \
     main.cpp \
     network.cpp \
-    player.cpp \
+    player.cpp
 
 HEADERS += \
     ECS/common_components.h \
