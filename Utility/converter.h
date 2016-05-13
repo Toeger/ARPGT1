@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace Converter{
+namespace Converter {
 	std::wstring str_to_wstring(const std::string &str);
 }
 

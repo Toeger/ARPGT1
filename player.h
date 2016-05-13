@@ -8,7 +8,7 @@
 #include <vector>
 
 class Player : public ECS::Entity {
-		public:
+	public:
 	static Player player;
 	std::vector<Skills::Skill_definition> skills;
 };

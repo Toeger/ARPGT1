@@ -201,7 +201,7 @@ int main() {
 						continue;
 					}
 					auto animation = skill_it->get<Common_components::Animated_model>();
-					if (animation){
+					if (animation) {
 						auto &trans = body->get_current_transformator();
 						animation->set_position(Map::current_map->to_world_coords(trans.vector));
 						animation->set_rotation(trans.direction.to_degrees());

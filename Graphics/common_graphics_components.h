@@ -21,7 +21,7 @@ namespace Common_components {
 		void look_at(float x, float y);
 		void set_rotation(float angle);
 
-			private:
+		private:
 		irr::scene::IAnimatedMeshSceneNode *node;
 	};
 };

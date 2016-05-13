@@ -41,9 +41,9 @@ namespace Skills {
 		ECS::Entity_handle caster;
 		ECS::Entity_handle target;
 		std::bitset<static_cast<std::size_t>(Collisions::size)> affected;
-		std::function<void(Skill_instance &)> on_create = [](Skill_instance &) {}; //function to be called when an instance of the skill is created
-		std::function<void(Skill_instance &)> on_tick = [](Skill_instance &) {};   //function to be called every tick
-		std::function<void(Skill_instance &)> on_hit = [](Skill_instance &) {};    //function to be called every tick
+		std::function<void(Skill_instance &)> on_create = [](Skill_instance & /*unused*/) {}; //function to be called when an instance of the skill is created
+		std::function<void(Skill_instance &)> on_tick = [](Skill_instance & /*unused*/) {};   //function to be called every tick
+		std::function<void(Skill_instance &)> on_hit = [](Skill_instance & /*unused*/) {};    //function to be called every tick
 		Type type = Type::invalid;
 
 		Skill_instance create();

@@ -20,7 +20,7 @@ struct Terrain {
 	Terrain &operator=(const Terrain &) = delete;
 	void set_position(float x, float y, float z);
 
-		private:
+	private:
 	void create_terrain(Window &window, const std::string &hight_bitmap, const std::string &texture_1, const std::string &texture_2);
 	irr::scene::ITerrainSceneNode *terrain;
 };

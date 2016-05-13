@@ -29,7 +29,7 @@ struct Camera {
 	void zoom_in();
 	void zoom_out();
 
-		private:
+	private:
 	//static constexpr Physical::Direction turn_speed{10.f, 1.f}; //this really should compile -.-
 	static const Physical::Direction turn_speed;
 	Physical::Direction direction;

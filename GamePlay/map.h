@@ -19,7 +19,7 @@ struct Map {
 	int get_height() const;
 	std::pair<float, float> to_world_coords(const Physical::Vector &vec);
 
-		private:
+	private:
 	int block_size = 100;
 	std::vector<bool> create_map(std::size_t width, std::size_t height);
 	int width;

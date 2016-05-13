@@ -42,14 +42,18 @@ namespace Physical {
 		//Idea: place the Rect to the center in an axis aligned way
 		auto t = -t2 + t1; //t is the new circle position, a is now at 0/0
 		//remember that operators on Transformators are not commutative, so t = -t2 + t1; is not necessarily equal to t = t1 - t2;
-		if (t.vector.x + c.radius < 0)
+		if (t.vector.x + c.radius < 0) {
 			return false;
-		if (t.vector.x - c.radius > a.width)
+		}
+		if (t.vector.x - c.radius > a.width) {
 			return false;
-		if (t.vector.y + c.radius < 0)
+		}
+		if (t.vector.y + c.radius < 0) {
 			return false;
-		if (t.vector.y - c.radius > a.height)
+		}
+		if (t.vector.y - c.radius > a.height) {
 			return false;
+		}
 		return true;
 	}
 	inline bool collides(const Physical::Rect &a, const Transformator &t1, const Physical::Circle &c, const Transformator &t2) {

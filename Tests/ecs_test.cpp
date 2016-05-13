@@ -25,10 +25,10 @@ struct Test_component {
 	}
 
 	int n;
-	static size_t object_count;
+	static std::size_t object_count;
 };
 
-size_t Test_component::object_count = 0;
+std::size_t Test_component::object_count = 0;
 
 static void test_entity() {
 	ECS::Entity n;

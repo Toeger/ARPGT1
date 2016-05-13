@@ -40,7 +40,7 @@ void Terrain::set_position(float x, float y, float z) {
 
 void Terrain::create_terrain(Window &window, const std::string &hight_bitmap, const std::string &texture_1, const std::string &texture_2) {
 	terrain = window.scene_manager->addTerrainSceneNode(hight_bitmap.c_str(),
-														0,                                            //parent node
+														nullptr,                                      //parent node
 														-1,                                           //node id
 														irr::core::vector3df(0.f, 0.f, 0.f),          //position
 														irr::core::vector3df(0.f, 0.f, 0.f),          //rotation //comment says this is not yet implemented

@@ -46,7 +46,7 @@ struct Input_handler : public irr::IEventReceiver {
 	std::function<void()> instant_actions[Action::size];
 	bool is_action_happening(Action action) const;
 
-		private:
+	private:
 	//defines which continuous actions are happening. Continuous actions are happening when a key is pressed
 	bool continuous_actions[Action::size] = {};
 	bool OnEvent(const irr::SEvent &event) override;

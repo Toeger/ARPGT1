@@ -102,7 +102,7 @@ namespace Physical {
 		constexpr Direction(const Direction &) = default;
 		Direction &operator=(const Direction &) = default;
 
-			private:
+		private:
 		constexpr void normalize() {
 			auto sq = x * x + y * y;
 			if (sq < std::numeric_limits<float>::epsilon()) {
