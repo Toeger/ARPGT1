@@ -72,7 +72,7 @@ static void run_network() {
 	for (; !network_should_quit;) {
 		auto size = recvfrom(fd, buffer.data(), buffer.size(), 0, any_cast<sockaddr>(&server), &socket_length);
 		if (size == -1) {
-			perror("Failed recieving data");
+			perror("Failed receiving data");
 			continue;
 		}
 		handle(buffer.data(), size);
