@@ -62,8 +62,8 @@ static void lua_oncreate_test() {
 	std::stringstream data{R"xxx({"skillname" :{
 		"type" : "projectile",
 		"oncreate":"test(\"success\")",
-		"animation" : "Art/circle.ms3d",
-		"texture" : "Art/circle.png"
+		"animation" : "art/circle.ms3d",
+		"texture" : "art/circle.png"
 		}})xxx"};
 	auto skill_definitions =
 		Skills::load(data, [](LuaContext &context) { context.writeFunction("test", [](const std::string &s) { test_write_string = s; }); });

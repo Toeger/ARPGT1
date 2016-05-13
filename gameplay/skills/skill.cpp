@@ -66,12 +66,12 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 				if (!property_value.is_string()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a path to a 3D model");
 				}
-				skill.animation = property_value.get_ref<const std::string &>();
+				skill.animation = ARTDIR "/" + property_value.get_ref<const std::string &>();
 			} else if (property_name == "texture") {
 				if (!property_value.is_string()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string with a path to a 3D model");
 				}
-				skill.texture = property_value.get_ref<const std::string &>();
+				skill.texture = ARTDIR "/" + property_value.get_ref<const std::string &>();
 			} else if (property_name == "channeltime") {
 				if (!property_value.is_number()) {
 					throw std::runtime_error("value of skill property " + property_name + " must be of type number denoting a time in seconds");
