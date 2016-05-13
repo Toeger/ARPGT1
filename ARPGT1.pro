@@ -62,7 +62,6 @@ HEADERS += \
     Graphics/terrain.h \
     Graphics/window.h \
     Physics/aabb.h \
-    Physics/aarect.h \
     Physics/body.h \
     Physics/circle.h \
     Physics/collision.h \
@@ -80,7 +79,6 @@ HEADERS += \
     Utility/asserts.h \
     Utility/casts.h \
     Utility/converter.h \
-    Utility/vmap.h \
     main.h \
     make_function.h \
     network.h \
