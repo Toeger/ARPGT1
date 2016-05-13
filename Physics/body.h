@@ -50,7 +50,7 @@ namespace Physical {
 		static_assert(Index<Shape, Supported_types>::value >= 0, //comparison always true, but we only care about if it compiles, not the actual value
 					  "Unsupported type for DynamicBody, add it to Physical::Supported_types to fix");
 
-			public:
+		public:
 		//special member functions
 		DynamicBody(Shape &&shape, const Transformator &transformator)
 			: current_transformator(transformator)
@@ -113,7 +113,7 @@ namespace Physical {
 			current_transformator = next_transformator;
 		}
 
-			private:
+		private:
 		//colliding checks if this body is colliding with any other body instanciated with any of the supported types
 		//end of recursion
 		template <bool compare_other_to_this, class OtherShape>
@@ -121,13 +121,15 @@ namespace Physical {
 			using Body = DynamicBody<OtherShape>;
 			for (auto r = ECS::System::range<Body>(); r; r.advance()) {
 				auto &other = r.template get<Body>();
-				if (&other == this) //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
+				if (&other == this) { //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
 					continue;
+				}
 				auto had_collision =
 					//collides(other.shape, other.current_transformator, shape, new_transformator) ||
 					collides(other.shape, other.next_transformator, shape, new_transformator);
-				if (had_collision)
+				if (had_collision) {
 					return ECS::System::component_to_entity_handle(other);
+				}
 			}
 			return {};
 		}
@@ -139,20 +141,22 @@ namespace Physical {
 				auto had_collision =
 					//collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator) ||
 					collides(other.get_shape(), other.get_next_transformator(), shape, new_transformator);
-				if (had_collision)
+				if (had_collision) {
 					return ECS::System::component_to_entity_handle(other);
+				}
 			}
 			return {};
 		}
 
 		//end of recursion
-		template <size_t type_index>
+		template <std::size_t type_index>
 		std::enable_if_t<type_index == number_of_supported_types, ECS::Entity_handle> colliding(const Transformator &t) {
-			if (Map::current_map->collides(shape, t))
+			if (Map::current_map->collides(shape, t)) {
 				return ECS::System::component_to_entity_handle(*Map::current_map);
+			}
 			return {};
 		}
-		template <size_t type_index>
+		template <std::size_t type_index>
 			std::enable_if_t < type_index<number_of_supported_types, ECS::Entity_handle> colliding(const Transformator &new_transformator) {
 			//wish I had static_if which would allow me to remove colliding_helper
 			auto eh = colliding_helper<std::is_same<std::tuple_element_t<type_index, Supported_types>, Shape>::value,
@@ -163,37 +167,6 @@ namespace Physical {
 		Transformator current_transformator, next_transformator;
 		Shape shape;
 	};
-}
-
-#include "sensor.h"
-
-namespace Physical {
-	namespace {
-		template <size_t type_index, class Function>
-		std::enable_if_t<type_index == number_of_supported_types> apply_to_physical_bodies_impl(Function &&) { /*end of recursion*/
-		}
-
-		template <size_t type_index, class Function>
-			std::enable_if_t < type_index<number_of_supported_types> apply_to_physical_bodies_impl(Function &&f) {
-			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
-			using Dynamic_Body_type = DynamicBody<Shape_type>;
-			for (auto sit = ECS::System::range<Dynamic_Body_type>(); sit; sit.advance()) {
-				f(sit.template get<Dynamic_Body_type>());
-			}
-			using Sensor_Body_type = Sensor<Shape_type>;
-			for (auto sit = ECS::System::range<Sensor_Body_type>(); sit; sit.advance()) {
-				f(sit.template get<Sensor_Body_type>());
-			}
-			apply_to_physical_bodies_impl<type_index + 1>(std::forward<Function>(f));
-		}
-	}
-	template <class Function>
-	void apply_to_physical_bodies(Function &&f) {
-		apply_to_physical_bodies_impl<0>(std::forward<Function>(f));
-	}
-	inline void end_frame() {
-		apply_to_physical_bodies([](auto &body) { body.end_frame(); });
-	}
 }
 
 #endif // BODY_H

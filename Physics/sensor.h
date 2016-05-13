@@ -27,6 +27,33 @@ namespace Physical {
 			});
 		}
 	};
+
+	namespace {
+		template <std::size_t type_index, class Function>
+		std::enable_if_t<type_index == number_of_supported_types> apply_to_physical_bodies_impl(Function && /*unused*/) { /*end of recursion*/
+		}
+
+		template <std::size_t type_index, class Function>
+			std::enable_if_t < type_index<number_of_supported_types> apply_to_physical_bodies_impl(Function &&f) {
+			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
+			using Dynamic_Body_type = DynamicBody<Shape_type>;
+			for (auto sit = ECS::System::range<Dynamic_Body_type>(); sit; sit.advance()) {
+				f(sit.template get<Dynamic_Body_type>());
+			}
+			using Sensor_Body_type = Sensor<Shape_type>;
+			for (auto sit = ECS::System::range<Sensor_Body_type>(); sit; sit.advance()) {
+				f(sit.template get<Sensor_Body_type>());
+			}
+			apply_to_physical_bodies_impl<type_index + 1>(std::forward<Function>(f));
+		}
+	}
+	template <class Function>
+	void apply_to_physical_bodies(Function &&f) {
+		apply_to_physical_bodies_impl<0>(std::forward<Function>(f));
+	}
+	inline void end_frame() {
+		apply_to_physical_bodies([](auto &body) { body.end_frame(); });
+	}
 }
 
 #endif // SENSOR_H
