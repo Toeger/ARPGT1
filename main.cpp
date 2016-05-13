@@ -238,7 +238,7 @@ int main() {
 		} while (blocked);
 		p.add(std::move(b));
 		p.add(Common_components::Speed{150});
-		std::ifstream f("Data/skills.json");
+		std::ifstream f("data/skills.json");
 		assert_fast(f);
 		p.skills = Skills::load(f);
 		p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
