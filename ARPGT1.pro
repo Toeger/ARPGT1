@@ -70,6 +70,7 @@ HEADERS += \
     physics/collision.h \
     physics/line.h \
     physics/physics_utility.h \
+    physics/rect.h \
     physics/sensor.h \
     physics/shapes.h \
     player.h \
