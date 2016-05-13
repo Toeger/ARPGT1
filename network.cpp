@@ -34,8 +34,9 @@ static void run_network() {
 	//connect
 	hostent *host;
 	host = gethostbyname(Config::host_name);
-	if (!host) {
+	if (host == nullptr) {
 		std::cerr << "failed resolving " << Config::host_name << '\n';
+		return;
 	}
 	sockaddr_in server = {};
 	server.sin_family = AF_INET;
