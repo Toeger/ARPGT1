@@ -1,9 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "ECS/entity.h"
-#include "GamePlay/Skills/skill.h"
-#include "Physics/physics_utility.h"
+#include "ecs/entity.h"
+#include "gameplay/skills/skill.h"
+#include "physics/physics_utility.h"
 
 #include <vector>
 

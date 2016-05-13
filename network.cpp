@@ -1,7 +1,7 @@
 #include "network.h"
-#include "ECS/utility.h"
-#include "Utility/asserts.h"
-#include "Utility/casts.h"
+#include "ecs/utility.h"
+#include "utility/asserts.h"
+#include "utility/casts.h"
 
 #include <arpa/inet.h>
 #include <array>
