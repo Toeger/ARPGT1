@@ -87,7 +87,7 @@ HEADERS += \
 
 QMAKE_CXXFLAGS += -std=c++1z
 QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -ggdb
-DEFINES += ARTDIR=\'\"./TESTDIR\"\'
+#DEFINES += ARTDIR=\'\"./TESTDIR\"\'
 #QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors -Wno-global-constructors
 #QMAKE_CXXFLAGS_DEBUG_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
 linux-clang{
