@@ -162,7 +162,7 @@ int main() {
 		Map::current_map = &map.emplace<Map>(map_width, map_height);
 		map.emplace<Common_components::Map>();
 	}
-	Terrain terrain(window, *Map::current_map, "Art/cobble_stone.png");
+	Terrain terrain(window, *Map::current_map, "art/cobble_stone.png");
 
 	{ //add running straight AI system
 		auto fun = [](ECS::Entity_handle monster, Physical::Transformator &player_pos) {
@@ -241,7 +241,7 @@ int main() {
 		std::ifstream f("data/skills.json");
 		assert_fast(f);
 		p.skills = Skills::load(f);
-		p.emplace<Common_components::Animated_model>(window, "Art/circle.ms3d", "Art/circle.png");
+		p.emplace<Common_components::Animated_model>(window, "art/circle.ms3d", "art/circle.png");
 	}
 	setup_controls(input_handler, camera);
 
