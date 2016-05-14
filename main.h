@@ -4,7 +4,7 @@
 #include <chrono>
 
 #ifndef ARTDIR //set -DARTDIR="some/folder" to the folder that contains "art" and "data"
-#define ARTDIR "./"
+#define ARTDIR "."
 #endif //ARTDIR
 
 namespace Config {
