@@ -245,7 +245,7 @@ int main() {
 	}
 	setup_controls(input_handler, camera);
 
-	//Network::run();
+	Network::Network_thread nwt;
 	while (window.update(camera)) {
 		//resolve logical frame
 		while (now() - last_update_timepoint > Config::logical_frame_duration) {
@@ -263,7 +263,6 @@ int main() {
 			update_logical_frame();
 		}
 	}
-	//Network::stop();
 	Skills::Skill_instance::instances.clear();
 	ECS::Entity::clear_all();
 }

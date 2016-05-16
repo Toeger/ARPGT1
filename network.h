@@ -10,6 +10,12 @@ namespace Network {
 		//use some kind of tagged union? or separate containers for different types of events?
 	};
 
+	//RAII object that starts and stops the network thread, must not have more than 1 of these
+	struct Network_thread{
+		Network_thread();
+		~Network_thread();
+	};
+
 	//start the network thread (login, get the world state, get regular updates)
 	void run();
 	//stop the network thread (logout)

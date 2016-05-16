@@ -22,14 +22,13 @@ namespace Config {
 }
 
 static std::thread network_thread;
-static std::atomic<bool> network_should_quit;
+static std::atomic<bool> network_should_quit{false};
 
 void handle(char *buffer, std::size_t size) {
 	std::cout << std::string(buffer, buffer + size) << '\n' << std::flush;
 }
 
 static void run_network() {
-	network_should_quit = false;
 	ON_SCOPE_EXIT(/*TODO: push "network down" event */);
 	//connect
 	hostent *host;
@@ -69,7 +68,7 @@ static void run_network() {
 	std::array<char, Config::MAX_UDP_PAYLOAD> buffer;
 
 	socklen_t socket_length = sizeof server;
-	for (; !network_should_quit;) {
+	while (!network_should_quit) {
 		auto size = recvfrom(fd, buffer.data(), buffer.size(), 0, any_cast<sockaddr>(&server), &socket_length);
 		if (size == -1) {
 			perror("Failed receiving data");
@@ -91,6 +90,16 @@ void Network::update() {
 
 void Network::stop() {
 	//stop the network thread (logout)
+	assert_fast(network_thread.joinable());
 	network_should_quit = true;
 	network_thread.join();
+	network_should_quit = false;
+}
+
+Network::Network_thread::Network_thread() {
+	Network::run();
+}
+
+Network::Network_thread::~Network_thread() {
+	Network::stop();
 }
