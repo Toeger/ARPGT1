@@ -22,7 +22,7 @@ namespace Common_components {
 		void set_rotation(float angle);
 
 		private:
-		irr::scene::IAnimatedMeshSceneNode *node;
+		irr::scene::IAnimatedMeshSceneNode *node = nullptr;
 	};
 };
 

@@ -16,8 +16,7 @@ Common_components::Animated_model::Animated_model(Window &window, const std::str
 	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 }
 
-Common_components::Animated_model::Animated_model(Common_components::Animated_model &&other)
-	: node(nullptr) {
+Common_components::Animated_model::Animated_model(Common_components::Animated_model &&other) {
 	std::swap(node, other.node);
 }
 
