@@ -41,6 +41,9 @@ namespace Physical {
 	inline Vector operator-(const Vector &v) {
 		return {-v.x, -v.y};
 	}
+	inline Vector operator+(const Vector &lhs, const Vector &rhs) {
+		return {lhs.x + rhs.x, lhs.y + rhs.y};
+	}
 	inline Vector operator-(const Vector &lhs, const Vector &rhs) {
 		return {lhs.x - rhs.x, lhs.y - rhs.y};
 	}
