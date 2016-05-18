@@ -146,7 +146,7 @@ void light_controls(Input_handler &input_handler, Camera &camera) {
 }
 
 int main() {
-	assert(Tester::run());
+	//assert(Tester::run());
 
 	auto &now = std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
@@ -244,6 +244,30 @@ int main() {
 		p.emplace<Common_components::Animated_model>(window, ARTDIR "/art/circle.ms3d", ARTDIR "/art/circle.png");
 	}
 	setup_controls(input_handler, camera);
+
+	{ //make a basic enemy
+		//this is our enemy
+		ECS::Entity enemy;
+		//mark it as an enemy
+		enemy.emplace<Common_components::Enemy>();
+		//give it 100 HP
+		enemy.emplace<Common_components::HP>(100);
+		//the player has speed 150, but turtles are slow
+		enemy.emplace<Common_components::Speed>(100.f);
+		//approximate the collision shape of the turtle with a circle with radius 100
+		auto &body = enemy.emplace<Physical::DynamicBody<Physical::Circle>>(100);
+		//move the turtle somewhere
+		//TODO: make sure the turtle is not inside a wall
+		auto physical_position = Map::current_map->to_world_coords(p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector +
+																   Physical::Vector{0, 0}); //move it 100 in front of the player
+		body.force_move(Physical::Vector{physical_position.first, physical_position.second});
+		//give the enemy a 3D model
+		enemy.emplace<Common_components::Animated_model>(window, ARTDIR "/art/circle.ms3d", ARTDIR "/art/circle.png").set_position(physical_position);
+		//the turtle lives as long as its HP is above 0, when hp is reduced to <= 0 it automatically disappears
+		std::move(enemy).make_automatic([](ECS::Entity_handle eh) {
+			return eh.get<Common_components::HP>()->hp <= 0;
+		});
+	}
 
 	Network::Network_thread nwt;
 	while (window.update(camera)) {
