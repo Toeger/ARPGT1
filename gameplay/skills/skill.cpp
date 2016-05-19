@@ -15,13 +15,14 @@ namespace {
 	template <Skills::Collision c>
 	bool _collides_with(ECS::Entity_handle eh, const Skills::Collision_type_tags tags);
 	template <>
-	bool _collides_with<Skills::Collision::size>(ECS::Entity_handle, const Skills::Collision_type_tags) {
+	bool _collides_with<Skills::Collision::size>(ECS::Entity_handle /*unused*/, const Skills::Collision_type_tags /*unused*/) {
 		return false;
 	}
 	template <Skills::Collision c>
 	bool _collides_with(ECS::Entity_handle eh, const Skills::Collision_type_tags tags) {
-		if (tags[static_cast<std::size_t>(c)] && eh.get<Skills::Collision_tag<c>>())
+		if (tags[static_cast<std::size_t>(c)] && eh.get<Skills::Collision_tag<c>>()) {
 			return true;
+		}
 		return _collides_with<static_cast<Skills::Collision>(static_cast<int>(c) + 1)>(eh, tags);
 	}
 }
