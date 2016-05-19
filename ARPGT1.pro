@@ -112,8 +112,3 @@ DISTFILES += \
     LICENSE \
     README.md \
     TODO
-
-copyart.target = always
-copyart.commands = mkdir -p Data; cp $${PWD}/Data/* Data; mkdir -p Art; cp $${PWD}/Art/* Art || true;
-QMAKE_EXTRA_TARGETS += copyart
-PRE_TARGETDEPS += always
