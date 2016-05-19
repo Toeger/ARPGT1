@@ -12,6 +12,22 @@
 #include <stdexcept>
 
 namespace {
+	constexpr Skills::Collision get_next_collision(Skills::Collision collision) {
+		switch (collision) {
+		case Skills::Collision::allies:
+			return Skills::Collision::enemies;
+		case Skills::Collision::enemies:
+			return Skills::Collision::map;
+		case Skills::Collision::map:
+			return Skills::Collision::self;
+		case Skills::Collision::self:
+			return Skills::Collision::size;
+		case Skills::Collision::size:
+			return Skills::Collision::size;
+			//should an enum value not be handled clang will complain, so we don't even bother with a default value
+		}
+	}
+
 	template <Skills::Collision c>
 	bool _collides_with(ECS::Entity_handle eh, const Skills::Collision_type_tags tags);
 	template <>
@@ -23,7 +39,7 @@ namespace {
 		if (tags[static_cast<std::size_t>(c)] && eh.get<Skills::Collision_tag<c>>()) {
 			return true;
 		}
-		return _collides_with<static_cast<Skills::Collision>(static_cast<int>(c) + 1)>(eh, tags);
+		return _collides_with<get_next_collision(c)>(eh, tags);
 	}
 }
 
