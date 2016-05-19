@@ -11,6 +11,25 @@
 #include <sstream>
 #include <stdexcept>
 
+namespace {
+	template <Skills::Collision c>
+	bool _collides_with(ECS::Entity_handle eh, const Skills::Collision_type_tags tags);
+	template <>
+	bool _collides_with<Skills::Collision::size>(ECS::Entity_handle, const Skills::Collision_type_tags) {
+		return false;
+	}
+	template <Skills::Collision c>
+	bool _collides_with(ECS::Entity_handle eh, const Skills::Collision_type_tags tags) {
+		if (tags[static_cast<std::size_t>(c)] && eh.get<Skills::Collision_tag<c>>())
+			return true;
+		return _collides_with<static_cast<Skills::Collision>(static_cast<int>(c) + 1)>(eh, tags);
+	}
+}
+
+bool Skills::collides_with(ECS::Entity_handle eh, const Skills::Collision_type_tags tags) {
+	return _collides_with<Collision::allies>(eh, tags);
+}
+
 std::vector<Skills::Skill_instance> Skills::Skill_instance::instances;
 
 std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setup_lua_environment)(LuaContext &)) {
@@ -95,7 +114,7 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 						throw std::runtime_error("interaction type must be one of [\"" + join(collision_strings, "\", \"") + "\"], found \"" +
 												 interaction_type_name + "\"");
 					}
-					skill.affected[pos - begin(collision_strings)] = true;
+					skill.collision_types[pos - begin(collision_strings)] = true;
 				}
 			} else if (property_name == "cooldown") {
 				if (!property_value.is_number()) {
@@ -145,6 +164,7 @@ void Skills::setup_default_lua_environment(LuaContext &lua_context) {
 
 Skills::Skill_instance Skills::Skill_definition::create() {
 	Skills::Skill_instance instance(*this);
+	instance.collision_types = collision_types;
 	switch (type) {
 	case Type::aura:
 		break;

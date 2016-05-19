@@ -13,7 +13,12 @@ class LuaContext;
 
 namespace Skills {
 	enum class Type { aura, instant, invalid, projectile, size };
-	enum class Collisions { allies, enemies, map, self, size };
+	enum class Collision { allies, enemies, map, self, size }; //Collisions are subjective, it depends on the caster who is ally and enemy
+	using Collision_type_tags = std::bitset<static_cast<std::size_t>(Collision::size)>;
+	template <Collision collision>
+	struct Collision_tag {};
+
+	bool collides_with(ECS::Entity_handle eh, const Collision_type_tags tags);
 
 	//skill concepts:
 	/* Target - Either the target entity or an area
@@ -40,7 +45,7 @@ namespace Skills {
 		Logical_time cooldown{0};
 		ECS::Entity_handle caster;
 		ECS::Entity_handle target;
-		std::bitset<static_cast<std::size_t>(Collisions::size)> affected;
+		Collision_type_tags collision_types;
 		std::function<void(Skill_instance &)> on_create = [](Skill_instance & /*unused*/) {}; //function to be called when an instance of the skill is created
 		std::function<void(Skill_instance &)> on_tick = [](Skill_instance & /*unused*/) {};   //function to be called every tick
 		std::function<void(Skill_instance &)> on_hit = [](Skill_instance & /*unused*/) {};    //function to be called every tick
@@ -56,6 +61,7 @@ namespace Skills {
 		Skill_instance(const Skill_definition &skill_definition);
 		Skill_instance(Skill_instance &&) = default;
 		Skill_instance &operator=(Skill_instance &&) = default;
+		Collision_type_tags collision_types;
 		const Skill_definition *skill_definition = nullptr;
 		std::vector<Skills::Modifier> modifiers;
 		void on_create();

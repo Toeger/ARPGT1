@@ -146,7 +146,7 @@ void light_controls(Input_handler &input_handler, Camera &camera) {
 }
 
 int main() {
-	//assert(Tester::run());
+	assert(Tester::run());
 
 	auto &now = std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
@@ -187,15 +187,17 @@ int main() {
 				auto body = skill_it->get<Physical::DynamicBody<Physical::Circle>>();
 				if (speed && body) {
 					bool collided = false;
-					body->move(Physical::Vector{0, speed->speed},
-							   [&collided](const Physical::Vector &v, ECS::Entity_handle entity) {
-								   //TODO: check if entity is one of the collision types, if so deal damage and destroy skill_instance, otherwise keep moving
-								   //issue: we only get the first thing we hit, so if we hit both an object that we don't collide with and one that we collide
-								   //with we phase through the thing we were supposed to collide with
-								   (void)entity;
-								   collided = true;
-								   return (v);
-							   });
+					body->move(Physical::Vector{0, speed->speed}, [&collided, &skill = *skill_it ](const Physical::Vector &v, ECS::Entity_handle entity) {
+						//issue: we only get the first thing we hit, so if we hit both an object that we don't collide with and one that we collide
+						//with we phase through the thing we were supposed to collide with
+						if (Skills::collides_with(entity, skill.collision_types)) {
+							collided = true;
+							//TODO: Deal damage if it is an enemy
+						} else {
+							collided = false;
+						}
+						return (v);
+					});
 					if (collided) {
 						skill_it = Skills::Skill_instance::instances.erase(skill_it);
 						continue;
