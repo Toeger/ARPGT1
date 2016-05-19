@@ -6,7 +6,7 @@
 
 Map *Map::current_map;
 
-Map::Map(std::size_t width, std::size_t height)
+Map::Map(int width, int height)
 	: width(width)
 	, map(create_map(width, height)) {}
 
@@ -51,14 +51,14 @@ std::pair<float, float> Map::to_world_coords(const Physical::Vector &vec) {
 	return {width - 1 - vec.x / block_size, vec.y / block_size};
 }
 
-std::vector<bool> Map::create_map(std::size_t width, std::size_t height) {
+std::vector<bool> Map::create_map(int width, int height) {
 	std::vector<bool> retval(width * height);
 	const auto min = 0.f;
 	const auto max = 1.f;
 	const auto separator = 0.47f;
 	auto noise = get_perlin_noise(width, height, 40, min, max, 20);
-	for (std::size_t x = 0; x < width; x++) {
-		for (std::size_t y = 0; y < height; y++) {
+	for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
 			retval[x + width * y] = noise[x + width * y] < separator;
 		}
 	}
