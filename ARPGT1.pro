@@ -94,6 +94,7 @@ linux-clang{
     QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
     QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 }
+QMAKE_CXXFLAGS_PROFILE += -DNDEBUG
 QMAKE_CXXFLAGS_RELEASE += -O3 -DNDEBUG
 gcc{
     clang{
