@@ -161,6 +161,7 @@ int main() {
 		constexpr std::size_t map_height = 1024;
 		Map::current_map = &map.emplace<Map>(map_width, map_height);
 		map.emplace<Common_components::Map>();
+		map.emplace<Skills::Collision_tag<Skills::Collision::map>>();
 	}
 	Terrain terrain(window, *Map::current_map, ARTDIR "/art/cobble_stone.png");
 
@@ -250,8 +251,8 @@ int main() {
 	{ //make a basic enemy
 		//this is our enemy
 		ECS::Entity enemy;
-		//mark it as an enemy, but that doesn't do anything yet
-		enemy.emplace<Common_components::Enemy>();
+		//mark it as an enemy
+		enemy.emplace<Skills::Collision_tag<Skills::Collision::enemies>>();
 		//give it 100 HP
 		enemy.emplace<Common_components::HP>(100);
 		//the player has speed 150 we are a bit slower
