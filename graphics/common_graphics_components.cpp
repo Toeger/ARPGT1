@@ -12,7 +12,7 @@ Common_components::Animated_model::Animated_model(Window &window, const std::str
 Common_components::Animated_model::Animated_model(Window &window, const std::string &path) {
 	node = window.add_model(path);
 	//node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-	node->addShadowVolumeSceneNode();
+	//node->addShadowVolumeSceneNode();
 	node->setMaterialFlag(irr::video::EMF_NORMALIZE_NORMALS, true);
 }
 
