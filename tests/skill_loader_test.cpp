@@ -15,19 +15,19 @@
 static void load_empty() {
 	std::stringstream data{R"({})"};
 	auto skills = Skills::load(data);
-	assert(skills.size() == 0);
+	assert(skills.empty());
 }
 
 static void ignore_comments() {
 	{
 		std::stringstream data{R"({"comment":{}})"};
 		auto skills = Skills::load(data);
-		assert(skills.size() == 0);
+		assert(skills.empty());
 	}
 	{
 		std::stringstream data{R"({"comment":{}, "comment":{}, "comment":{}, "comment":{}})"};
 		auto skills = Skills::load(data);
-		assert(skills.size() == 0);
+		assert(skills.empty());
 	}
 }
 
@@ -44,7 +44,7 @@ static void load_name() {
 		assert(pos != end(names));
 		names.erase(pos);
 	}
-	assert(names.size() == 0);
+	assert(names.empty());
 }
 
 static void lua_oncreate_test() {
