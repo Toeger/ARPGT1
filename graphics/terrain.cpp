@@ -4,7 +4,7 @@
 
 #include <irrlicht/irrlicht.h>
 
-Terrain::Terrain(Window &window, const Map &map, const std::string &texture) {
+Terrain::Terrain(Window &window, const Map &map, string_view texture) {
 	auto height_map =
 		window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {make_unsigned(map.get_width()), make_unsigned(map.get_height())});
 	ON_SCOPE_EXIT(height_map->drop(););
@@ -26,7 +26,7 @@ Terrain::Terrain(Window &window, const Map &map, const std::string &texture) {
 	create_terrain(window, height_bitmap_name, inverse_height_map_name, texture);
 }
 
-Terrain::Terrain(Window &window, const std::string &height_bitmap, const std::string &texture_1, const std::string &texture_2) {
+Terrain::Terrain(Window &window, string_view height_bitmap, string_view texture_1, string_view texture_2) {
 	create_terrain(window, height_bitmap, texture_1, texture_2);
 }
 
@@ -38,8 +38,8 @@ void Terrain::set_position(float x, float y, float z) {
 	terrain->setPosition({x, y, z});
 }
 
-void Terrain::create_terrain(Window &window, const std::string &hight_bitmap, const std::string &texture_1, const std::string &texture_2) {
-	terrain = window.scene_manager->addTerrainSceneNode(hight_bitmap.c_str(),
+void Terrain::create_terrain(Window &window, string_view hight_bitmap, string_view texture_1, string_view texture_2) {
+	terrain = window.scene_manager->addTerrainSceneNode(hight_bitmap.data(),
 														nullptr,                                      //parent node
 														-1,                                           //node id
 														irr::core::vector3df(0.f, 0.f, 0.f),          //position
@@ -51,8 +51,8 @@ void Terrain::create_terrain(Window &window, const std::string &hight_bitmap, co
 														0 //smoothFactor //shouldn't need to smooth since perlin does smoothing just fine
 														);
 	//terrain->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-	terrain->setMaterialTexture(0, window.video_driver->getTexture(texture_1.c_str()));
-	terrain->setMaterialTexture(1, window.video_driver->getTexture(texture_2.c_str()));
+	terrain->setMaterialTexture(0, window.video_driver->getTexture(texture_1.data()));
+	terrain->setMaterialTexture(1, window.video_driver->getTexture(texture_2.data()));
 	terrain->setMaterialType(irr::video::EMT_DETAIL_MAP);
 	terrain->scaleTexture(1.f, 50.f);
 	window.scene_manager->getMeshManipulator()->makePlanarTextureMapping(terrain->getMesh(), 0.004f);

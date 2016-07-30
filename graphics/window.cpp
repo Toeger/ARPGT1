@@ -11,7 +11,7 @@ Window Window::get_dummy() {
 	return {};
 }
 
-Window::Window(Input_handler &input_handler, int width, int height, const std::string &title) {
+Window::Window(Input_handler &input_handler, int width, int height, string_view title) {
 	//setup irrlicht graphics
 	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(width, height), 32, false, true, true, &input_handler);
 	assert(render_device);
@@ -39,9 +39,9 @@ bool Window::update(Camera &camera) {
 	return true;
 }
 
-irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path, Physical::Vector position, Physical::Direction direction, float scale,
+irr::scene::IAnimatedMeshSceneNode *Window::add_model(string_view path, Physical::Vector position, Physical::Direction direction, float scale,
 													  irr::scene::ISceneNode *parent) {
-	auto mesh = scene_manager->getMesh(path.c_str());
+	auto mesh = scene_manager->getMesh(path.data());
 	assert(mesh);
 	auto node = scene_manager->addAnimatedMeshSceneNode(mesh, parent, -1, {position.x, 0, position.y});
 	node->setRotation({0, direction.to_degrees(), 0});
@@ -50,8 +50,8 @@ irr::scene::IAnimatedMeshSceneNode *Window::add_model(const std::string &path, P
 	return node;
 }
 
-irr::video::ITexture *Window::get_texture(const std::string &path) const {
-	return video_driver->getTexture(path.c_str());
+irr::video::ITexture *Window::get_texture(string_view path) const {
+	return video_driver->getTexture(path.data());
 }
 
 Window::Window() {

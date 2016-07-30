@@ -4,12 +4,14 @@
 #include "physics/physics_utility.h"
 #include "window.h"
 
-#include <string>
+#include <experimental/string_view>
+
+using string_view = std::experimental::string_view;
 
 namespace Common_components {
 	struct Animated_model {
-		Animated_model(Window &window, const std::string &path, const std::string &texture);
-		Animated_model(Window &window, const std::string &path);
+		Animated_model(Window &window, string_view path, string_view texture);
+		Animated_model(Window &window, string_view path);
 		Animated_model(Animated_model &&other);
 		Animated_model(const Animated_model &) = delete;
 		Animated_model &operator=(const Animated_model &) = delete;

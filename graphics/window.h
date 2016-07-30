@@ -5,7 +5,9 @@
 #include "input_handler.h"
 #include "physics/physics_utility.h"
 
-#include <string>
+#include <experimental/string_view>
+
+using string_view = std::experimental::string_view;
 
 struct Camera;
 
@@ -24,7 +26,7 @@ namespace irr {
 
 struct Window {
 	static Window get_dummy();
-	Window(Input_handler &input_handler, int width = 800, int height = 600, const std::string &title = "");
+	Window(Input_handler &input_handler, int width = 800, int height = 600, string_view title = "");
 	Window(Window &&) = default;
 	Window(const Window &) = delete;
 	Window &operator=(Window &&) = default;
@@ -32,9 +34,9 @@ struct Window {
 	~Window();
 	bool update(Camera &camera);
 	static Window *current_window;
-	irr::scene::IAnimatedMeshSceneNode *add_model(const std::string &path, Physical::Vector position = {}, Physical::Direction direction = {}, float size = 1.f,
+	irr::scene::IAnimatedMeshSceneNode *add_model(string_view path, Physical::Vector position = {}, Physical::Direction direction = {}, float size = 1.f,
 												  irr::scene::ISceneNode *parent = nullptr);
-	irr::video::ITexture *get_texture(const std::string &path) const;
+	irr::video::ITexture *get_texture(string_view path) const;
 
 	private:
 	Utility::Move_only_pointer<irr::IrrlichtDevice> render_device;
