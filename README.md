@@ -3,7 +3,9 @@ This is the client of ARPGT1.
 
 It uses [ECS](https://github.com/Toeger/ECS) as a submodule, therefore you need to clone using
 
-    git clone --recursive git://github.com/Toeger/ARPGT1.git
+    git clone https://github.com/Toeger/ARPGT1
+    git submodule init
+    git submodule update
 
 so that it pulls the required ECS submodule too.
 
