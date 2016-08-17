@@ -17,9 +17,16 @@ LIBS += -lIrrlicht
 LIBS += -llua5.1
 
 SOURCES += \
+    ecs/common_components.cpp \
+    ecs/ecs_impl.cpp \
+    ecs/entity.cpp \
     ecs/entity_base.cpp \
+    ecs/entity_handle.cpp \
     ecs/log.cpp \
     ecs/system.cpp \
+    ecs/system_base.cpp \
+    ecs/system_iterator.cpp \
+    ecs/utility.cpp \
     gameplay/map.cpp \
     gameplay/skills/skill.cpp \
     graphics/camera.cpp \
