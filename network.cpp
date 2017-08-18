@@ -24,7 +24,7 @@ namespace Config {
 static std::thread network_thread;
 static std::atomic<bool> network_should_quit{false};
 
-void handle(char *buffer, std::size_t size) {
+static void handle(char *buffer, std::size_t size) {
 	std::cout << std::string(buffer, buffer + size) << '\n' << std::flush;
 }
 

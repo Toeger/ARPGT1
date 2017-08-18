@@ -4,7 +4,7 @@
 
 #include <irrlicht/irrlicht.h>
 
-Terrain::Terrain(Window &window, const Map &map, string_view texture) {
+Terrain::Terrain(Window &window, const Map &map, std::string_view texture) {
 	auto height_map =
 		window.video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {make_unsigned(map.get_width()), make_unsigned(map.get_height())});
 	ON_SCOPE_EXIT(height_map->drop(););
@@ -26,7 +26,7 @@ Terrain::Terrain(Window &window, const Map &map, string_view texture) {
 	create_terrain(window, height_bitmap_name, inverse_height_map_name, texture);
 }
 
-Terrain::Terrain(Window &window, string_view height_bitmap, string_view texture_1, string_view texture_2) {
+Terrain::Terrain(Window &window, std::string_view height_bitmap, std::string_view texture_1, std::string_view texture_2) {
 	create_terrain(window, height_bitmap, texture_1, texture_2);
 }
 
@@ -38,7 +38,7 @@ void Terrain::set_position(float x, float y, float z) {
 	terrain->setPosition({x, y, z});
 }
 
-void Terrain::create_terrain(Window &window, string_view hight_bitmap, string_view texture_1, string_view texture_2) {
+void Terrain::create_terrain(Window &window, std::string_view hight_bitmap, std::string_view texture_1, std::string_view texture_2) {
 	terrain = window.scene_manager->addTerrainSceneNode(hight_bitmap.data(),
 														nullptr,                                      //parent node
 														-1,                                           //node id

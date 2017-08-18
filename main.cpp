@@ -44,11 +44,11 @@ std::enable_if_t<!std::is_floating_point<T>::value, T> get_random_number(T from,
 	return std::uniform_int_distribution<T>(from, to)(rng);
 }
 
-void debug_print(const Physical::Circle &c, const Physical::Transformator &t) {
+static void debug_print(const Physical::Circle &c, const Physical::Transformator &t) {
 	std::cout << "circle: x: " << t.vector.x << " y: " << t.vector.y << " r: " << c.radius << '\n';
 }
 
-void debug_print(const Physical::Line &l, const Physical::Transformator &t) {
+static void debug_print(const Physical::Line &l, const Physical::Transformator &t) {
 	auto pos = t + l.vector;
 	std::cout << "line: x1: " << t.vector.x << " y1: " << t.vector.y << " x2: " << pos.vector.x << " y2: " << pos.vector.y << '\n';
 }
@@ -73,7 +73,7 @@ static void update_logical_frame() {
 }
 
 //handle continuous actions
-void handle_input(Input_handler &input, Camera &camera) {
+static void handle_input(Input_handler &input, Camera &camera) {
 	//player movement
 	{
 		int x = 0;
@@ -106,7 +106,7 @@ void handle_input(Input_handler &input, Camera &camera) {
 	}
 }
 
-void setup_controls(Input_handler &input_handler, Camera &camera) {
+static void setup_controls(Input_handler &input_handler, Camera &camera) {
 	//camera
 	{
 		input_handler.mouse_wheel[Input_handler::Mouse_wheel_up] = Input_handler::Action::camera_zoom_in;
@@ -127,7 +127,7 @@ void setup_controls(Input_handler &input_handler, Camera &camera) {
 	}
 }
 
-void light_controls(Input_handler &input_handler, Camera &camera) {
+static void light_controls(Input_handler &input_handler, Camera &camera) {
 	constexpr float light_speed = 10.f;
 	auto assign_light_key_action = [&input_handler, &camera](irr::EKEY_CODE key, Input_handler::Action action, float x, float y, float z) {
 		input_handler.key_action_map[key] = action;

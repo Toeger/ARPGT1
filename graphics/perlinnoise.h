@@ -33,9 +33,9 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 	std::array<T, width / 2 + 2> bottom_line; //we actually want width / wave_length
 	std::generate_n(begin(top_line), width / wave_length + 1, [&dis] { return dis(mt); });
 	std::generate_n(begin(bottom_line), width / wave_length + 1, [&dis] { return dis(mt); });
-	for (unsigned y = 0; y < height; y++) {
+	for (int y = 0; y < height; y++) {
 		const auto bottom_ratio = (y % wave_length) * 1.f / wave_length;
-		for (unsigned x = 0; x < width; x++) {
+		for (int x = 0; x < width; x++) {
 			const auto tl = top_line[x / wave_length];
 			const auto tr = top_line[x / wave_length + 1];
 			const auto bl = bottom_line[x / wave_length];
@@ -52,15 +52,15 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 }
 
 template <class T>
-void add_octave(std::size_t width, std::size_t height, int wave_length, std::vector<T> &array, std::uniform_real_distribution<T> &dis) {
+void add_octave(int width, int height, int wave_length, std::vector<T> &array, std::uniform_real_distribution<T> &dis) {
 	assert_fast(wave_length >= 2);
 	std::vector<T> top_line(width / wave_length + 2);
 	std::vector<T> bottom_line(width / wave_length + 2);
 	std::generate(begin(top_line), end(top_line), [&dis] { return dis(mt); });
 	std::generate(begin(bottom_line), end(bottom_line), [&dis] { return dis(mt); });
-	for (unsigned y = 0; y < height; y++) {
+	for (int y = 0; y < height; y++) {
 		const auto bottom_ratio = (y % wave_length) * 1.f / wave_length;
-		for (unsigned x = 0; x < width; x++) {
+		for (int x = 0; x < width; x++) {
 			const auto tl = top_line[x / wave_length];
 			const auto tr = top_line[x / wave_length + 1];
 			const auto bl = bottom_line[x / wave_length];
@@ -95,8 +95,7 @@ std::enable_if_t<std::is_floating_point<T>::value, std::array<std::array<T, heig
 }
 
 template <class T>
-std::enable_if_t<std::is_floating_point<T>::value, std::vector<T>> get_perlin_noise(std::size_t width, std::size_t height, int octaves, T from, T to,
-																					int start = 0) {
+std::enable_if_t<std::is_floating_point<T>::value, std::vector<T>> get_perlin_noise(int width, int height, int octaves, T from, T to, int start = 0) {
 	assert_fast(octaves >= 0);
 	assert_fast(width > 0);
 	assert_fast(height > 0);

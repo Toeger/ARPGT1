@@ -1,4 +1,5 @@
 #include "physics/physics_utility.h"
+#include "physics_utility.h"
 #include "tests/tests_utility.h"
 
 using namespace Physical;

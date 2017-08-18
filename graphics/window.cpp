@@ -11,7 +11,7 @@ Window Window::get_dummy() {
 	return {};
 }
 
-Window::Window(Input_handler &input_handler, int width, int height, string_view title) {
+Window::Window(Input_handler &input_handler, int width, int height, std::string_view title) {
 	//setup irrlicht graphics
 	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(width, height), 32, false, true, true, &input_handler);
 	assert(render_device);
@@ -39,7 +39,7 @@ bool Window::update(Camera &camera) {
 	return true;
 }
 
-irr::scene::IAnimatedMeshSceneNode *Window::add_model(string_view path, Physical::Vector position, Physical::Direction direction, float scale,
+irr::scene::IAnimatedMeshSceneNode *Window::add_model(std::string_view path, Physical::Vector position, Physical::Direction direction, float scale,
 													  irr::scene::ISceneNode *parent) {
 	auto mesh = scene_manager->getMesh(path.data());
 	assert(mesh);
@@ -50,7 +50,7 @@ irr::scene::IAnimatedMeshSceneNode *Window::add_model(string_view path, Physical
 	return node;
 }
 
-irr::video::ITexture *Window::get_texture(string_view path) const {
+irr::video::ITexture *Window::get_texture(std::string_view path) const {
 	return video_driver->getTexture(path.data());
 }
 

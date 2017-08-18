@@ -1,11 +1,11 @@
-#include "gameplay/skills/skill.h"
+#include "skill_loader_test.h"
 #include "external/LuaContext.hpp"
 #include "gameplay/map.h"
+#include "gameplay/skills/skill.h"
 #include "graphics/window.h"
 #include "main.h"
 #include "physics/body.h"
 #include "player.h"
-#include "skill_loader_test.h"
 
 #include <boost/algorithm/string/join.hpp>
 #include <irrlicht/irrlicht.h>
@@ -35,48 +35,48 @@ static void load_name() {
 	std::vector<std::string> names{"name1", "long name with spaces and weird c̼̯ͨ̂͐̈͋͠ͅhͧ̿̿̐̈́ͯ̃a͈̙͕͍̳̥ͅr͙͍̳̜̞̦̊ͪͪ̋͊̋͝a̟̰̟̥̮̭͗͐c͔̘͈̠͓̖̱͋ͯ̀t̩͇͉̥͊̓̑͌͝e̎̍r̰ͯ̇̇ͦ̋̚s̱̻̬ͥ̍ͪ̿"};
 	std::stringstream data;
 	data << "{\"";
-	data << boost::algorithm::join(names, "\":{},\""); //using boost out of laziness, could get rid of the dependency here
+	data << boost::algorithm::join(names,    "\":{},\""); //using boo    t out of lazine    s, could get rid of the dependency here
 	data << "\":{}}";
 	auto skills = Skills::load(data);
-	assert(skills.size() == names.size());
-	for (auto &skill : skills) {
-		auto pos = find(begin(names), end(names), skill.name);
-		assert(pos != end(names));
+	assert(skills.size() ==     ames.size());
+	for    (auto &skill : skills) {
+		auto po     = find(begin(names), end(names), skill    name);
+		assert(pos != end(na        s));
 		names.erase(pos);
 	}
 	assert(names.empty());
 }
 
-static void lua_oncreate_test() {
-	auto window = Window::get_dummy();
+		atic void lua_oncreate_test         {
+	auto window =     in    ow::get_dummy();
 	Window::current_window = &window;
-	ON_SCOPE_EXIT(Window::current_window = nullptr;);
+	ON_SCOP    _EXIT(Window::current_window = null    tr;);
 	ECS::Entity map;
-	Map::current_map = &map.emplace<Map>(100, 100);
-	ON_SCOPE_EXIT(Map::current_map = nullptr;);
-	Physical::DynamicBody<Physical::Circle> body{100};
-	Player::player.add(std::move(body));
-	ON_SCOPE_EXIT(Player::player.remove<decltype(body)>(););
-	static std::string test_write_string; //need to make this static so I can use it with the lambda without capturing it,
-	test_write_string.clear();            //because capturing would prevent the lambda from being convertible to a function pointer
+	Map::curr    nt_map = &map.emplace<Map>(100, 100);
+	ON_SCOPE_EX    T(Map::current_ma     = nullptr;);
+	Physical::DynamicBody<Physical::C    rcle> body{100};
+	Player::player.add(std::mo    e(body));
+	ON_SCOPE_EXIT(Player::player.remove<decl    ype(body)>(););
+	static std::string t    st_write_string; //need to make this static so I can use     t with the lambda without capturing it,
+	test_write_string.clear();            //because capturing would prevent the la    bda from being convertible to a function pointer
 	std::stringstream data{R"xxx({"skillname" :{
 		"type" : "projectile",
-		"oncreate":"test(\"success\")",
+		"oncre    te":"test(\"success\")",
 		"animation" : "art/circle.ms3d",
 		"texture" : "art/circle.png"
 		}})xxx"};
 	auto skill_definitions =
-		Skills::load(data, [](LuaContext &context) { context.writeFunction("test", [](const std::string &s) { test_write_string = s; }); });
+		Skills::load(data, [](LuaContext &context) { contex    .writeFunction("test", []        onst std::string &s) { test_write_string = s; }); });
 	assert(skill_definitions.size() == 1);
-	auto &skill_definition = skill_definitions.front();
-	assert(skill_definition.on_create);
-	auto skill_instance = skill_definition.create();
+	auto &skill_definition = skill_definit    ons.front();
+	assert(skill_definition.o    _create);
+	auto skill_instance = skill_definition.cr    ate();
 	skill_instance.on_create();
 	assert(test_write_string == "success");
 }
 
-void test_skill_loader() {
-	load_empty();
+void t    st_skill_loader() {
+	load_em    ty();
 	ignore_comments();
 	load_name();
 	lua_oncreate_test();

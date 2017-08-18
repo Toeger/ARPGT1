@@ -1,3 +1,9 @@
+art
+*.pro.user
+concept
+other
+stats
+
 # Compiled Object files
 *.slo
 *.lo

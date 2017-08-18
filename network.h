@@ -11,7 +11,7 @@ namespace Network {
 	};
 
 	//RAII object that starts and stops the network thread, must not have more than 1 of these
-	struct Network_thread{
+	struct Network_thread {
 		Network_thread();
 		~Network_thread();
 	};

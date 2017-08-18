@@ -14,17 +14,17 @@
 namespace {
 	constexpr Skills::Collision get_next_collision(Skills::Collision collision) {
 		switch (collision) {
-		case Skills::Collision::allies:
-			return Skills::Collision::enemies;
-		case Skills::Collision::enemies:
-			return Skills::Collision::map;
-		case Skills::Collision::map:
-			return Skills::Collision::self;
-		case Skills::Collision::self:
-			return Skills::Collision::size;
-		case Skills::Collision::size:
-			return Skills::Collision::size;
-			//should an enum value not be handled clang will complain, so we don't even bother with a default value
+			case Skills::Collision::allies:
+				return Skills::Collision::enemies;
+			case Skills::Collision::enemies:
+				return Skills::Collision::map;
+			case Skills::Collision::map:
+				return Skills::Collision::self;
+			case Skills::Collision::self:
+				return Skills::Collision::size;
+			case Skills::Collision::size:
+				return Skills::Collision::size;
+				//should an enum value not be handled clang will complain, so we don't even bother with a default value
 		}
 	}
 
@@ -183,27 +183,27 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 	Skills::Skill_instance instance(*this);
 	instance.collision_types = collision_types;
 	switch (type) {
-	case Type::aura:
-		break;
-	case Type::instant:
-		break;
-	case Type::projectile: {
-		const auto player_body = Player::player.get<Physical::DynamicBody<Physical::Circle>>();
-		const auto player_trans = player_body->get_current_transformator();
-		const auto pos = Map::current_map->to_world_coords(player_trans.vector);
-		if (texture.empty()) {
-			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation).set_position(pos);
-		} else {
-			instance.emplace<Common_components::Animated_model>(*Window::current_window, animation, texture).set_position(pos);
-		}
-		instance.emplace<Common_components::Speed>(speed);
-		const auto player_radius = player_body->get_shape().radius;
-		auto &projectile_body = instance.emplace<Physical::DynamicBody<Physical::Circle>>(size); //after this line player_body is invalid
-		projectile_body.force_move(player_trans + Physical::Vector{0, 2 * player_radius + size});
-	} break;
-	case Type::invalid:
-	case Type::size:
-		throw std::runtime_error("invalid skill type");
+		case Type::aura:
+			break;
+		case Type::instant:
+			break;
+		case Type::projectile: {
+			const auto player_body = Player::player.get<Physical::DynamicBody<Physical::Circle>>();
+			const auto player_trans = player_body->get_current_transformator();
+			const auto pos = Map::current_map->to_world_coords(player_trans.vector);
+			if (texture.empty()) {
+				instance.emplace<Common_components::Animated_model>(*Window::current_window, animation).set_position(pos);
+			} else {
+				instance.emplace<Common_components::Animated_model>(*Window::current_window, animation, texture).set_position(pos);
+			}
+			instance.emplace<Common_components::Speed>(speed);
+			const auto player_radius = player_body->get_shape().radius;
+			auto &projectile_body = instance.emplace<Physical::DynamicBody<Physical::Circle>>(size); //after this line player_body is invalid
+			projectile_body.force_move(player_trans + Physical::Vector{0, 2 * player_radius + size});
+		} break;
+		case Type::invalid:
+		case Type::size:
+			throw std::runtime_error("invalid skill type");
 	}
 
 	return instance;

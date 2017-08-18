@@ -30,11 +30,6 @@ struct function_traits<ReturnType (*)(Args...)> {
 	typedef std::function<ReturnType(Args...)> f_type;
 };
 
-template <typename L>
-static typename function_traits<L>::f_type make_function(L l) {
-	return (typename function_traits<L>::f_type){l};
-}
-
 //handles bind & multiple function call operator()'s
 template <typename ReturnType, typename... Args, class T>
 auto make_function(T &&t) -> std::function<decltype(ReturnType(t(std::declval<Args>()...)))(Args...)> {

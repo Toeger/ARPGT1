@@ -12,10 +12,10 @@ Map::Map(int width, int height)
 
 bool Map::collides(const Physical::Circle &circle, const Physical::Transformator &transformator) {
 	auto &pos = transformator.vector;
-	auto startx = (pos.x - circle.radius) / block_size;
-	auto endx = (pos.x + circle.radius) / block_size + 1;
-	auto starty = (pos.y - circle.radius) / block_size;
-	auto endy = (pos.y + circle.radius) / block_size + 1;
+	const int startx = (pos.x - circle.radius) / block_size;
+	const int endx = (pos.x + circle.radius) / block_size + 1;
+	const int starty = (pos.y - circle.radius) / block_size;
+	const int endy = (pos.y + circle.radius) / block_size + 1;
 	for (int y = starty; y < endy; y++) {
 		for (int x = startx; x < endx; x++) {
 			if (get(x, y) && Physical::collides(circle, transformator, Physical::Rect(block_size, block_size),
@@ -43,7 +43,7 @@ int Map::get_width() const {
 }
 
 int Map::get_height() const {
-	return make_signed(map.size()) / width;
+	return static_cast<int>(map.size()) / width;
 }
 
 std::pair<float, float> Map::to_world_coords(const Physical::Vector &vec) {

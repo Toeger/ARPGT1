@@ -4,12 +4,12 @@
 #include <cmath>
 #include <irrlicht/irrlicht.h>
 
-Common_components::Animated_model::Animated_model(Window &window, string_view path, string_view texture)
+Common_components::Animated_model::Animated_model(Window &window, std::string_view path, std::string_view texture)
 	: Common_components::Animated_model(window, path) {
 	node->setMaterialTexture(0, window.get_texture(texture.data()));
 }
 
-Common_components::Animated_model::Animated_model(Window &window, string_view path) {
+Common_components::Animated_model::Animated_model(Window &window, std::string_view path) {
 	node = window.add_model(path);
 	//node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	//node->addShadowVolumeSceneNode();

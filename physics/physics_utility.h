@@ -17,7 +17,6 @@ namespace Physical {
 		constexpr Vector(float x = 0, float y = 0)
 			: x(x)
 			, y(y) {}
-		constexpr Vector(const Vector &) = default;
 		constexpr float length() const {
 			return std::sqrt(x * x + y * y);
 		}
@@ -169,7 +168,6 @@ namespace Physical {
 			direction += other.direction;
 			return *this;
 		}
-		Transformator &operator=(const Transformator &other) = default;
 		//inverting transformations
 		constexpr Transformator operator-() const {
 			Transformator t;

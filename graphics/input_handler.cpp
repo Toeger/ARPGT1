@@ -21,41 +21,41 @@ bool Input_handler::is_action_happening(Input_handler::Action action) const {
 
 bool Input_handler::OnEvent(const irr::SEvent &event) {
 	switch (event.EventType) {
-	case irr::EET_KEY_INPUT_EVENT: {
-		//set what actions are happening
-		continuous_actions[key_action_map[event.KeyInput.Key]] = event.KeyInput.PressedDown;
-		//call instant action function if set
-		auto &f = instant_actions[key_action_map[event.KeyInput.Key]];
-		if (f) {
-			f();
-		}
-	} break;
-	case irr::EET_MOUSE_INPUT_EVENT: {
-		//call instant action function if set
-		auto &f = instant_actions[mouse_action_map[event.MouseInput.Event]];
-		if (f) {
-			f();
-		}
-		if (event.MouseInput.Event == irr::EMIE_MOUSE_WHEEL) {
-			int scroll = event.MouseInput.Wheel;
-			while (scroll > 0) {
-				auto &f = instant_actions[mouse_wheel[Mouse_wheel_up]];
-				if (f) {
-					f();
-				}
-				scroll--;
+		case irr::EET_KEY_INPUT_EVENT: {
+			//set what actions are happening
+			continuous_actions[key_action_map[event.KeyInput.Key]] = event.KeyInput.PressedDown;
+			//call instant action function if set
+			auto &f = instant_actions[key_action_map[event.KeyInput.Key]];
+			if (f) {
+				f();
 			}
-			while (scroll < 0) {
-				auto &f = instant_actions[mouse_wheel[Mouse_wheel_down]];
-				if (f) {
-					f();
-				}
-				scroll++;
+		} break;
+		case irr::EET_MOUSE_INPUT_EVENT: {
+			//call instant action function if set
+			auto &f = instant_actions[mouse_action_map[event.MouseInput.Event]];
+			if (f) {
+				f();
 			}
-		}
-	} break;
-	default:
-		break;
+			if (event.MouseInput.Event == irr::EMIE_MOUSE_WHEEL) {
+				auto scroll = event.MouseInput.Wheel;
+				while (scroll > 0) {
+					auto &f = instant_actions[mouse_wheel[Mouse_wheel_up]];
+					if (f) {
+						f();
+					}
+					scroll--;
+				}
+				while (scroll < 0) {
+					auto &f = instant_actions[mouse_wheel[Mouse_wheel_down]];
+					if (f) {
+						f();
+					}
+					scroll++;
+				}
+			}
+		} break;
+		default:
+			break;
 	}
 	return false;
 }

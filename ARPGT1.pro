@@ -94,10 +94,15 @@ HEADERS += \
     utility/converter.h
 
 QMAKE_CXXFLAGS += -std=c++1z
-QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -Werror -Wfatal-errors -ggdb
+QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -ggdb #-Werror -Wfatal-errors
 DEFINES += ARTDIR=\'\"$${PWD}\"\'
-#QMAKE_CXXFLAGS_DEBUG += -Weverything -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors -Wno-global-constructors
-#QMAKE_CXXFLAGS_DEBUG_WARN_ON += -Wno-missing-braces #-Wno-unused-parameter
+#QMAKE_CXXFLAGS_DEBUG += -Weverything
+QMAKE_CXXFLAGS_DEBUG += -Wno-unused-function -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors
+QMAKE_CXXFLAGS_DEBUG += -Wno-global-constructors -Wno-missing-braces -Wno-newline-eof -Wno-padded -Wno-documentation -Wno-documentation-unknown-command
+QMAKE_CXXFLAGS_DEBUG += -Wno-sign-conversion -Wno-float-conversion -Wno-double-promotion -Wno-shorten-64-to-32 -Wno-sign-compare
+QMAKE_CXXFLAGS_DEBUG += -Wno-unneeded-internal-declaration -Wno-switch-enum #-Wno-unused-parameter
+QMAKE_CXXFLAGS_DEBUG += --system-header-prefix=external/
+
 linux-clang{
     QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
     QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
