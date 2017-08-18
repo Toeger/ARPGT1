@@ -43,6 +43,7 @@ std::enable_if_t<!std::is_floating_point<T>::value, T> get_random_number(T from,
 	return std::uniform_int_distribution<T>(from, to)(rng);
 }
 
+#pragma clang diagnostic ignored "-Wunused-function"
 static void debug_print(const Physical::Circle &c, const Physical::Transformator &t) {
 	std::cout << "circle: x: " << t.vector.x << " y: " << t.vector.y << " r: " << c.radius << '\n';
 }
@@ -176,7 +177,7 @@ int main() {
 
 		auto precomputer = [] { return Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator(); };
 
-		ECS::System::add_system<Common_components::Run_straight_AI>(fun, precomputer);
+		ECS::System::add_system<Common_components::Run_straight_AI>(std::move(fun), std::move(precomputer));
 	}
 
 	{ //add skill system

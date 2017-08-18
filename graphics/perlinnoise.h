@@ -26,6 +26,8 @@ T blend(T tl, T tr, T bl, T br, float bratio, float rratio) {
 	return tl * (1 - bratio) * (1 - rratio) + tr * (1 - bratio) * rratio + bl * bratio * (1 - rratio) + br * bratio * rratio;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-compare" //for some reason the compiler flag -Wno-sign-compare has no effect on this function
 template <class T, std::size_t width, std::size_t height>
 void add_octave(int wave_length, std::array<std::array<T, height>, width> &array, std::uniform_real_distribution<T> &dis) {
 	assert_fast(wave_length >= 2);
@@ -50,6 +52,7 @@ void add_octave(int wave_length, std::array<std::array<T, height>, width> &array
 		}
 	}
 }
+#pragma clang diagnostic pop
 
 template <class T>
 void add_octave(int width, int height, int wave_length, std::vector<T> &array, std::uniform_real_distribution<T> &dis) {

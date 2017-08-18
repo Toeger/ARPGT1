@@ -93,7 +93,7 @@ HEADERS += \
     utility/converter.h
 
 QMAKE_CXXFLAGS += -std=c++1z
-QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -ggdb #-Werror -Wfatal-errors
+QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -ggdb -Werror -Wfatal-errors
 DEFINES += ARTDIR=\'\"$${PWD}\"\'
 #QMAKE_CXXFLAGS_DEBUG += -Weverything
 QMAKE_CXXFLAGS_DEBUG += -Wno-unused-function -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors
