@@ -70,7 +70,6 @@ HEADERS += \
     graphics/terrain.h \
     graphics/window.h \
     main.h \
-    make_function.h \
     network.h \
     physics/aabb.h \
     physics/body.h \
