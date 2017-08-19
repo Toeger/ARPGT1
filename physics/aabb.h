@@ -64,6 +64,6 @@ namespace Physical {
 	inline bool collides(const AABB &b1, const AABB &b2) {
 		return b1.left < b2.right && b1.right > b2.left && b1.bottom < b2.top && b1.top > b2.bottom;
 	}
-}
+} // namespace Physical
 
 #endif // AABB_H

@@ -19,7 +19,7 @@ namespace Config {
 	const auto host_name = "togersoft.com";
 	const auto host_port = 12345;
 	const std::size_t MAX_UDP_PAYLOAD = 512;
-}
+} // namespace Config
 
 static std::thread network_thread;
 static std::atomic<bool> network_should_quit{false};

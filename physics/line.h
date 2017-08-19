@@ -16,6 +16,6 @@ namespace Physical {
 		Line(const Line &) = default;
 		Vector vector;
 	};
-}
+} // namespace Physical
 
 #endif // LINE_H

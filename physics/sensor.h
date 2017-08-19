@@ -13,8 +13,8 @@ namespace Physical {
 		Sensor(Shape &&shape, const Transformator &transformator)
 			: Body(std::move(shape), transformator) {}
 		using Body::operator+=;
-		using Body::get_current_transformator;
 		using Body::end_frame;
+		using Body::get_current_transformator;
 		using Body::get_shape;
 		using Body::move;
 		template <
@@ -46,7 +46,7 @@ namespace Physical {
 			}
 			apply_to_physical_bodies_impl<type_index + 1>(std::forward<Function>(f));
 		}
-	}
+	} // namespace
 	template <class Function>
 	void apply_to_physical_bodies(Function &&f) {
 		apply_to_physical_bodies_impl<0>(std::forward<Function>(f));
@@ -54,6 +54,6 @@ namespace Physical {
 	inline void end_frame() {
 		apply_to_physical_bodies([](auto &body) { body.end_frame(); });
 	}
-}
+} // namespace Physical
 
 #endif // SENSOR_H

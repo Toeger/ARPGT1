@@ -10,7 +10,7 @@ namespace irr {
 	namespace scene {
 		class ITerrainSceneNode;
 	}
-}
+} // namespace irr
 
 struct Terrain {
 	Terrain(Window &window, const Map &map, std::string_view texture);

@@ -41,7 +41,7 @@ namespace {
 		}
 		return _collides_with<get_next_collision(c)>(eh, tags);
 	}
-}
+} // namespace
 
 bool Skills::collides_with(ECS::Entity_handle eh, const Skills::Collision_type_tags tags) {
 	return _collides_with<Collision::allies>(eh, tags);
@@ -123,7 +123,10 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 					}
 					const auto &interaction_type_name = interaction.get_ref<const std::string &>();
 					const auto collision_strings = {
-						"allies", "enemies", "map", "self",
+						"allies",
+						"enemies",
+						"map",
+						"self",
 					};
 					auto pos = lower_bound(begin(collision_strings), end(collision_strings), interaction_type_name);
 					if (pos == end(collision_strings)) {
@@ -158,7 +161,10 @@ std::vector<Skills::Skill_definition> Skills::load(std::istream &is, void (*setu
 					throw std::runtime_error("value of skill property " + property_name + " must be of type string denoting the type of the skill");
 				}
 				const auto type_strings = {
-					"aura", "instant", "invalid", "projectile",
+					"aura",
+					"instant",
+					"invalid",
+					"projectile",
 				};
 				auto pos = lower_bound(begin(type_strings), end(type_strings), property_value.get_ref<const std::string &>());
 				if (pos == end(type_strings)) {

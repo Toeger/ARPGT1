@@ -192,6 +192,6 @@ namespace Physical {
 	inline std::ostream &operator<<(std::ostream &os, const Transformator &t) {
 		return os << '(' << t.vector.x << ',' << t.vector.y << ')' << "->" << t.direction.to_degrees();
 	}
-}
+} // namespace Physical
 
 #endif // UTILITY_H

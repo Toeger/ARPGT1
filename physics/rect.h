@@ -14,6 +14,6 @@ namespace Physical {
 		float width;
 		float height;
 	};
-}
+} // namespace Physical
 
 #endif // Rect_H

@@ -89,6 +89,6 @@ namespace Skills {
 	void setup_default_lua_environment(LuaContext &lua_context);
 
 	std::vector<Skill_definition> load(std::istream &is, void (*setup_lua_environment)(LuaContext &) = &setup_default_lua_environment);
-}
+} // namespace Skills
 
 #endif // SKILL_H

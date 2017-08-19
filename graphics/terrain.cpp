@@ -49,7 +49,7 @@ void Terrain::create_terrain(Window &window, std::string_view hight_bitmap, std:
 														5,                                            //maxLOD //TODO: figure out what this actually does
 														irr::scene::ETPS_9,                           //patchSize //TODO: figure out what this actually does
 														0 //smoothFactor //shouldn't need to smooth since perlin does smoothing just fine
-														);
+	);
 	//terrain->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	terrain->setMaterialTexture(0, window.video_driver->getTexture(texture_1.data()));
 	terrain->setMaterialTexture(1, window.video_driver->getTexture(texture_2.data()));

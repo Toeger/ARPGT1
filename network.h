@@ -24,6 +24,6 @@ namespace Network {
 	std::vector<Event> get_events();
 	//send actions of this client to server
 	void update();
-}
+} // namespace Network
 
 #endif // NETWORK_H

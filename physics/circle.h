@@ -12,6 +12,6 @@ namespace Physical {
 			: radius(radius) {}
 		float radius;
 	};
-}
+} // namespace Physical
 
 #endif // CIRCLE_H

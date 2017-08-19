@@ -10,8 +10,8 @@ namespace irr {
 	namespace scene {
 		class ICameraSceneNode;
 		class ILightSceneNode;
-	}
-}
+	} // namespace scene
+} // namespace irr
 
 struct Camera {
 	Camera(Window &window);

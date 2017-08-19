@@ -24,6 +24,6 @@ namespace Common_components {
 		private:
 		irr::scene::IAnimatedMeshSceneNode *node = nullptr;
 	};
-};
+}; // namespace Common_components
 
 #endif // COMMON_GRAPHICS_COMPONENTS_H

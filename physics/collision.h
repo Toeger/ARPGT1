@@ -30,7 +30,7 @@ namespace Physical {
 		inline bool collides(Point p, Point circle_center, float circle_radius) {
 			return square(p.x - circle_center.x) + square(p.y - circle_center.y) < square(circle_radius);
 		}
-	}
+	} // namespace Helper
 
 	inline bool collides(const Physical::Circle &c1, const Transformator &t1, const Physical::Circle &c2, const Transformator &t2) {
 		auto distance = t1.vector - t2.vector;
@@ -87,6 +87,6 @@ namespace Physical {
 	inline bool collides(const Physical::Line &l, const Transformator &t1, const Physical::Circle &c, const Transformator &t2) {
 		return collides(c, t2, l, t1);
 	}
-}
+} // namespace Physical
 
 #endif // COLLISION_H

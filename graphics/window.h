@@ -14,13 +14,13 @@ namespace irr {
 		class IAnimatedMeshSceneNode;
 		class ISceneManager;
 		class ISceneNode;
-	}
+	} // namespace scene
 	namespace video {
 		class ITexture;
 		class IVideoDriver;
-	}
+	} // namespace video
 	class IrrlichtDevice;
-}
+} // namespace irr
 
 struct Window {
 	static Window get_dummy();

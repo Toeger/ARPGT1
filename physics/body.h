@@ -43,7 +43,7 @@ namespace Physical {
 		struct Index<T, std::tuple<U, Types...>> {
 			static const std::size_t value = 1 + Index<T, std::tuple<Types...>>::value;
 		};
-	}
+	} // namespace
 	//A DynamicBody consists of one of the supported shapes with collision detection and a Transformator that translates and rotates the shape
 	template <class Shape>
 	class DynamicBody {
@@ -167,6 +167,6 @@ namespace Physical {
 		Transformator current_transformator, next_transformator;
 		Shape shape;
 	};
-}
+} // namespace Physical
 
 #endif // BODY_H
