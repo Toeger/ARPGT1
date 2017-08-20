@@ -37,12 +37,12 @@ namespace Physical {
 			std::enable_if_t < type_index<number_of_supported_types> apply_to_physical_bodies_impl(Function &&f) {
 			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
 			using Dynamic_Body_type = DynamicBody<Shape_type>;
-			for (auto sit = ECS::System::range<Dynamic_Body_type>(); sit; sit.advance()) {
-				f(sit.template get<Dynamic_Body_type>());
+			for (auto &body : ECS::System::get_range<Dynamic_Body_type>()) {
+				f(body);
 			}
 			using Sensor_Body_type = Sensor<Shape_type>;
-			for (auto sit = ECS::System::range<Sensor_Body_type>(); sit; sit.advance()) {
-				f(sit.template get<Sensor_Body_type>());
+			for (auto &sensor : ECS::System::get_range<Sensor_Body_type>()) {
+				f(sensor);
 			}
 			apply_to_physical_bodies_impl<type_index + 1>(std::forward<Function>(f));
 		}

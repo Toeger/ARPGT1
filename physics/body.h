@@ -119,8 +119,7 @@ namespace Physical {
 		template <bool compare_other_to_this, class OtherShape>
 		std::enable_if_t<compare_other_to_this, ECS::Entity_handle> colliding_helper(const Transformator &new_transformator) {
 			using Body = DynamicBody<OtherShape>;
-			for (auto r = ECS::System::range<Body>(); r; r.advance()) {
-				auto &other = r.template get<Body>();
+			for (auto &other : ECS::System::get_range<Body>()) {
 				if (&other == this) { //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
 					continue;
 				}
@@ -136,8 +135,7 @@ namespace Physical {
 		template <bool compare_other_to_this, class OtherShape>
 		std::enable_if_t<!compare_other_to_this, ECS::Entity_handle> colliding_helper(const Transformator &new_transformator) {
 			using Body = DynamicBody<OtherShape>;
-			for (auto r = ECS::System::range<Body>(); r; r.advance()) {
-				auto &other = r.template get<Body>();
+			for (auto &other : ECS::System::get_range<Body>()) {
 				auto had_collision =
 					//collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator) ||
 					collides(other.get_shape(), other.get_next_transformator(), shape, new_transformator);
