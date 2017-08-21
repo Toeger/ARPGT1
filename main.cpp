@@ -35,12 +35,12 @@ namespace {
 }
 
 template <class T>
-std::enable_if_t<std::is_floating_point<T>::value, T> get_random_number(T from, T to) {
-	return std::uniform_real_distribution<T>(from, to)(rng);
-}
-template <class T>
-std::enable_if_t<!std::is_floating_point<T>::value, T> get_random_number(T from, T to) {
-	return std::uniform_int_distribution<T>(from, to)(rng);
+T get_random_number(T from, T to) {
+	if constexpr (std::is_floating_point<T>::value) {
+		return std::uniform_real_distribution<T>(from, to)(rng);
+	} else {
+		return std::uniform_int_distribution<T>(from, to)(rng);
+	}
 }
 
 #pragma clang diagnostic ignored "-Wunused-function"

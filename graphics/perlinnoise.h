@@ -80,10 +80,11 @@ void add_octave(int width, int height, int wave_length, std::vector<T> &array, s
 }
 
 template <class T, int width, int height, int octaves>
-std::enable_if_t<std::is_floating_point<T>::value, std::array<std::array<T, height>, width>> get_perlin_noise(T from, T to, int start = 0) {
-	static_assert(octaves >= 0, "");
-	static_assert(width > 0, "");
-	static_assert(height > 0, "");
+std::array<std::array<T, height>, width> get_perlin_noise(T from, T to, int start = 0) {
+	static_assert(std::is_floating_point<T>::value);
+	static_assert(octaves >= 0);
+	static_assert(width > 0);
+	static_assert(height > 0);
 	assert_fast(from < to);
 	assert_fast(start <= octaves);
 
@@ -98,7 +99,8 @@ std::enable_if_t<std::is_floating_point<T>::value, std::array<std::array<T, heig
 }
 
 template <class T>
-std::enable_if_t<std::is_floating_point<T>::value, std::vector<T>> get_perlin_noise(int width, int height, int octaves, T from, T to, int start = 0) {
+std::vector<T> get_perlin_noise(int width, int height, int octaves, T from, T to, int start = 0) {
+	static_assert(std::is_floating_point<T>::value);
 	assert_fast(octaves >= 0);
 	assert_fast(width > 0);
 	assert_fast(height > 0);

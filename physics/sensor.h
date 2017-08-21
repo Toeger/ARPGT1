@@ -28,28 +28,20 @@ namespace Physical {
 		}
 	};
 
-	namespace {
-		template <std::size_t type_index, class Function>
-		std::enable_if_t<type_index == number_of_supported_types> apply_to_physical_bodies_impl(Function && /*unused*/) { /*end of recursion*/
-		}
-
-		template <std::size_t type_index, class Function>
-			std::enable_if_t < type_index<number_of_supported_types> apply_to_physical_bodies_impl(Function &&f) {
-			using Shape_type = std::tuple_element_t<type_index, Supported_types>;
-			using Dynamic_Body_type = DynamicBody<Shape_type>;
-			for (auto &body : ECS::System::get_range<Dynamic_Body_type>()) {
-				f(body);
-			}
-			using Sensor_Body_type = Sensor<Shape_type>;
-			for (auto &sensor : ECS::System::get_range<Sensor_Body_type>()) {
-				f(sensor);
-			}
-			apply_to_physical_bodies_impl<type_index + 1>(std::forward<Function>(f));
-		}
-	} // namespace
-	template <class Function>
+	template <int type_index = 0, class Function>
 	void apply_to_physical_bodies(Function &&f) {
-		apply_to_physical_bodies_impl<0>(std::forward<Function>(f));
+		using Shape_type = Supported_types::nth<type_index>;
+		using Dynamic_Body_type = DynamicBody<Shape_type>;
+		for (auto &body : ECS::System::get_range<Dynamic_Body_type>()) {
+			f(body);
+		}
+		using Sensor_Body_type = Sensor<Shape_type>;
+		for (auto &sensor : ECS::System::get_range<Sensor_Body_type>()) {
+			f(sensor);
+		}
+		if constexpr (type_index + 1 < Supported_types::size) {
+			apply_to_physical_bodies<type_index + 1>(std::forward<Function>(f));
+		}
 	}
 	inline void end_frame() {
 		apply_to_physical_bodies([](auto &body) { body.end_frame(); });

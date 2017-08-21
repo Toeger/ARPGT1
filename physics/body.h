@@ -22,33 +22,12 @@ namespace ECS {
 
 namespace Physical {
 	//add shapes here that a Body can be
-	using Supported_types = std::tuple<Physical::Circle, Physical::Line>; //TODO: add Physical::Polygon
-	static const constexpr std::size_t number_of_supported_types = std::tuple_size<Supported_types>::value;
+	using Supported_types = Utility::Type_list<Physical::Circle, Physical::Line>; //TODO: add Physical::Polygon
 
-	namespace { //helper
-		//from https://stackoverflow.com/a/18063608/3484570
-		//this is used to get the index for a type in a tuple
-		//example: Index<int, std::tuple<float, char, int, double>>::value returns 2 at compile time
-		//if the type does not exist you get a compilation error
-		//if the type exists multiple times you get the first index with a match
-		template <class T, class Tuple>
-		struct Index;
-
-		template <class T, class... Types>
-		struct Index<T, std::tuple<T, Types...>> {
-			static const std::size_t value = 0;
-		};
-
-		template <class T, class U, class... Types>
-		struct Index<T, std::tuple<U, Types...>> {
-			static const std::size_t value = 1 + Index<T, std::tuple<Types...>>::value;
-		};
-	} // namespace
 	//A DynamicBody consists of one of the supported shapes with collision detection and a Transformator that translates and rotates the shape
 	template <class Shape>
 	class DynamicBody {
-		static_assert(Index<Shape, Supported_types>::value >= 0, //comparison always true, but we only care about if it compiles, not the actual value
-					  "Unsupported type for DynamicBody, add it to Physical::Supported_types to fix");
+		static_assert(Supported_types::has<Shape>(), "Unsupported type for DynamicBody, add it to Physical::Supported_types to fix");
 
 		public:
 		//special member functions
@@ -114,52 +93,31 @@ namespace Physical {
 		}
 
 		private:
-		//colliding checks if this body is colliding with any other body instanciated with any of the supported types
-		//end of recursion
-		template <bool compare_other_to_this, class OtherShape>
-		std::enable_if_t<compare_other_to_this, ECS::Entity_handle> colliding_helper(const Transformator &new_transformator) {
-			using Body = DynamicBody<OtherShape>;
+		//get the entity that we collide with if we move to the position given by new_transformator
+		template <std::size_t type_index>
+		ECS::Entity_handle colliding(const Transformator &new_transformator) {
+			using Body = DynamicBody<Supported_types::nth<type_index>>;
 			for (auto &other : ECS::System::get_range<Body>()) {
-				if (&other == this) { //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
-					continue;
+				if constexpr (std::is_same<Supported_types::nth<type_index>, Shape>::value) {
+					if (&other == this) { //can we optimize the branch out somehow? By getting the range from begin to this and this to end?
+						continue;
+					}
 				}
-				auto had_collision =
-					//collides(other.shape, other.current_transformator, shape, new_transformator) ||
-					collides(other.shape, other.next_transformator, shape, new_transformator);
-				if (had_collision) {
-					return ECS::System::component_to_entity_handle(other);
-				}
-			}
-			return {};
-		}
-		template <bool compare_other_to_this, class OtherShape>
-		std::enable_if_t<!compare_other_to_this, ECS::Entity_handle> colliding_helper(const Transformator &new_transformator) {
-			using Body = DynamicBody<OtherShape>;
-			for (auto &other : ECS::System::get_range<Body>()) {
-				auto had_collision =
+				const auto had_collision =
 					//collides(other.get_shape(), other.get_current_transformator(), shape, new_transformator) ||
 					collides(other.get_shape(), other.get_next_transformator(), shape, new_transformator);
 				if (had_collision) {
 					return ECS::System::component_to_entity_handle(other);
 				}
 			}
-			return {};
-		}
-
-		//end of recursion
-		template <std::size_t type_index>
-		std::enable_if_t<type_index == number_of_supported_types, ECS::Entity_handle> colliding(const Transformator &t) {
-			if (Map::current_map->collides(shape, t)) {
-				return ECS::System::component_to_entity_handle(*Map::current_map);
+			if constexpr (type_index + 1 < Supported_types::size) {
+				return colliding<type_index + 1>(new_transformator);
+			} else {
+				if (Map::current_map->collides(shape, new_transformator)) {
+					return ECS::System::component_to_entity_handle(*Map::current_map);
+				}
+				return {};
 			}
-			return {};
-		}
-		template <std::size_t type_index>
-			std::enable_if_t < type_index<number_of_supported_types, ECS::Entity_handle> colliding(const Transformator &new_transformator) {
-			//wish I had static_if which would allow me to remove colliding_helper
-			auto eh = colliding_helper<std::is_same<std::tuple_element_t<type_index, Supported_types>, Shape>::value,
-									   std::tuple_element_t<type_index, Supported_types>>(new_transformator);
-			return eh ? eh : colliding<type_index + 1>(new_transformator);
 		}
 		//a Body holds 2 transformators: the current one where the object is and the next one where it will be next frame
 		Transformator current_transformator, next_transformator;
