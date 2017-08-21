@@ -194,7 +194,7 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 		case Type::instant:
 			break;
 		case Type::projectile: {
-			const auto player_body = Player::player.get<Physical::DynamicBody<Physical::Circle>>();
+			const auto player_body = Player::player.get<Physical::Dynamic_body<Physical::Circle>>();
 			const auto player_trans = player_body->get_current_transformator();
 			const auto pos = Map::current_map->to_world_coords(player_trans.vector);
 			if (texture.empty()) {
@@ -204,7 +204,7 @@ Skills::Skill_instance Skills::Skill_definition::create() {
 			}
 			instance.emplace<Common_components::Speed>(speed);
 			const auto player_radius = player_body->get_shape().radius;
-			auto &projectile_body = instance.emplace<Physical::DynamicBody<Physical::Circle>>(size); //after this line player_body is invalid
+			auto &projectile_body = instance.emplace<Physical::Dynamic_body<Physical::Circle>>(size); //after this line player_body is invalid
 			projectile_body.force_move(player_trans + Physical::Vector{0, 2 * player_radius + size});
 		} break;
 		case Type::invalid:

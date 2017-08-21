@@ -191,10 +191,10 @@ static void test_line_circle_collision() {
 static void run_towards_each_other_and_get_stuck_bug_test() {
 	ECS::Entity e1;
 	ECS::Entity e2;
-	e1.add(Physical::DynamicBody<Physical::Circle>(100));
-	e2.add(Physical::DynamicBody<Physical::Circle>(100, 1000));
-	auto &b1 = *e1.get<Physical::DynamicBody<Physical::Circle>>();
-	auto &b2 = *e2.get<Physical::DynamicBody<Physical::Circle>>();
+	e1.add(Physical::Dynamic_body<Physical::Circle>(100));
+	e2.add(Physical::Dynamic_body<Physical::Circle>(100, 1000));
+	auto &b1 = *e1.get<Physical::Dynamic_body<Physical::Circle>>();
+	auto &b2 = *e2.get<Physical::Dynamic_body<Physical::Circle>>();
 	b1 += 500;
 	b2 += -500;
 	assert_equal(b1.get_next_transformator().vector.x, 500.f);

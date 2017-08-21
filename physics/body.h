@@ -26,34 +26,34 @@ namespace Physical {
 
 	//A DynamicBody consists of one of the supported shapes with collision detection and a Transformator that translates and rotates the shape
 	template <class Shape>
-	class DynamicBody {
+	class Dynamic_body {
 		static_assert(Supported_types::has<Shape>(), "Unsupported type for DynamicBody, add it to Physical::Supported_types to fix");
 
 		public:
 		//special member functions
-		DynamicBody(Shape &&shape, const Transformator &transformator)
+		Dynamic_body(Shape &&shape, const Transformator &transformator)
 			: current_transformator(transformator)
 			, next_transformator(transformator)
 			, shape(std::move(shape)) {}
-		DynamicBody(Shape &&shape, const Vector &position = {}, const Direction &direction = {})
-			: DynamicBody(std::move(shape), Transformator{position, direction}) {}
-		DynamicBody(DynamicBody &&) = default;
-		DynamicBody(const DynamicBody &) = delete;
-		DynamicBody &operator=(const DynamicBody &) = delete;
-		DynamicBody &operator=(DynamicBody &&) = default;
+		Dynamic_body(Shape &&shape, const Vector &position = {}, const Direction &direction = {})
+			: Dynamic_body(std::move(shape), Transformator{position, direction}) {}
+		Dynamic_body(Dynamic_body &&) = default;
+		Dynamic_body(const Dynamic_body &) = delete;
+		Dynamic_body &operator=(const Dynamic_body &) = delete;
+		Dynamic_body &operator=(Dynamic_body &&) = default;
 
 		//operators
-		DynamicBody &operator+=(const Transformator &transformator) {
+		Dynamic_body &operator+=(const Transformator &transformator) {
 			auto new_transformator = next_transformator + transformator;
 			if (!colliding<0>(new_transformator)) {
 				next_transformator = new_transformator;
 			}
 			return *this;
 		}
-		DynamicBody &operator+=(const Vector &vector) {
+		Dynamic_body &operator+=(const Vector &vector) {
 			return *this += Transformator(vector);
 		}
-		DynamicBody &operator+=(const Direction &direction) {
+		Dynamic_body &operator+=(const Direction &direction) {
 			return *this += Transformator(direction);
 		}
 		template <class Transformator>
@@ -96,7 +96,7 @@ namespace Physical {
 		//get the entity that we collide with if we move to the position given by new_transformator
 		template <std::size_t type_index>
 		ECS::Entity_handle colliding(const Transformator &new_transformator) {
-			using Body = DynamicBody<Supported_types::nth<type_index>>;
+			using Body = Dynamic_body<Supported_types::nth<type_index>>;
 			for (auto &other : ECS::System::get_range<Body>()) {
 				if constexpr (std::is_same<Supported_types::nth<type_index>, Shape>::value) {
 					if (&other == this) { //can we optimize the branch out somehow? By getting the range from begin to this and this to end?

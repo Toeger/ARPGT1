@@ -54,7 +54,7 @@ static void lua_oncreate_test() {
 	ECS::Entity map;
 	Map::current_map = &map.emplace<Map>(100, 100);
 	ON_SCOPE_EXIT(Map::current_map = nullptr;);
-	Physical::DynamicBody<Physical::Circle> body{100};
+	Physical::Dynamic_body<Physical::Circle> body{100};
 	Player::player.add(std::move(body));
 	ON_SCOPE_EXIT(Player::player.remove<decltype(body)>(););
 	static std::string test_write_string; //need to make this static so I can use it with the lambda without capturing it,

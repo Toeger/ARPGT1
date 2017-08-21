@@ -91,7 +91,7 @@ static void handle_input(Input_handler &input, Camera &camera) {
 			x--;
 		}
 		if (x | y) { //we have player movement
-			auto &player_body = *Player::player.get<Physical::DynamicBody<Physical::Circle>>();
+			auto &player_body = *Player::player.get<Physical::Dynamic_body<Physical::Circle>>();
 			player_body += -camera.get_direction() - player_body.get_current_transformator().direction - Physical::Direction::from_degrees(90);
 			Physical::Vector move_direction(x, y);
 			move_direction /= move_direction.length();
@@ -167,7 +167,7 @@ int main() {
 
 	{ //add running straight AI system
 		auto fun = [](ECS::Entity_handle monster, Physical::Transformator &player_pos) {
-			auto &monster_body = *monster.get<Physical::DynamicBody<Physical::Circle>>();
+			auto &monster_body = *monster.get<Physical::Dynamic_body<Physical::Circle>>();
 			auto monster_transformator = monster_body.get_current_transformator();
 			auto to_player_vector = player_pos.vector - monster_transformator.vector;
 			auto monster_speed = monster.get<Common_components::Speed>()->speed;
@@ -175,7 +175,7 @@ int main() {
 			monster_body += monster_speed;
 		};
 
-		auto precomputer = [] { return Player::player.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator(); };
+		auto precomputer = [] { return Player::player.get<Physical::Dynamic_body<Physical::Circle>>()->get_current_transformator(); };
 
 		ECS::System::add_system<Common_components::Run_straight_AI>(std::move(fun), std::move(precomputer));
 	}
@@ -185,7 +185,7 @@ int main() {
 			for (auto skill_it = std::begin(Skills::Skill_instance::instances); skill_it != std::end(Skills::Skill_instance::instances);) {
 				skill_it->on_tick();
 				auto speed = skill_it->get<Common_components::Speed>();
-				auto body = skill_it->get<Physical::DynamicBody<Physical::Circle>>();
+				auto body = skill_it->get<Physical::Dynamic_body<Physical::Circle>>();
 				if (speed && body) {
 					bool collided = false;
 					body->move(Physical::Vector{0, speed->speed}, [&collided, &skill = *skill_it ](const Physical::Vector &v, ECS::Entity_handle entity) {
@@ -222,7 +222,7 @@ int main() {
 
 	Player &p = Player::player;
 	{
-		Physical::DynamicBody<Physical::Circle> b{100};
+		Physical::Dynamic_body<Physical::Circle> b{100};
 		bool blocked = false;
 		auto check_blocked_function = [&blocked](const Physical::Transformator &, ECS::Entity_handle) {
 			blocked = true;
@@ -258,10 +258,10 @@ int main() {
 		//the player has speed 150 we are a bit slower
 		//enemy.emplace<Common_components::Speed>(100.f);
 		//approximate the collision shape of the turtle with a circle with radius 100
-		auto &body = enemy.emplace<Physical::DynamicBody<Physical::Circle>>(100);
+		auto &body = enemy.emplace<Physical::Dynamic_body<Physical::Circle>>(100);
 		//position the enemy near the player
 		//TODO: make sure the enemy is not inside a wall
-		const auto &enemy_pos = p.get<Physical::DynamicBody<Physical::Circle>>()->get_next_transformator().vector + Physical::Vector{0, 200};
+		const auto &enemy_pos = p.get<Physical::Dynamic_body<Physical::Circle>>()->get_next_transformator().vector + Physical::Vector{0, 200};
 		body.force_move(enemy_pos);
 		//give the enemy a 3D model
 		const auto physical_position = Map::current_map->to_world_coords(enemy_pos);
@@ -276,7 +276,7 @@ int main() {
 		while (now() - last_update_timepoint > Config::logical_frame_duration) {
 			//handle continuous input
 			handle_input(input_handler, camera);
-			auto pos = Map::current_map->to_world_coords(p.get<Physical::DynamicBody<Physical::Circle>>()->get_current_transformator().vector);
+			auto pos = Map::current_map->to_world_coords(p.get<Physical::Dynamic_body<Physical::Circle>>()->get_current_transformator().vector);
 			camera.set_position(pos.first, pos.second);
 			camera.look_at(pos.first, 0, pos.second);
 			auto &player_animation = *p.get<Common_components::Animated_model>();
