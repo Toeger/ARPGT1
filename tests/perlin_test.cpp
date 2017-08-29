@@ -2,8 +2,8 @@
 #include "ecs/log.h"
 #include "ecs/utility.h"
 #include "graphics/perlinnoise.h"
+#include "utility/asserts.h"
 
-#include <cassert>
 #include <iostream>
 #include <irrlicht/irrlicht.h>
 
@@ -37,13 +37,13 @@ void run_perlin() {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			auto &value = noise[x][y];
-			assert(value >= min);
-			assert(value <= max);
+			assert_fast(value >= min);
+			assert_fast(value <= max);
 			image->setPixel(x, y, {value, value, value});
 		}
 	}
 	bool success = video_driver->writeImageToFile(image, "media/perlin.png");
-	assert(success);
+	assert_fast(success);
 }
 
 template <int i = 0>
@@ -88,8 +88,8 @@ void test_perlin() {
 		for (int x_ = 0; x_ < width; x_++) {
 			auto &value = noise[x_][y];
 			const auto x = width - 1 - x_;
-			assert(value >= min);
-			assert(value <= max);
+			assert_fast(value >= min);
+			assert_fast(value <= max);
 			//unsigned char c = value < separator ? 0 : 255;
 			unsigned char c = value * 255;
 			image->setPixel(x, y, {0, c, c, c});
@@ -113,9 +113,9 @@ void test_perlin() {
 			break;
 		}
 	}
-	assert(is_bmp_writable);
+	assert_fast(is_bmp_writable);
 	bool success = video_driver->writeImageToFile(image, "/tmp/perlin_map.bmp");
-	assert(success);
+	assert_fast(success);
 	success = video_driver->writeImageToFile(inverted_image, "/tmp/inverted_perlin_map.png");
-	assert(success);
+	assert_fast(success);
 }

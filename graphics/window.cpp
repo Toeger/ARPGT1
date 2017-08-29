@@ -1,8 +1,8 @@
 #include "window.h"
 #include "camera.h"
+#include "utility/asserts.h"
 #include "utility/converter.h"
 
-#include <cassert>
 #include <irrlicht/irrlicht.h>
 
 Window *Window::current_window;
@@ -14,7 +14,7 @@ Window Window::get_dummy() {
 Window::Window(Input_handler &input_handler, int width, int height, std::string_view title) {
 	//setup irrlicht graphics
 	render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(width, height), 32, false, true, true, &input_handler);
-	assert(render_device);
+	assert_fast(render_device);
 	render_device->setWindowCaption(Converter::str_to_wstring(title).c_str());
 	video_driver = render_device->getVideoDriver();
 	scene_manager = render_device->getSceneManager();
@@ -42,11 +42,11 @@ bool Window::update(Camera &camera) {
 irr::scene::IAnimatedMeshSceneNode *Window::add_model(std::string_view path, Physical::Vector position, Physical::Direction direction, float scale,
 													  irr::scene::ISceneNode *parent) {
 	auto mesh = scene_manager->getMesh(path.data());
-	assert(mesh);
+	assert_fast(mesh);
 	auto node = scene_manager->addAnimatedMeshSceneNode(mesh, parent, -1, {position.x, 0, position.y});
 	node->setRotation({0, direction.to_degrees(), 0});
 	node->setScale({scale, scale, scale});
-	assert(node);
+	assert_fast(node);
 	return node;
 }
 
@@ -57,7 +57,7 @@ irr::video::ITexture *Window::get_texture(std::string_view path) const {
 Window::Window() {
 	//setup irrlicht graphics
 	render_device = irr::createDevice(irr::video::EDT_NULL);
-	assert(render_device);
+	assert_fast(render_device);
 	video_driver = render_device->getVideoDriver();
 	scene_manager = render_device->getSceneManager();
 }

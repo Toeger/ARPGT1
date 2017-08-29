@@ -17,10 +17,8 @@ namespace { //prevent ODR violations
 	template <class T>
 	inline void assert_fast(T &&t) {
 		if (!t) {
-#ifdef _NDEBUG //make sure assert is activated even during a release build
-#undef _NDEBUG
-			assert(!"assertion failure");
-#define _NDEBUG
+#ifdef _NDEBUG
+			__builtin_unreachable();
 #else
 			assert(!"assertion failure");
 #endif
@@ -35,10 +33,8 @@ namespace { //prevent ODR violations
 	template <class T>
 	inline void assert_debug(T &&t) {
 		if (!t) {
-#ifdef _NDEBUG //make sure assert is activated even during a release build
-#undef _NDEBUG
-			assert(!"assertion failure");
-#define _NDEBUG
+#ifdef _NDEBUG
+			__builtin_unreachable();
 #else
 			assert(!"assertion failure");
 #endif
@@ -53,10 +49,8 @@ namespace { //prevent ODR violations
 	template <class T>
 	inline void assert_all(T &&t) {
 		if (!t) {
-#ifdef _NDEBUG //make sure assert is activated even during a release build
-#undef _NDEBUG
-			assert(!"assertion failure");
-#define _NDEBUG
+#ifdef _NDEBUG
+			__builtin_unreachable();
 #else
 			assert(!"assertion failure");
 #endif
