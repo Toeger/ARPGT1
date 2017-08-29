@@ -37,19 +37,19 @@ namespace Physical {
 	inline std::ostream &operator<<(std::ostream &os, const Vector &v) {
 		return os << v.x << '\n' << v.y << '\n';
 	}
-	inline Vector operator-(const Vector &v) {
+	inline constexpr Vector operator-(const Vector &v) {
 		return {-v.x, -v.y};
 	}
-	inline Vector operator+(const Vector &lhs, const Vector &rhs) {
+	inline constexpr Vector operator+(const Vector &lhs, const Vector &rhs) {
 		return {lhs.x + rhs.x, lhs.y + rhs.y};
 	}
-	inline Vector operator-(const Vector &lhs, const Vector &rhs) {
+	inline constexpr Vector operator-(const Vector &lhs, const Vector &rhs) {
 		return {lhs.x - rhs.x, lhs.y - rhs.y};
 	}
-	inline Vector operator*(Vector lhs, float rhs) {
+	inline constexpr Vector operator*(Vector lhs, float rhs) {
 		return lhs *= rhs;
 	}
-	inline Vector operator/(Vector lhs, float rhs) {
+	inline constexpr Vector operator/(Vector lhs, float rhs) {
 		return lhs /= rhs;
 	}
 
