@@ -1,4 +1,5 @@
 #include "perlin_test.h"
+#include "ecs/log.h"
 #include "ecs/utility.h"
 #include "graphics/perlinnoise.h"
 
@@ -7,6 +8,16 @@
 #include <irrlicht/irrlicht.h>
 
 constexpr int max_i = 64;
+
+template <class T>
+void drop(T *t) {
+	t->drop();
+}
+
+namespace std {
+	template <class T>
+	unique_ptr(T *, void (*)(T *))->unique_ptr<T, void (*)(T *)>;
+}
 
 template <int i = 0>
 void run_perlin() {
@@ -18,10 +29,11 @@ void run_perlin() {
 
 	auto noise = get_perlin_noise<float, width, height, i>(0, 255);
 	auto render_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2du(800, 600), 32, false, false, true, nullptr);
-	ON_SCOPE_EXIT(render_device->drop(););
+	std::unique_ptr rd_dropper{render_device, drop};
 	auto video_driver = render_device->getVideoDriver();
 	auto image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
-	ON_SCOPE_EXIT(image->drop(););
+	std::unique_ptr id_dropper{image, drop};
+	std::unique_ptr idd{image, drop};
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			auto &value = noise[x][y];
@@ -65,12 +77,12 @@ void test_perlin() {
 
 	std::transform(&noise[0][0], &noise[0][0] + width * height, &noise[0][0], sigmoid);
 	auto render_device = irr::createDevice(irr::video::EDT_NULL);
-	ON_SCOPE_EXIT(render_device->drop(););
+	std::unique_ptr rd_dropper{render_device, drop};
 	auto video_driver = render_device->getVideoDriver();
 	auto image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
-	ON_SCOPE_EXIT(image->drop(););
+	std::unique_ptr image_dropper{image, drop};
 	auto inverted_image = video_driver->createImage(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, {width, height});
-	ON_SCOPE_EXIT(inverted_image->drop(););
+	std::unique_ptr inverted_image_dropper{inverted_image, drop};
 	auto square = [](auto x) { return x * x; };
 	for (int y = 0; y < height; y++) {
 		for (int x_ = 0; x_ < width; x_++) {
@@ -92,10 +104,10 @@ void test_perlin() {
 		}
 	}
 	bool is_bmp_writable = false;
-	std::cout << video_driver->getImageWriterCount() << '\n' << std::flush;
+	Log::log_debug() << video_driver->getImageWriterCount();
 	for (auto image_writer_index = 0u; image_writer_index < video_driver->getImageWriterCount(); image_writer_index++) {
 		auto image_write = video_driver->getImageWriter(image_writer_index);
-		std::cout << image_write->getDebugName() << '\n' << std::flush;
+		Log::log_debug() << image_write->getDebugName();
 		if (image_write->isAWriteableFileExtension(".bmp")) {
 			is_bmp_writable = true;
 			break;
