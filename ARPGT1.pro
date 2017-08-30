@@ -124,3 +124,5 @@ DISTFILES += \
     TODO \
     data/skill_documentation.txt \
     data/skills.json
+
+system(g++ --version)
