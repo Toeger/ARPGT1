@@ -100,13 +100,13 @@ QMAKE_CXXFLAGS_DEBUG += -Wno-global-constructors -Wno-missing-braces -Wno-newlin
 QMAKE_CXXFLAGS_DEBUG += -Wno-sign-conversion -Wno-float-conversion -Wno-double-promotion -Wno-shorten-64-to-32 -Wno-sign-compare
 QMAKE_CXXFLAGS_DEBUG += -Wno-unneeded-internal-declaration -Wno-switch-enum -Wno-undefined-func-template -Wno-unknown-pragmas #-Wno-unused-parameter
 
-linux-clang{
+equals(QMAKE_CXX, clang++) {
     QMAKE_CXXFLAGS_DEBUG += -Weverything
     QMAKE_CXXFLAGS += --system-header-prefix=external/
     QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
     QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 }
-gcc{
+equals(QMAKE_CXX, g++) {
     QMAKE_CXXFLAGS += -isystem $${PWD}/external
     QMAKE_CXXFLAGS += -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-function
 }

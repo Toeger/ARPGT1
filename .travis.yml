@@ -14,6 +14,7 @@ install:
 
 script:
   - g++ --version
+  - qmake --version
   - qmake
   - make
   - ./ARPGT1 test
