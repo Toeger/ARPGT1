@@ -8,7 +8,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG += c++1z
 
-linux:INCLUDEPATH += /usr/include/lua5.1
+INCLUDEPATH += /usr/include/lua5.1
 
 LIBS += -lpthread
 LIBS += -lIrrlicht
