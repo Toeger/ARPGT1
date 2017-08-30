@@ -117,9 +117,10 @@ QMAKE_CXXFLAGS_PROFILE += -DNDEBUG
 QMAKE_CXXFLAGS_RELEASE += -O3 -DNDEBUG
 
 DISTFILES += \
+    .travis.yml \
     CMakeLists.txt \
-    data/skill_documentation.txt \
-    data/skills.json \
     LICENSE \
     README.md \
-    TODO
+    TODO \
+    data/skill_documentation.txt \
+    data/skills.json

@@ -145,8 +145,11 @@ static void light_controls(Input_handler &input_handler, Camera &camera) {
 	assign_light_key_action(irr::EKEY_CODE::KEY_KEY_L, Input_handler::Action::light_backward, 0, 0, -1);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 	assert(Tester::run());
+	if (argc == 2 && strcmp(argv[1], "test") == 0) {
+		return 0;
+	}
 
 	auto &now = std::chrono::high_resolution_clock::now;
 	auto last_update_timepoint = now();
