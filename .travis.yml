@@ -12,11 +12,11 @@ install:
   - sudo apt-get install -qq g++-7
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
   # other stuff we need
-  - sudo apt-get install -qq qt5-qmake libirrlicht-dev libluabind-dev libluabind-dbg
+  - sudo apt-get install -qq qt5-qmake libirrlicht-dev libluabind-dev libboost-dev liblua5.1-0-dev
 
 script:
   - g++ --version
   - qmake --version
   - qmake
-  - make
+  - make -j8
   - ./ARPGT1 test
