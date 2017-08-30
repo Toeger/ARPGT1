@@ -8,8 +8,6 @@ CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG += c++1z
 
-QT_SELECT = 5 qmake
-
 linux:INCLUDEPATH += /usr/include/lua5.1
 
 LIBS += -lpthread
@@ -92,31 +90,31 @@ HEADERS += \
     utility/casts.h \
     utility/converter.h
 
-QMAKE_CXXFLAGS += -std=c++1z
-QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -ggdb -Werror -Wfatal-errors
 DEFINES += ARTDIR=\'\"$${PWD}\"\'
-#QMAKE_CXXFLAGS_DEBUG += -Weverything
+
+QMAKE_CXXFLAGS += -std=c++1z
+QMAKE_CXXFLAGS += -Werror -Wfatal-errors
+QMAKE_CXXFLAGS_DEBUG += -fno-omit-frame-pointer -Wall -ggdb
 QMAKE_CXXFLAGS_DEBUG += -Wno-unused-function -Wno-c++98-compat -Wno-shadow -Wno-string-conversion -Wno-c++98-compat-pedantic -Wno-exit-time-destructors
 QMAKE_CXXFLAGS_DEBUG += -Wno-global-constructors -Wno-missing-braces -Wno-newline-eof -Wno-padded -Wno-documentation -Wno-documentation-unknown-command
 QMAKE_CXXFLAGS_DEBUG += -Wno-sign-conversion -Wno-float-conversion -Wno-double-promotion -Wno-shorten-64-to-32 -Wno-sign-compare
-QMAKE_CXXFLAGS_DEBUG += -Wno-unneeded-internal-declaration -Wno-switch-enum #-Wno-unused-parameter
-QMAKE_CXXFLAGS_DEBUG += --system-header-prefix=external/
+QMAKE_CXXFLAGS_DEBUG += -Wno-unneeded-internal-declaration -Wno-switch-enum -Wno-undefined-func-template -Wno-unknown-pragmas #-Wno-unused-parameter
 
 linux-clang{
+    QMAKE_CXXFLAGS_DEBUG += -Weverything
+    QMAKE_CXXFLAGS += --system-header-prefix=external/
     QMAKE_CXXFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
     QMAKE_LFLAGS_DEBUG += -fsanitize=undefined,address#,safe-stack
 }
+gcc{
+    QMAKE_CXXFLAGS += -isystem $${PWD}/external
+    QMAKE_CXXFLAGS += -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-function
+}
+
+QMAKE_CXXFLAGS_RELEASE += -flto
+QMAKE_LFLAGS_RELEASE += -flto
 QMAKE_CXXFLAGS_PROFILE += -DNDEBUG
 QMAKE_CXXFLAGS_RELEASE += -O3 -DNDEBUG
-gcc{
-    clang{
-        #clang pretends to be gcc but doesn't support -flto
-    }
-    else{
-        QMAKE_CXXFLAGS_RELEASE += -flto
-        QMAKE_LFLAGS_RELEASE += -flto
-    }
-}
 
 DISTFILES += \
     CMakeLists.txt \

@@ -256,7 +256,7 @@ int main() {
 		//give it 100 HP
 		enemy.emplace<Common_components::HP>(100);
 		//the player has speed 150 we are a bit slower
-		//enemy.emplace<Common_components::Speed>(100.f);
+		enemy.emplace<Common_components::Speed>(100.f);
 		//approximate the collision shape of the turtle with a circle with radius 100
 		auto &body = enemy.emplace<Physical::Dynamic_body<Physical::Circle>>(100);
 		//position the enemy near the player

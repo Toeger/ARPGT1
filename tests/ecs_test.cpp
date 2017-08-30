@@ -63,11 +63,9 @@ static void test_entity_handle() {
 		eh = ECS::System::component_to_entity_handle(*n.get<Test_component>());
 		assert(eh.get<Test_component>());
 		assert(eh.get<Test_component>() == n.get<Test_component>());
-		auto &components = ECS::System::get_components<Test_component>();
-		assert(components.size());
+		assert(ECS::System::get_components<Test_component>().size());
 	}
-	auto &components = ECS::System::get_components<Test_component>();
-	assert(!components.size());
+	assert(!ECS::System::get_components<Test_component>().size());
 	assert(eh.get<Test_component>() == nullptr);
 }
 
