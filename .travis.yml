@@ -15,8 +15,7 @@ install:
   - sudo apt-get install -qq qt5-qmake libirrlicht-dev libluabind-dev libboost-dev liblua5.1-0-dev
 
 script:
-  - g++ --version
-  - qmake --version
-  - qmake
+  - qmake -qt=qt5 --version
+  - qmake -qt=qt5
   - make -j8
   - ./ARPGT1 test
