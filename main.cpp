@@ -146,9 +146,8 @@ static void light_controls(Input_handler &input_handler, Camera &camera) {
 }
 
 int main(int argc, char *argv[]) {
-	assert(Tester::run());
 	if (argc == 2 && strcmp(argv[1], "test") == 0) {
-		return 0;
+		return Tester::run();
 	}
 
 	auto &now = std::chrono::high_resolution_clock::now;
