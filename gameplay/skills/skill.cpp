@@ -1,12 +1,12 @@
 #include "skill.h"
 #include "ecs/common_components.h"
-#include "external/LuaContext.hpp"
-#include "external/json.hpp"
 #include "graphics/common_graphics_components.h"
 #include "main.h"
 #include "physics/body.h"
 #include "player.h"
 
+#include <external/LuaContext.hpp>
+#include <external/json.hpp>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>

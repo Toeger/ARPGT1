@@ -1,5 +1,4 @@
 #include "skill_loader_test.h"
-#include "external/LuaContext.hpp"
 #include "gameplay/map.h"
 #include "gameplay/skills/skill.h"
 #include "graphics/window.h"
@@ -8,6 +7,7 @@
 #include "player.h"
 
 #include <boost/algorithm/string/join.hpp>
+#include <external/LuaContext.hpp>
 #include <irrlicht/irrlicht.h>
 #include <sstream>
 #include <string>
