@@ -12,7 +12,7 @@ install:
   - sudo apt-get install -qq g++-7
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
   # other stuff we need
-  - sudo apt-get install -qq qmake libirrlicht-dev libluabind-dev libluabind-dbg
+  - sudo apt-get install -qq qt5-qmake libirrlicht-dev libluabind-dev libluabind-dbg
 
 script:
   - g++ --version
