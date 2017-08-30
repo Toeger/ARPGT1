@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Toeger/ARPGT1.svg?branch=master)](https://travis-ci.org/Toeger/ARPGT1)
+
 # ARPGT1
 This is the client of ARPGT1.
 
